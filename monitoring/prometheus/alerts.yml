@@ -1,0 +1,392 @@
+# Prometheus Alerting Rules for IKODIO BugBounty Platform
+
+groups:
+  # Application Health Alerts
+  - name: application_health
+    interval: 30s
+    rules:
+      - alert: HighErrorRate
+        expr: rate(http_requests_total{status=~"5.."}[5m]) > 0.05
+        for: 5m
+        labels:
+          severity: critical
+        annotations:
+          summary: "High error rate detected"
+          description: "Error rate is {{ $value }}% for {{ $labels.service }}"
+
+      - alert: ServiceDown
+        expr: up{job=~"backend|frontend|ai-engine"} == 0
+        for: 2m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Service {{ $labels.job }} is down"
+          description: "{{ $labels.instance }} has been down for more than 2 minutes"
+
+      - alert: HighResponseTime
+        expr: histogram_quantile(0.95, rate(http_request_duration_seconds_bucket[5m])) > 2
+        for: 10m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High response time detected"
+          description: "95th percentile response time is {{ $value }}s for {{ $labels.endpoint }}"
+
+  # Database Alerts
+  - name: database
+    interval: 30s
+    rules:
+      - alert: PostgreSQLDown
+        expr: pg_up == 0
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "PostgreSQL database is down"
+          description: "PostgreSQL instance {{ $labels.instance }} has been down for more than 1 minute"
+
+      - alert: HighDatabaseConnections
+        expr: pg_stat_database_numbackends / pg_settings_max_connections > 0.8
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High database connection usage"
+          description: "Database {{ $labels.datname }} is using {{ $value | humanizePercentage }} of available connections"
+
+      - alert: DatabaseReplicationLag
+        expr: pg_replication_lag > 10
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Database replication lag detected"
+          description: "Replication lag is {{ $value }} seconds on {{ $labels.instance }}"
+
+      - alert: LongRunningQueries
+        expr: pg_stat_activity_max_tx_duration > 300
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Long running database queries"
+          description: "Query running for {{ $value }}s on database {{ $labels.datname }}"
+
+      - alert: DiskSpaceHigh
+        expr: (pg_database_size_bytes / disk_total_bytes) > 0.85
+        for: 10m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Database disk space usage high"
+          description: "Database is using {{ $value | humanizePercentage }} of disk space"
+
+  # Redis Alerts
+  - name: redis
+    interval: 30s
+    rules:
+      - alert: RedisDown
+        expr: redis_up == 0
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Redis is down"
+          description: "Redis instance {{ $labels.instance }} has been down for more than 1 minute"
+
+      - alert: RedisMemoryHigh
+        expr: redis_memory_used_bytes / redis_memory_max_bytes > 0.9
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Redis memory usage high"
+          description: "Redis is using {{ $value | humanizePercentage }} of available memory"
+
+      - alert: RedisRejectedConnections
+        expr: rate(redis_rejected_connections_total[5m]) > 0
+        for: 1m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Redis rejecting connections"
+          description: "Redis is rejecting connections on {{ $labels.instance }}"
+
+  # RabbitMQ Alerts
+  - name: rabbitmq
+    interval: 30s
+    rules:
+      - alert: RabbitMQDown
+        expr: rabbitmq_up == 0
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "RabbitMQ is down"
+          description: "RabbitMQ instance {{ $labels.instance }} has been down for more than 1 minute"
+
+      - alert: RabbitMQQueueSize
+        expr: rabbitmq_queue_messages > 10000
+        for: 10m
+        labels:
+          severity: warning
+        annotations:
+          summary: "RabbitMQ queue size is high"
+          description: "Queue {{ $labels.queue }} has {{ $value }} messages"
+
+      - alert: RabbitMQConsumersDown
+        expr: rabbitmq_queue_consumers == 0
+        for: 5m
+        labels:
+          severity: critical
+        annotations:
+          summary: "No consumers for RabbitMQ queue"
+          description: "Queue {{ $labels.queue }} has no active consumers"
+
+  # Celery Worker Alerts
+  - name: celery_workers
+    interval: 30s
+    rules:
+      - alert: CeleryWorkersDown
+        expr: celery_workers_active == 0
+        for: 2m
+        labels:
+          severity: critical
+        annotations:
+          summary: "No active Celery workers"
+          description: "All Celery workers are down for {{ $labels.queue }}"
+
+      - alert: CeleryTaskBacklog
+        expr: celery_tasks_pending > 1000
+        for: 10m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High Celery task backlog"
+          description: "{{ $value }} tasks pending in queue {{ $labels.queue }}"
+
+      - alert: CeleryTaskFailureRate
+        expr: rate(celery_tasks_failed_total[5m]) > 0.1
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High Celery task failure rate"
+          description: "Task failure rate is {{ $value | humanizePercentage }}"
+
+  # Security Alerts
+  - name: security
+    interval: 30s
+    rules:
+      - alert: HighFailedLoginAttempts
+        expr: rate(login_attempts_failed_total[5m]) > 10
+        for: 2m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High failed login attempts"
+          description: "{{ $value }} failed login attempts per second from {{ $labels.ip }}"
+
+      - alert: SuspiciousActivity
+        expr: rate(security_suspicious_activity_total[5m]) > 5
+        for: 5m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Suspicious activity detected"
+          description: "{{ $value }} suspicious activities per second detected"
+
+      - alert: RateLimitExceeded
+        expr: rate(rate_limit_exceeded_total[5m]) > 100
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High rate limit violations"
+          description: "{{ $value }} rate limit violations per second"
+
+      - alert: CriticalVulnerabilityDetected
+        expr: vulnerabilities_detected_total{severity="critical"} > 0
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Critical vulnerability detected"
+          description: "{{ $value }} critical vulnerabilities detected in the last minute"
+
+  # Resource Alerts
+  - name: resources
+    interval: 30s
+    rules:
+      - alert: HighCPUUsage
+        expr: rate(process_cpu_seconds_total[5m]) > 0.8
+        for: 10m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High CPU usage"
+          description: "CPU usage is {{ $value | humanizePercentage }} on {{ $labels.instance }}"
+
+      - alert: HighMemoryUsage
+        expr: process_resident_memory_bytes / node_memory_MemTotal_bytes > 0.9
+        for: 10m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High memory usage"
+          description: "Memory usage is {{ $value | humanizePercentage }} on {{ $labels.instance }}"
+
+      - alert: DiskSpaceRunningOut
+        expr: (node_filesystem_avail_bytes / node_filesystem_size_bytes) < 0.1
+        for: 5m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Disk space running out"
+          description: "Only {{ $value | humanizePercentage }} disk space available on {{ $labels.instance }}"
+
+      - alert: HighNetworkTraffic
+        expr: rate(node_network_receive_bytes_total[5m]) > 100000000
+        for: 10m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High network traffic"
+          description: "Network traffic is {{ $value | humanize }}B/s on {{ $labels.instance }}"
+
+  # Scan Operations Alerts
+  - name: scan_operations
+    interval: 60s
+    rules:
+      - alert: ScanFailureRate
+        expr: rate(scans_failed_total[10m]) / rate(scans_started_total[10m]) > 0.2
+        for: 10m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High scan failure rate"
+          description: "Scan failure rate is {{ $value | humanizePercentage }}"
+
+      - alert: ScanQueueBacklog
+        expr: scans_queued > 100
+        for: 15m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Scan queue backlog"
+          description: "{{ $value }} scans are queued and waiting"
+
+      - alert: LongRunningScan
+        expr: scan_duration_seconds > 3600
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Long running scan detected"
+          description: "Scan {{ $labels.scan_id }} has been running for {{ $value | humanizeDuration }}"
+
+  # AI/ML Model Alerts
+  - name: ml_models
+    interval: 60s
+    rules:
+      - alert: ModelPredictionLatency
+        expr: histogram_quantile(0.95, rate(ml_prediction_duration_seconds_bucket[5m])) > 5
+        for: 10m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High ML model prediction latency"
+          description: "95th percentile prediction latency is {{ $value }}s for model {{ $labels.model }}"
+
+      - alert: ModelAccuracyDrop
+        expr: ml_model_accuracy < 0.7
+        for: 5m
+        labels:
+          severity: critical
+        annotations:
+          summary: "ML model accuracy dropped"
+          description: "Model {{ $labels.model }} accuracy is {{ $value | humanizePercentage }}"
+
+      - alert: HighModelErrorRate
+        expr: rate(ml_prediction_errors_total[5m]) > 0.1
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High ML model error rate"
+          description: "Model {{ $labels.model }} error rate is {{ $value | humanizePercentage }}"
+
+  # Payment Processing Alerts
+  - name: payments
+    interval: 30s
+    rules:
+      - alert: PaymentGatewayDown
+        expr: payment_gateway_up == 0
+        for: 2m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Payment gateway is down"
+          description: "Payment gateway {{ $labels.gateway }} has been down for more than 2 minutes"
+
+      - alert: HighPaymentFailureRate
+        expr: rate(payments_failed_total[5m]) / rate(payments_attempted_total[5m]) > 0.1
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High payment failure rate"
+          description: "Payment failure rate is {{ $value | humanizePercentage }}"
+
+      - alert: LargeTransactionPending
+        expr: payment_amount_usd > 10000 and payment_status == "pending"
+        for: 30m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Large transaction pending"
+          description: "Transaction of ${{ $value }} has been pending for 30 minutes"
+
+  # Backup Alerts
+  - name: backups
+    interval: 300s
+    rules:
+      - alert: BackupFailed
+        expr: time() - last_successful_backup_timestamp > 86400
+        for: 1h
+        labels:
+          severity: critical
+        annotations:
+          summary: "Backup has not completed successfully"
+          description: "No successful backup in the last 24 hours for {{ $labels.backup_type }}"
+
+      - alert: BackupSizeTooSmall
+        expr: backup_size_bytes < 1000000
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Backup size is suspiciously small"
+          description: "Backup {{ $labels.backup_name }} is only {{ $value | humanize }}B"
+
+  # SLA/SLO Alerts
+  - name: sla_slo
+    interval: 60s
+    rules:
+      - alert: APIAvailabilitySLO
+        expr: (sum(rate(http_requests_total{status!~"5.."}[5m])) / sum(rate(http_requests_total[5m]))) < 0.999
+        for: 5m
+        labels:
+          severity: critical
+        annotations:
+          summary: "API availability SLO violation"
+          description: "API availability is {{ $value | humanizePercentage }}, below 99.9% SLO"
+
+      - alert: ResponseTimeSLO
+        expr: histogram_quantile(0.99, rate(http_request_duration_seconds_bucket[5m])) > 1
+        for: 10m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Response time SLO violation"
+          description: "99th percentile response time is {{ $value }}s, above 1s SLO"

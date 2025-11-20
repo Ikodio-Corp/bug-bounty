@@ -1,0 +1,213 @@
+# Example staging values for IKODIO BugBounty
+# Override production values for staging environment
+
+global:
+  namespace: ikodio-staging
+  environment: staging
+  releaseVersion: "1.0.0-staging"
+
+backend:
+  replicaCount: 2
+  image:
+    repository: ikodio/bugbounty-backend
+    tag: "develop"
+    pullPolicy: Always
+  
+  autoscaling:
+    enabled: true
+    minReplicas: 2
+    maxReplicas: 5
+    targetCPUUtilizationPercentage: 70
+  
+  resources:
+    requests:
+      memory: "512Mi"
+      cpu: "500m"
+    limits:
+      memory: "2Gi"
+      cpu: "2000m"
+  
+  env:
+    DEBUG: "true"
+    CORS_ORIGINS: "https://staging.ikodio.com,https://api-staging.ikodio.com"
+
+frontend:
+  replicaCount: 1
+  image:
+    repository: ikodio/bugbounty-frontend
+    tag: "develop"
+    pullPolicy: Always
+  
+  autoscaling:
+    enabled: true
+    minReplicas: 1
+    maxReplicas: 3
+
+postgresql:
+  enabled: true
+  persistence:
+    size: 20Gi
+    storageClass: standard
+  resources:
+    requests:
+      memory: "512Mi"
+      cpu: "250m"
+    limits:
+      memory: "2Gi"
+      cpu: "1000m"
+
+redis:
+  enabled: true
+  persistence:
+    size: 5Gi
+  resources:
+    requests:
+      memory: "256Mi"
+      cpu: "100m"
+    limits:
+      memory: "1Gi"
+      cpu: "500m"
+  config:
+    maxmemory: "1gb"
+
+celery:
+  worker:
+    replicaCount: 2
+    concurrency: 2
+    resources:
+      requests:
+        memory: "512Mi"
+        cpu: "500m"
+      limits:
+        memory: "2Gi"
+        cpu: "2000m"
+
+ingress:
+  enabled: true
+  className: nginx
+  annotations:
+    cert-manager.io/cluster-issuer: "letsencrypt-staging"
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/proxy-body-size: "50m"
+  
+  tls:
+    - secretName: ikodio-tls-staging
+      hosts:
+        - staging.ikodio.com
+        - api-staging.ikodio.com
+  
+  hosts:
+    - host: staging.ikodio.com
+      paths:
+        - path: /
+          pathType: Prefix
+          service: frontend
+          port: 3000
+    - host: api-staging.ikodio.com
+      paths:
+        - path: /
+          pathType: Prefix
+          service: backend
+          port: 8000
+
+monitoring:
+  prometheus:
+    enabled: true
+    retention: 15d
+    persistence:
+      size: 20Gi
+  
+  grafana:
+    enabled: true
+    persistence:
+      size: 5Gi
+
+logging:
+  elasticsearch:
+    enabled: true
+    replicaCount: 1
+    persistence:
+      size: 50Gi
+    resources:
+      requests:
+        memory: "2Gi"
+        cpu: "500m"
+      limits:
+        memory: "4Gi"
+        cpu: "2000m"
+  
+  logstash:
+    enabled: true
+    replicaCount: 1
+  
+  kibana:
+    enabled: true
+    replicaCount: 1
+  
+  filebeat:
+    enabled: true
+  
+  metricbeat:
+    enabled: true
+
+sentry:
+  enabled: true
+  tracesSampleRate: 0.5
+  profilesSampleRate: 0.5
+
+secrets:
+  postgresPassword: "staging-password"
+  secretKey: "staging-secret-key"
+  grafanaAdminPassword: "staging-grafana-password"
+  
+  openaiApiKey: ""
+  sentryDsn: ""
+  
+  githubClientId: ""
+  githubClientSecret: ""
+  googleClientId: ""
+  googleClientSecret: ""
+  microsoftClientId: ""
+  microsoftClientSecret: ""
+  gitlabClientId: ""
+  gitlabClientSecret: ""
+  
+  stripeSecretKey: ""
+  stripePublishableKey: ""
+  stripeWebhookSecret: ""
+  
+  smtpHost: ""
+  smtpPort: "587"
+  smtpUser: ""
+  smtpPassword: ""
+  
+  slackBotToken: ""
+  slackSigningSecret: ""
+  discordBotToken: ""
+  discordWebhookUrl: ""
+  
+  jiraUrl: ""
+  jiraEmail: ""
+  jiraApiToken: ""
+  linearApiKey: ""
+  asanaAccessToken: ""
+  mondayApiToken: ""
+  
+  hackeroneApiToken: ""
+  bugcrowdApiToken: ""
+  intigritiApiToken: ""
+  yeswehackApiToken: ""
+  
+  jenkinsUrl: ""
+  jenkinsUser: ""
+  jenkinsToken: ""
+  
+  awsAccessKeyId: ""
+  awsSecretAccessKey: ""
+  awsRegion: "us-east-1"
+  gcpProjectId: ""
+  gcpServiceAccountKey: ""
+  azureTenantId: ""
+  azureClientId: ""
+  azureClientSecret: ""
+  azureSubscriptionId: ""

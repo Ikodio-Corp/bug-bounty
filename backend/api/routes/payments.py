@@ -1,0 +1,519 @@
+"""
+Payment & Subscription Routes
+Stripe integration for payments and subscriptions
+"""
+from fastapi import APIRouter, HTTPException, Depends, Request, Body
+from sqlalchemy.ext.asyncio import AsyncSession
+from pydantic import BaseModel
+from typing import Optional
+
+from core.database import get_db
+from core.security import get_current_user
+from services.payment_service import PaymentProcessor, SubscriptionManager
+from models.user import User
+import stripe
+
+router = APIRouter(prefix="/payments", tags=["Payments & Subscriptions"])
+
+payment_processor = PaymentProcessor()
+subscription_manager = SubscriptionManager()
+
+
+class CreateSubscriptionRequest(BaseModel):
+    """Request model for creating subscription"""
+    tier: str
+    payment_method_id: str
+
+
+class UpdateSubscriptionRequest(BaseModel):
+    """Request model for updating subscription"""
+    new_tier: str
+
+
+class CreatePaymentIntentRequest(BaseModel):
+    """Request model for creating payment intent"""
+    amount: int
+    currency: str = "idr"
+    description: Optional[str] = None
+
+
+@router.post("/create-customer")
+async def create_customer(
+    current_user: User = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db)
+):
+    """
+    Create Stripe customer for user
+    
+    Args:
+        current_user: Authenticated user
+        db: Database session
+        
+    Returns:
+        dict: Customer information
+    """
+    try:
+        if current_user.stripe_customer_id:
+            return {
+                "message": "Customer already exists",
+                "customer_id": current_user.stripe_customer_id
+            }
+        
+        customer = await payment_processor.create_customer(
+            email=current_user.email,
+            name=current_user.full_name or current_user.username,
+            metadata={"user_id": str(current_user.id)}
+        )
+        
+        # Save customer ID to user
+        current_user.stripe_customer_id = customer["id"]
+        await db.commit()
+        
+        return {
+            "message": "Customer created successfully",
+            "customer_id": customer["id"]
+        }
+        
+    except Exception as e:
+        raise HTTPException(
+            status_code=500,
+            detail=f"Failed to create customer: {str(e)}"
+        )
+
+
+@router.post("/subscriptions/create")
+async def create_subscription(
+    request: CreateSubscriptionRequest,
+    current_user: User = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db)
+):
+    """
+    Create new subscription for user
+    
+    Args:
+        request: Subscription creation request
+        current_user: Authenticated user
+        db: Database session
+        
+    Returns:
+        dict: Subscription details
+    """
+    try:
+        # Ensure customer exists
+        if not current_user.stripe_customer_id:
+            customer = await payment_processor.create_customer(
+                email=current_user.email,
+                name=current_user.full_name or current_user.username,
+                metadata={"user_id": str(current_user.id)}
+            )
+            current_user.stripe_customer_id = customer["id"]
+            await db.commit()
+        
+        # Create subscription
+        subscription = await payment_processor.create_subscription(
+            customer_id=current_user.stripe_customer_id,
+            tier=request.tier,
+            payment_method_id=request.payment_method_id
+        )
+        
+        # Update user subscription info
+        current_user.subscription_tier = request.tier
+        current_user.stripe_subscription_id = subscription["id"]
+        await db.commit()
+        
+        return {
+            "message": "Subscription created successfully",
+            "subscription_id": subscription["id"],
+            "tier": request.tier,
+            "status": subscription["status"],
+            "current_period_end": subscription["current_period_end"]
+        }
+        
+    except Exception as e:
+        raise HTTPException(
+            status_code=500,
+            detail=f"Failed to create subscription: {str(e)}"
+        )
+
+
+@router.post("/subscriptions/cancel")
+async def cancel_subscription(
+    current_user: User = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db)
+):
+    """
+    Cancel user's subscription
+    
+    Args:
+        current_user: Authenticated user
+        db: Database session
+        
+    Returns:
+        dict: Cancellation confirmation
+    """
+    try:
+        if not current_user.stripe_subscription_id:
+            raise HTTPException(
+                status_code=400,
+                detail="No active subscription found"
+            )
+        
+        subscription = await payment_processor.cancel_subscription(
+            subscription_id=current_user.stripe_subscription_id
+        )
+        
+        # Update user subscription info
+        current_user.subscription_tier = "free"
+        current_user.stripe_subscription_id = None
+        await db.commit()
+        
+        return {
+            "message": "Subscription cancelled successfully",
+            "cancel_at_period_end": subscription["cancel_at_period_end"],
+            "current_period_end": subscription["current_period_end"]
+        }
+        
+    except Exception as e:
+        raise HTTPException(
+            status_code=500,
+            detail=f"Failed to cancel subscription: {str(e)}"
+        )
+
+
+@router.post("/subscriptions/update")
+async def update_subscription(
+    request: UpdateSubscriptionRequest,
+    current_user: User = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db)
+):
+    """
+    Update user's subscription tier
+    
+    Args:
+        request: Subscription update request
+        current_user: Authenticated user
+        db: Database session
+        
+    Returns:
+        dict: Updated subscription details
+    """
+    try:
+        if not current_user.stripe_subscription_id:
+            raise HTTPException(
+                status_code=400,
+                detail="No active subscription found"
+            )
+        
+        # Cancel old subscription
+        await payment_processor.cancel_subscription(
+            subscription_id=current_user.stripe_subscription_id
+        )
+        
+        # Create new subscription with new tier
+        subscription = await payment_processor.create_subscription(
+            customer_id=current_user.stripe_customer_id,
+            tier=request.new_tier
+        )
+        
+        # Update user subscription info
+        current_user.subscription_tier = request.new_tier
+        current_user.stripe_subscription_id = subscription["id"]
+        await db.commit()
+        
+        return {
+            "message": "Subscription updated successfully",
+            "new_tier": request.new_tier,
+            "subscription_id": subscription["id"],
+            "status": subscription["status"]
+        }
+        
+    except Exception as e:
+        raise HTTPException(
+            status_code=500,
+            detail=f"Failed to update subscription: {str(e)}"
+        )
+
+
+@router.get("/subscriptions/status")
+async def get_subscription_status(
+    current_user: User = Depends(get_current_user)
+):
+    """
+    Get current subscription status
+    
+    Args:
+        current_user: Authenticated user
+        
+    Returns:
+        dict: Subscription status and features
+    """
+    tier = current_user.subscription_tier or "free"
+    features = subscription_manager.get_tier_features(tier)
+    
+    return {
+        "tier": tier,
+        "subscription_id": current_user.stripe_subscription_id,
+        "features": features,
+        "limits": {
+            "scans_per_month": features["scans_per_month"],
+            "ai_scans": features["ai_scans"],
+            "team_members": features["team_members"],
+            "api_access": features["api_access"]
+        }
+    }
+
+
+@router.post("/payment-intent")
+async def create_payment_intent(
+    request: CreatePaymentIntentRequest,
+    current_user: User = Depends(get_current_user)
+):
+    """
+    Create payment intent for one-time payment
+    
+    Args:
+        request: Payment intent request
+        current_user: Authenticated user
+        
+    Returns:
+        dict: Payment intent client secret
+    """
+    try:
+        if not current_user.stripe_customer_id:
+            raise HTTPException(
+                status_code=400,
+                detail="Customer not created. Call /create-customer first"
+            )
+        
+        payment_intent = await payment_processor.create_payment_intent(
+            amount=request.amount,
+            currency=request.currency,
+            customer_id=current_user.stripe_customer_id,
+            description=request.description
+        )
+        
+        return {
+            "client_secret": payment_intent["client_secret"],
+            "payment_intent_id": payment_intent["id"],
+            "amount": request.amount,
+            "currency": request.currency
+        }
+        
+    except Exception as e:
+        raise HTTPException(
+            status_code=500,
+            detail=f"Failed to create payment intent: {str(e)}"
+        )
+
+
+@router.post("/checkout/session")
+async def create_checkout_session(
+    tier: str = Body(...),
+    success_url: str = Body(...),
+    cancel_url: str = Body(...),
+    current_user: User = Depends(get_current_user)
+):
+    """
+    Create Stripe Checkout session for subscription
+    
+    Args:
+        tier: Subscription tier
+        success_url: URL to redirect on success
+        cancel_url: URL to redirect on cancel
+        current_user: Authenticated user
+        
+    Returns:
+        dict: Checkout session URL
+    """
+    try:
+        if not current_user.stripe_customer_id:
+            customer = await payment_processor.create_customer(
+                email=current_user.email,
+                name=current_user.full_name or current_user.username,
+                metadata={"user_id": str(current_user.id)}
+            )
+            current_user.stripe_customer_id = customer["id"]
+        
+        session = await payment_processor.create_checkout_session(
+            customer_id=current_user.stripe_customer_id,
+            tier=tier,
+            success_url=success_url,
+            cancel_url=cancel_url
+        )
+        
+        return {
+            "session_id": session["id"],
+            "url": session["url"]
+        }
+        
+    except Exception as e:
+        raise HTTPException(
+            status_code=500,
+            detail=f"Failed to create checkout session: {str(e)}"
+        )
+
+
+@router.post("/billing-portal")
+async def create_billing_portal_session(
+    return_url: str = Body(...),
+    current_user: User = Depends(get_current_user)
+):
+    """
+    Create Stripe billing portal session
+    
+    Args:
+        return_url: URL to return to after portal session
+        current_user: Authenticated user
+        
+    Returns:
+        dict: Billing portal URL
+    """
+    try:
+        if not current_user.stripe_customer_id:
+            raise HTTPException(
+                status_code=400,
+                detail="No customer found"
+            )
+        
+        session = await payment_processor.create_billing_portal_session(
+            customer_id=current_user.stripe_customer_id,
+            return_url=return_url
+        )
+        
+        return {
+            "url": session["url"]
+        }
+        
+    except Exception as e:
+        raise HTTPException(
+            status_code=500,
+            detail=f"Failed to create billing portal session: {str(e)}"
+        )
+
+
+@router.post("/webhook")
+async def stripe_webhook(
+    request: Request,
+    db: AsyncSession = Depends(get_db)
+):
+    """
+    Handle Stripe webhooks
+    
+    Args:
+        request: FastAPI request with webhook payload
+        db: Database session
+        
+    Returns:
+        dict: Success response
+    """
+    try:
+        payload = await request.body()
+        sig_header = request.headers.get("stripe-signature")
+        
+        # Verify webhook signature
+        is_valid = await payment_processor.verify_webhook_signature(
+            payload=payload,
+            signature=sig_header
+        )
+        
+        if not is_valid:
+            raise HTTPException(status_code=400, detail="Invalid signature")
+        
+        # Parse event
+        import json
+        event = json.loads(payload)
+        
+        # Handle different event types
+        if event["type"] == "customer.subscription.created":
+            # Handle subscription created
+            subscription = event["data"]["object"]
+            customer_id = subscription["customer"]
+            
+            # Update user subscription status
+            from sqlalchemy import select
+            result = await db.execute(
+                select(User).where(User.stripe_customer_id == customer_id)
+            )
+            user = result.scalar_one_or_none()
+            
+            if user:
+                user.stripe_subscription_id = subscription["id"]
+                await db.commit()
+        
+        elif event["type"] == "customer.subscription.deleted":
+            # Handle subscription cancelled
+            subscription = event["data"]["object"]
+            customer_id = subscription["customer"]
+            
+            from sqlalchemy import select
+            result = await db.execute(
+                select(User).where(User.stripe_customer_id == customer_id)
+            )
+            user = result.scalar_one_or_none()
+            
+            if user:
+                user.subscription_tier = "free"
+                user.stripe_subscription_id = None
+                await db.commit()
+        
+        elif event["type"] == "invoice.payment_succeeded":
+            # Handle successful payment
+            pass
+        
+        elif event["type"] == "invoice.payment_failed":
+            # Handle failed payment
+            pass
+        
+        return {"status": "success"}
+        
+    except Exception as e:
+        raise HTTPException(
+            status_code=400,
+            detail=f"Webhook error: {str(e)}"
+        )
+
+
+@router.get("/tiers")
+async def get_subscription_tiers():
+    """
+    Get available subscription tiers and pricing
+    
+    Returns:
+        dict: All subscription tiers with features and pricing
+    """
+    return {
+        "tiers": subscription_manager.TIERS
+    }
+
+
+@router.get("/usage")
+async def get_usage_stats(
+    current_user: User = Depends(get_current_user)
+):
+    """
+    Get current usage statistics
+    
+    Args:
+        current_user: Authenticated user
+        
+    Returns:
+        dict: Usage statistics for current billing period
+    """
+    # TODO: Implement usage tracking
+    tier = current_user.subscription_tier or "free"
+    features = subscription_manager.get_tier_features(tier)
+    
+    return {
+        "tier": tier,
+        "limits": {
+            "scans_per_month": features["scans_per_month"]
+        },
+        "usage": {
+            "scans_used": 0,
+            "scans_remaining": features["scans_per_month"]
+        },
+        "billing_period": {
+            "start": None,
+            "end": None
+        }
+    }

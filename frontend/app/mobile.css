@@ -1,0 +1,129 @@
+/* Mobile Responsiveness Utilities */
+
+@media (max-width: 640px) {
+  /* Typography */
+  h1 {
+    @apply text-2xl;
+  }
+  
+  h2 {
+    @apply text-xl;
+  }
+  
+  h3 {
+    @apply text-lg;
+  }
+  
+  /* Spacing */
+  .container {
+    @apply px-4;
+  }
+  
+  /* Tables - Make them scrollable on mobile */
+  .table-responsive {
+    @apply overflow-x-auto -mx-4 px-4;
+  }
+  
+  table {
+    @apply min-w-full;
+  }
+  
+  /* Cards - Full width on mobile */
+  .card {
+    @apply rounded-none;
+  }
+  
+  /* Buttons - Full width on mobile */
+  .btn-mobile-full {
+    @apply w-full;
+  }
+  
+  /* Grids - Single column on mobile */
+  .grid-responsive {
+    @apply grid-cols-1;
+  }
+  
+  /* Navigation */
+  .sidebar {
+    @apply w-full h-auto;
+  }
+  
+  /* Modals */
+  .modal {
+    @apply w-full h-full rounded-none;
+  }
+  
+  /* Forms */
+  .form-group {
+    @apply mb-4;
+  }
+  
+  input, select, textarea {
+    @apply text-base;
+  }
+  
+  /* Hide on mobile */
+  .hide-mobile {
+    @apply hidden;
+  }
+  
+  /* Show only on mobile */
+  .show-mobile {
+    @apply block;
+  }
+}
+
+@media (min-width: 641px) {
+  .show-mobile {
+    @apply hidden;
+  }
+}
+
+/* Tablet specific */
+@media (min-width: 641px) and (max-width: 1024px) {
+  .grid-responsive {
+    @apply grid-cols-2;
+  }
+  
+  .hide-tablet {
+    @apply hidden;
+  }
+}
+
+/* Touch-friendly targets */
+@media (hover: none) and (pointer: coarse) {
+  button, a, input[type="checkbox"], input[type="radio"] {
+    @apply min-h-[44px] min-w-[44px];
+  }
+  
+  .touch-action-none {
+    touch-action: none;
+  }
+}
+
+/* Landscape mode adjustments */
+@media (max-width: 640px) and (orientation: landscape) {
+  .header {
+    @apply h-12;
+  }
+  
+  .content {
+    @apply pt-12;
+  }
+}
+
+/* Safe area insets for notched devices */
+@supports (padding: max(0px)) {
+  body {
+    padding-left: env(safe-area-inset-left);
+    padding-right: env(safe-area-inset-right);
+  }
+  
+  .header {
+    padding-top: env(safe-area-inset-top);
+  }
+  
+  .footer {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+}

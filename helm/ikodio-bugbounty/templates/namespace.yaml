@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: ikodio-bugbounty
+  labels:
+    name: ikodio-bugbounty
+    environment: production

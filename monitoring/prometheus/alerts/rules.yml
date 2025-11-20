@@ -1,0 +1,115 @@
+# Alerting rules for IKODIO Bug Bounty Platform
+
+groups:
+  - name: ikodio_alerts
+    interval: 30s
+    rules:
+      # API availability alerts
+      - alert: APIDown
+        expr: up{job="backend"} == 0
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Backend API is down"
+          description: "Backend API has been down for more than 1 minute"
+
+      # High error rate
+      - alert: HighErrorRate
+        expr: rate(http_requests_total{status=~"5.."}[5m]) > 0.05
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High error rate detected"
+          description: "Error rate is above 5% for the last 5 minutes"
+
+      # High response time
+      - alert: HighResponseTime
+        expr: histogram_quantile(0.95, rate(http_request_duration_seconds_bucket[5m])) > 1
+        for: 10m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High API response time"
+          description: "95th percentile response time is above 1 second"
+
+      # Database connection issues
+      - alert: DatabaseConnectionHigh
+        expr: database_connections_active / database_connections_max > 0.8
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Database connection pool nearly exhausted"
+          description: "Active connections are above 80% of maximum"
+
+      # Redis unavailable
+      - alert: RedisDown
+        expr: up{job="redis"} == 0
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Redis is down"
+          description: "Redis has been unavailable for more than 1 minute"
+
+      # High CPU usage
+      - alert: HighCPUUsage
+        expr: (100 - (avg by (instance) (rate(node_cpu_seconds_total{mode="idle"}[5m])) * 100)) > 85
+        for: 10m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High CPU usage detected"
+          description: "CPU usage is above 85% for 10 minutes"
+
+      # High memory usage
+      - alert: HighMemoryUsage
+        expr: (node_memory_MemTotal_bytes - node_memory_MemAvailable_bytes) / node_memory_MemTotal_bytes * 100 > 90
+        for: 5m
+        labels:
+          severity: critical
+        annotations:
+          summary: "High memory usage"
+          description: "Memory usage is above 90%"
+
+      # Disk space low
+      - alert: DiskSpaceLow
+        expr: (node_filesystem_avail_bytes / node_filesystem_size_bytes) * 100 < 15
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Low disk space"
+          description: "Disk space is below 15%"
+
+      # Celery queue too long
+      - alert: CeleryQueueTooLong
+        expr: celery_queue_length > 1000
+        for: 10m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Celery queue is too long"
+          description: "Celery queue has more than 1000 pending tasks"
+
+      # Auto-fix failure rate high
+      - alert: AutoFixHighFailureRate
+        expr: rate(auto_fix_failures_total[30m]) / rate(auto_fix_attempts_total[30m]) > 0.2
+        for: 30m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Auto-fix failure rate is high"
+          description: "More than 20% of auto-fix attempts are failing"
+
+      # DevOps self-healing failures
+      - alert: SelfHealingFailures
+        expr: rate(devops_self_healing_failures_total[1h]) > 5
+        for: 1h
+        labels:
+          severity: critical
+        annotations:
+          summary: "DevOps self-healing is failing"
+          description: "More than 5 self-healing failures in the last hour"

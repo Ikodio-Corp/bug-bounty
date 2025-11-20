@@ -1,0 +1,140 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: ikodio-config
+  namespace: ikodio-bugbounty
+data:
+  # Application
+  PROJECT_NAME: "IKODIO BugBounty"
+  DEBUG: "false"
+  ENVIRONMENT: "production"
+  RELEASE_VERSION: "1.0.0"
+  
+  # CORS
+  CORS_ORIGINS: "https://ikodio.com,https://app.ikodio.com"
+  
+  # Database
+  POSTGRES_SERVER: "postgres"
+  POSTGRES_PORT: "5432"
+  POSTGRES_DB: "ikodio_bugbounty"
+  
+  # Redis
+  REDIS_HOST: "redis"
+  REDIS_PORT: "6379"
+  REDIS_DB: "0"
+  
+  # Celery
+  CELERY_BROKER_URL: "redis://redis:6379/1"
+  CELERY_RESULT_BACKEND: "redis://redis:6379/2"
+  
+  # Features
+  ENABLE_AI_AGENTS: "true"
+  ENABLE_MARKETPLACE: "true"
+  ENABLE_GUILD: "true"
+  ENABLE_UNIVERSITY: "true"
+  ENABLE_QUANTUM: "true"
+  ENABLE_SATELLITE: "true"
+  ENABLE_GEOPOLITICAL: "true"
+  ENABLE_DAO: "true"
+  
+  # Sentry
+  SENTRY_TRACES_SAMPLE_RATE: "0.1"
+  SENTRY_PROFILES_SAMPLE_RATE: "0.1"
+
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: ikodio-secrets
+  namespace: ikodio-bugbounty
+type: Opaque
+stringData:
+  # Database
+  POSTGRES_USER: "ikodio_user"
+  POSTGRES_PASSWORD: "CHANGE_ME_IN_PRODUCTION"
+  
+  # Security
+  SECRET_KEY: "CHANGE_ME_IN_PRODUCTION"
+  ALGORITHM: "HS256"
+  ACCESS_TOKEN_EXPIRE_MINUTES: "30"
+  
+  # OpenAI
+  OPENAI_API_KEY: "your-openai-api-key"
+  
+  # OAuth Providers
+  GITHUB_CLIENT_ID: "your-github-client-id"
+  GITHUB_CLIENT_SECRET: "your-github-client-secret"
+  GOOGLE_CLIENT_ID: "your-google-client-id"
+  GOOGLE_CLIENT_SECRET: "your-google-client-secret"
+  MICROSOFT_CLIENT_ID: "your-microsoft-client-id"
+  MICROSOFT_CLIENT_SECRET: "your-microsoft-client-secret"
+  GITLAB_CLIENT_ID: "your-gitlab-client-id"
+  GITLAB_CLIENT_SECRET: "your-gitlab-client-secret"
+  
+  # Stripe
+  STRIPE_SECRET_KEY: "your-stripe-secret-key"
+  STRIPE_PUBLISHABLE_KEY: "your-stripe-publishable-key"
+  STRIPE_WEBHOOK_SECRET: "your-stripe-webhook-secret"
+  
+  # Email
+  SMTP_HOST: "smtp.gmail.com"
+  SMTP_PORT: "587"
+  SMTP_USER: "your-email@gmail.com"
+  SMTP_PASSWORD: "your-email-password"
+  
+  # Slack
+  SLACK_BOT_TOKEN: "xoxb-your-slack-bot-token"
+  SLACK_SIGNING_SECRET: "your-slack-signing-secret"
+  
+  # Discord
+  DISCORD_BOT_TOKEN: "your-discord-bot-token"
+  DISCORD_WEBHOOK_URL: "your-discord-webhook-url"
+  
+  # Jira
+  JIRA_URL: "https://your-domain.atlassian.net"
+  JIRA_EMAIL: "your-jira-email"
+  JIRA_API_TOKEN: "your-jira-api-token"
+  
+  # Linear
+  LINEAR_API_KEY: "your-linear-api-key"
+  
+  # Asana
+  ASANA_ACCESS_TOKEN: "your-asana-access-token"
+  
+  # Monday.com
+  MONDAY_API_TOKEN: "your-monday-api-token"
+  
+  # HackerOne
+  HACKERONE_API_TOKEN: "your-hackerone-api-token"
+  
+  # Bugcrowd
+  BUGCROWD_API_TOKEN: "your-bugcrowd-api-token"
+  
+  # Intigriti
+  INTIGRITI_API_TOKEN: "your-intigriti-api-token"
+  
+  # YesWeHack
+  YESWEHACK_API_TOKEN: "your-yeswehack-api-token"
+  
+  # Jenkins
+  JENKINS_URL: "https://jenkins.example.com"
+  JENKINS_USER: "your-jenkins-user"
+  JENKINS_TOKEN: "your-jenkins-token"
+  
+  # AWS
+  AWS_ACCESS_KEY_ID: "your-aws-access-key"
+  AWS_SECRET_ACCESS_KEY: "your-aws-secret-key"
+  AWS_REGION: "us-east-1"
+  
+  # GCP
+  GCP_PROJECT_ID: "your-gcp-project-id"
+  GCP_SERVICE_ACCOUNT_KEY: "your-gcp-service-account-key-json"
+  
+  # Azure
+  AZURE_TENANT_ID: "your-azure-tenant-id"
+  AZURE_CLIENT_ID: "your-azure-client-id"
+  AZURE_CLIENT_SECRET: "your-azure-client-secret"
+  AZURE_SUBSCRIPTION_ID: "your-azure-subscription-id"
+  
+  # Sentry
+  SENTRY_DSN: "https://your-sentry-dsn@sentry.io/project-id"

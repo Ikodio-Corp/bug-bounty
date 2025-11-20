@@ -1,0 +1,417 @@
+# Default values for ikodio-bugbounty
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+global:
+  namespace: ikodio-bugbounty
+  environment: production
+  releaseVersion: "1.0.0"
+
+# Backend Configuration
+backend:
+  replicaCount: 3
+  image:
+    repository: ikodio/bugbounty-backend
+    tag: latest
+    pullPolicy: Always
+  
+  resources:
+    requests:
+      memory: "512Mi"
+      cpu: "500m"
+    limits:
+      memory: "2Gi"
+      cpu: "2000m"
+  
+  autoscaling:
+    enabled: true
+    minReplicas: 3
+    maxReplicas: 10
+    targetCPUUtilizationPercentage: 70
+    targetMemoryUtilizationPercentage: 80
+  
+  service:
+    type: ClusterIP
+    port: 8000
+  
+  env:
+    PROJECT_NAME: "IKODIO BugBounty"
+    DEBUG: "false"
+    CORS_ORIGINS: "https://ikodio.com,https://app.ikodio.com"
+    ENABLE_AI_AGENTS: "true"
+    ENABLE_MARKETPLACE: "true"
+    ENABLE_GUILD: "true"
+    ENABLE_UNIVERSITY: "true"
+    ENABLE_QUANTUM: "true"
+    ENABLE_SATELLITE: "true"
+    ENABLE_GEOPOLITICAL: "true"
+    ENABLE_DAO: "true"
+    SENTRY_TRACES_SAMPLE_RATE: "0.1"
+    SENTRY_PROFILES_SAMPLE_RATE: "0.1"
+
+# Frontend Configuration
+frontend:
+  replicaCount: 2
+  image:
+    repository: ikodio/bugbounty-frontend
+    tag: latest
+    pullPolicy: Always
+  
+  resources:
+    requests:
+      memory: "256Mi"
+      cpu: "250m"
+    limits:
+      memory: "1Gi"
+      cpu: "1000m"
+  
+  autoscaling:
+    enabled: true
+    minReplicas: 2
+    maxReplicas: 5
+    targetCPUUtilizationPercentage: 70
+  
+  service:
+    type: ClusterIP
+    port: 3000
+
+# PostgreSQL Configuration
+postgresql:
+  enabled: true
+  image:
+    repository: postgres
+    tag: 15-alpine
+  
+  resources:
+    requests:
+      memory: "1Gi"
+      cpu: "500m"
+    limits:
+      memory: "4Gi"
+      cpu: "2000m"
+  
+  persistence:
+    enabled: true
+    size: 50Gi
+    storageClass: fast-ssd
+  
+  service:
+    port: 5432
+  
+  auth:
+    database: ikodio_bugbounty
+    username: ikodio_user
+    # Password should be set via secrets
+
+# Redis Configuration
+redis:
+  enabled: true
+  image:
+    repository: redis
+    tag: 7-alpine
+  
+  resources:
+    requests:
+      memory: "512Mi"
+      cpu: "250m"
+    limits:
+      memory: "2Gi"
+      cpu: "1000m"
+  
+  persistence:
+    enabled: true
+    size: 10Gi
+    storageClass: fast-ssd
+  
+  service:
+    port: 6379
+  
+  config:
+    maxmemory: "2gb"
+    maxmemory-policy: "allkeys-lru"
+    appendonly: "yes"
+
+# Celery Configuration
+celery:
+  worker:
+    replicaCount: 3
+    concurrency: 4
+    resources:
+      requests:
+        memory: "1Gi"
+        cpu: "1000m"
+      limits:
+        memory: "4Gi"
+        cpu: "4000m"
+  
+  beat:
+    replicaCount: 1
+    resources:
+      requests:
+        memory: "256Mi"
+        cpu: "100m"
+      limits:
+        memory: "512Mi"
+        cpu: "500m"
+
+# Ingress Configuration
+ingress:
+  enabled: true
+  className: nginx
+  annotations:
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/proxy-body-size: "100m"
+    nginx.ingress.kubernetes.io/limit-rps: "100"
+    nginx.ingress.kubernetes.io/limit-rpm: "50"
+  
+  tls:
+    - secretName: ikodio-tls
+      hosts:
+        - ikodio.com
+        - api.ikodio.com
+        - app.ikodio.com
+  
+  hosts:
+    - host: ikodio.com
+      paths:
+        - path: /
+          pathType: Prefix
+          service: frontend
+          port: 3000
+    - host: api.ikodio.com
+      paths:
+        - path: /
+          pathType: Prefix
+          service: backend
+          port: 8000
+    - host: app.ikodio.com
+      paths:
+        - path: /
+          pathType: Prefix
+          service: frontend
+          port: 3000
+
+# Monitoring Configuration
+monitoring:
+  prometheus:
+    enabled: true
+    image:
+      repository: prom/prometheus
+      tag: latest
+    resources:
+      requests:
+        memory: "1Gi"
+        cpu: "500m"
+      limits:
+        memory: "4Gi"
+        cpu: "2000m"
+    persistence:
+      enabled: true
+      size: 50Gi
+      storageClass: fast-ssd
+    service:
+      port: 9090
+    retention: 30d
+    scrapeInterval: 15s
+  
+  grafana:
+    enabled: true
+    image:
+      repository: grafana/grafana
+      tag: latest
+    resources:
+      requests:
+        memory: "256Mi"
+        cpu: "250m"
+      limits:
+        memory: "1Gi"
+        cpu: "1000m"
+    persistence:
+      enabled: true
+      size: 10Gi
+      storageClass: fast-ssd
+    service:
+      port: 3000
+    adminUser: admin
+    # adminPassword should be set via secrets
+
+# Logging Configuration
+logging:
+  elasticsearch:
+    enabled: true
+    image:
+      repository: docker.elastic.co/elasticsearch/elasticsearch
+      tag: 8.11.0
+    replicaCount: 3
+    resources:
+      requests:
+        memory: "4Gi"
+        cpu: "1000m"
+      limits:
+        memory: "8Gi"
+        cpu: "2000m"
+    persistence:
+      enabled: true
+      size: 100Gi
+      storageClass: fast-ssd
+    service:
+      restPort: 9200
+      nodePort: 9300
+    clusterName: ikodio-logs
+  
+  logstash:
+    enabled: true
+    image:
+      repository: docker.elastic.co/logstash/logstash
+      tag: 8.11.0
+    replicaCount: 2
+    resources:
+      requests:
+        memory: "2Gi"
+        cpu: "500m"
+      limits:
+        memory: "4Gi"
+        cpu: "2000m"
+    service:
+      beatsPort: 5044
+      tcpPort: 5000
+  
+  kibana:
+    enabled: true
+    image:
+      repository: docker.elastic.co/kibana/kibana
+      tag: 8.11.0
+    replicaCount: 1
+    resources:
+      requests:
+        memory: "1Gi"
+        cpu: "500m"
+      limits:
+        memory: "2Gi"
+        cpu: "1000m"
+    service:
+      port: 5601
+  
+  filebeat:
+    enabled: true
+    image:
+      repository: docker.elastic.co/beats/filebeat
+      tag: 8.11.0
+    resources:
+      requests:
+        memory: "200Mi"
+        cpu: "100m"
+      limits:
+        memory: "500Mi"
+        cpu: "500m"
+  
+  metricbeat:
+    enabled: true
+    image:
+      repository: docker.elastic.co/beats/metricbeat
+      tag: 8.11.0
+    resources:
+      requests:
+        memory: "200Mi"
+        cpu: "100m"
+      limits:
+        memory: "500Mi"
+        cpu: "500m"
+
+# Error Tracking Configuration
+sentry:
+  enabled: true
+  selfHosted: false
+  # DSN should be set via secrets
+  tracesSampleRate: 0.1
+  profilesSampleRate: 0.1
+
+# Security Configuration
+security:
+  podSecurityPolicy:
+    enabled: false
+  networkPolicy:
+    enabled: true
+  rbac:
+    create: true
+
+# Service Account
+serviceAccount:
+  create: true
+  annotations: {}
+  name: ""
+
+# Secrets (should be overridden in production)
+secrets:
+  # Database
+  postgresPassword: "CHANGE_ME_IN_PRODUCTION"
+  
+  # Security
+  secretKey: "CHANGE_ME_IN_PRODUCTION"
+  
+  # OpenAI
+  openaiApiKey: "your-openai-api-key"
+  
+  # OAuth
+  githubClientId: "your-github-client-id"
+  githubClientSecret: "your-github-client-secret"
+  googleClientId: "your-google-client-id"
+  googleClientSecret: "your-google-client-secret"
+  microsoftClientId: "your-microsoft-client-id"
+  microsoftClientSecret: "your-microsoft-client-secret"
+  gitlabClientId: "your-gitlab-client-id"
+  gitlabClientSecret: "your-gitlab-client-secret"
+  
+  # Stripe
+  stripeSecretKey: "your-stripe-secret-key"
+  stripePublishableKey: "your-stripe-publishable-key"
+  stripeWebhookSecret: "your-stripe-webhook-secret"
+  
+  # Email
+  smtpHost: "smtp.gmail.com"
+  smtpPort: "587"
+  smtpUser: "your-email@gmail.com"
+  smtpPassword: "your-email-password"
+  
+  # Notifications
+  slackBotToken: "xoxb-your-slack-bot-token"
+  slackSigningSecret: "your-slack-signing-secret"
+  discordBotToken: "your-discord-bot-token"
+  discordWebhookUrl: "your-discord-webhook-url"
+  
+  # Issue Tracking
+  jiraUrl: "https://your-domain.atlassian.net"
+  jiraEmail: "your-jira-email"
+  jiraApiToken: "your-jira-api-token"
+  linearApiKey: "your-linear-api-key"
+  asanaAccessToken: "your-asana-access-token"
+  mondayApiToken: "your-monday-api-token"
+  
+  # Bug Bounty Platforms
+  hackeroneApiToken: "your-hackerone-api-token"
+  bugcrowdApiToken: "your-bugcrowd-api-token"
+  intigritiApiToken: "your-intigriti-api-token"
+  yeswehackApiToken: "your-yeswehack-api-token"
+  
+  # CI/CD
+  jenkinsUrl: "https://jenkins.example.com"
+  jenkinsUser: "your-jenkins-user"
+  jenkinsToken: "your-jenkins-token"
+  
+  # Cloud Providers
+  awsAccessKeyId: "your-aws-access-key"
+  awsSecretAccessKey: "your-aws-secret-key"
+  awsRegion: "us-east-1"
+  gcpProjectId: "your-gcp-project-id"
+  gcpServiceAccountKey: "your-gcp-service-account-key-json"
+  azureTenantId: "your-azure-tenant-id"
+  azureClientId: "your-azure-client-id"
+  azureClientSecret: "your-azure-client-secret"
+  azureSubscriptionId: "your-azure-subscription-id"
+  
+  # Sentry
+  sentryDsn: "https://your-sentry-dsn@sentry.io/project-id"
+  
+  # Grafana
+  grafanaAdminPassword: "CHANGE_ME_IN_PRODUCTION"

@@ -1,0 +1,93 @@
+'use client';
+
+import { useState } from 'react';
+import { useMobile, useLongPress } from '@/hooks/useMobile';
+import ResponsiveTable from '@/components/ResponsiveTable';
+import MobileKeyboard from '@/components/MobileKeyboard';
+
+export default function BugsPage() {
+  const { isMobile } = useMobile();
+  const [selectedBug, setSelectedBug] = useState<any>(null);
+
+  // Example bug data
+  const bugs = [
+    {
+      id: '1',
+      title: 'SQL Injection in Login Form',
+      severity: 'Critical',
+      status: 'Open',
+      reporter: 'user@example.com',
+      bounty: '$500',
+      date: '2024-01-15',
+    },
+    {
+      id: '2',
+      title: 'XSS in Comment Section',
+      severity: 'High',
+      status: 'In Progress',
+      reporter: 'hacker@example.com',
+      bounty: '$300',
+      date: '2024-01-14',
+    },
+  ];
+
+  const columns = [
+    { key: 'title', label: 'Title' },
+    { 
+      key: 'severity', 
+      label: 'Severity',
+      render: (value: string) => (
+        <span className={`
+          px-2 py-1 rounded text-xs font-semibold
+          ${value === 'Critical' ? 'bg-red-600 text-white' : ''}
+          ${value === 'High' ? 'bg-orange-600 text-white' : ''}
+          ${value === 'Medium' ? 'bg-yellow-600 text-white' : ''}
+          ${value === 'Low' ? 'bg-green-600 text-white' : ''}
+        `}>
+          {value}
+        </span>
+      ),
+    },
+    { key: 'status', label: 'Status' },
+    { key: 'reporter', label: 'Reporter', mobileHide: true },
+    { key: 'bounty', label: 'Bounty' },
+    { key: 'date', label: 'Date', mobileHide: true },
+  ];
+
+  const handleRowClick = (bug: any) => {
+    setSelectedBug(bug);
+    console.log('Selected bug:', bug);
+  };
+
+  const shortcuts = [
+    { key: 'New', description: 'Create new bug report', action: () => console.log('New bug') },
+    { key: 'Filter', description: 'Filter bugs', action: () => console.log('Filter') },
+    { key: 'Sort', description: 'Sort bugs', action: () => console.log('Sort') },
+    { key: 'Export', description: 'Export data', action: () => console.log('Export') },
+  ];
+
+  return (
+    <div className={`${isMobile ? 'p-4 pb-16' : 'p-6'}`}>
+      <div className={`${isMobile ? 'mb-4' : 'mb-6'} flex justify-between items-center`}>
+        <h1 className={`${isMobile ? 'text-xl' : 'text-2xl'} font-bold text-white`}>
+          Bug Reports
+        </h1>
+        <button className={`
+          ${isMobile ? 'px-3 py-2 text-sm' : 'px-4 py-2'}
+          bg-blue-600 hover:bg-blue-700 text-white rounded
+        `}>
+          New Report
+        </button>
+      </div>
+
+      <ResponsiveTable
+        columns={columns}
+        data={bugs}
+        keyField="id"
+        onRowClick={handleRowClick}
+      />
+
+      {isMobile && <MobileKeyboard shortcuts={shortcuts} />}
+    </div>
+  );
+}

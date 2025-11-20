@@ -1,0 +1,157 @@
+name: Database Backup
+
+on:
+  schedule:
+    - cron: '0 2 * * *'
+  workflow_dispatch:
+
+env:
+  AWS_REGION: us-east-1
+  BACKUP_RETENTION_DAYS: 30
+
+jobs:
+  backup-production:
+    name: Backup Production Database
+    runs-on: ubuntu-latest
+    environment: production
+    
+    steps:
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+      
+      - name: Install kubectl
+        uses: azure/setup-kubectl@v3
+        with:
+          version: 'latest'
+      
+      - name: Configure kubectl
+        run: |
+          echo "${{ secrets.KUBE_CONFIG_PRODUCTION }}" | base64 -d > kubeconfig
+          export KUBECONFIG=./kubeconfig
+          kubectl cluster-info
+      
+      - name: Create database backup
+        env:
+          KUBECONFIG: ./kubeconfig
+        run: |
+          TIMESTAMP=$(date +%Y%m%d_%H%M%S)
+          BACKUP_FILE="ikodio_bugbounty_${TIMESTAMP}.sql.gz"
+          
+          kubectl exec -n ikodio-bugbounty deployment/ikodio-bugbounty-postgres -- \
+            bash -c "pg_dump -U \$POSTGRES_USER \$POSTGRES_DB | gzip" > ${BACKUP_FILE}
+          
+          echo "BACKUP_FILE=${BACKUP_FILE}" >> $GITHUB_ENV
+      
+      - name: Upload to S3
+        run: |
+          aws s3 cp ${BACKUP_FILE} s3://ikodio-backups/database/production/${BACKUP_FILE} \
+            --storage-class STANDARD_IA \
+            --server-side-encryption AES256
+      
+      - name: Verify backup
+        run: |
+          aws s3 ls s3://ikodio-backups/database/production/${BACKUP_FILE}
+      
+      - name: Create backup metadata
+        run: |
+          cat > backup-metadata.json << EOF
+          {
+            "timestamp": "$(date -u +%Y-%m-%dT%H:%M:%SZ)",
+            "filename": "${BACKUP_FILE}",
+            "size": "$(stat -f%z ${BACKUP_FILE})",
+            "sha256": "$(shasum -a 256 ${BACKUP_FILE} | cut -d' ' -f1)",
+            "environment": "production"
+          }
+          EOF
+          
+          aws s3 cp backup-metadata.json s3://ikodio-backups/database/production/metadata/${BACKUP_FILE}.json
+      
+      - name: Cleanup old backups
+        run: |
+          aws s3 ls s3://ikodio-backups/database/production/ | \
+            grep "\.sql\.gz$" | \
+            awk '{print $4}' | \
+            sort -r | \
+            tail -n +$((BACKUP_RETENTION_DAYS + 1)) | \
+            xargs -I {} aws s3 rm s3://ikodio-backups/database/production/{}
+      
+      - name: Notify on success
+        uses: slackapi/slack-github-action@v1
+        with:
+          webhook-url: ${{ secrets.SLACK_WEBHOOK_URL }}
+          payload: |
+            {
+              "text": "Database Backup Successful",
+              "blocks": [
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "Production database backup completed\n*File:* ${{ env.BACKUP_FILE }}"
+                  }
+                }
+              ]
+            }
+      
+      - name: Notify on failure
+        if: failure()
+        uses: slackapi/slack-github-action@v1
+        with:
+          webhook-url: ${{ secrets.SLACK_WEBHOOK_URL }}
+          payload: |
+            {
+              "text": "Database Backup Failed",
+              "blocks": [
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "Production database backup failed\n*Check workflow logs*"
+                  }
+                }
+              ]
+            }
+
+  backup-staging:
+    name: Backup Staging Database
+    runs-on: ubuntu-latest
+    environment: staging
+    
+    steps:
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+      
+      - name: Install kubectl
+        uses: azure/setup-kubectl@v3
+        with:
+          version: 'latest'
+      
+      - name: Configure kubectl
+        run: |
+          echo "${{ secrets.KUBE_CONFIG_STAGING }}" | base64 -d > kubeconfig
+          export KUBECONFIG=./kubeconfig
+          kubectl cluster-info
+      
+      - name: Create database backup
+        env:
+          KUBECONFIG: ./kubeconfig
+        run: |
+          TIMESTAMP=$(date +%Y%m%d_%H%M%S)
+          BACKUP_FILE="ikodio_bugbounty_staging_${TIMESTAMP}.sql.gz"
+          
+          kubectl exec -n ikodio-staging deployment/ikodio-bugbounty-staging-postgres -- \
+            bash -c "pg_dump -U \$POSTGRES_USER \$POSTGRES_DB | gzip" > ${BACKUP_FILE}
+          
+          aws s3 cp ${BACKUP_FILE} s3://ikodio-backups/database/staging/${BACKUP_FILE} \
+            --storage-class STANDARD_IA \
+            --server-side-encryption AES256
+          
+          rm ${BACKUP_FILE}

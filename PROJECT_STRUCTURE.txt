@@ -1,0 +1,78 @@
+.
+├── IMPLEMENTATION_SUMMARY.md
+├── PROJECT_STRUCTURE.txt
+├── QUICKSTART.md
+├── README.md
+├── SETUP.md
+├── ai-engine
+├── alembic.ini
+├── backend
+│   ├── Dockerfile
+│   ├── agents
+│   ├── api
+│   │   ├── __init__.py
+│   │   └── routes
+│   ├── core
+│   │   ├── __init__.py
+│   │   ├── config.py
+│   │   ├── database.py
+│   │   ├── redis.py
+│   │   └── security.py
+│   ├── main.py
+│   ├── middleware
+│   ├── models
+│   │   ├── __init__.py
+│   │   ├── advanced.py
+│   │   ├── bug.py
+│   │   ├── community.py
+│   │   ├── intelligence.py
+│   │   ├── marketplace.py
+│   │   └── user.py
+│   ├── requirements.txt
+│   ├── scanners
+│   ├── schemas
+│   │   └── auth.py
+│   ├── services
+│   │   └── auth_service.py
+│   ├── tasks
+│   └── utils
+├── database
+│   ├── migrations
+│   │   └── env.py
+│   └── seeds
+├── docker-compose.yml
+├── docs
+├── frontend
+│   ├── Dockerfile
+│   ├── app
+│   │   ├── globals.css
+│   │   ├── layout.tsx
+│   │   └── page.tsx
+│   ├── components
+│   │   └── ui
+│   ├── lib
+│   │   ├── api.ts
+│   │   └── utils.ts
+│   ├── next.config.js
+│   ├── package.json
+│   ├── postcss.config.js
+│   ├── public
+│   ├── tailwind.config.js
+│   └── tsconfig.json
+├── monitoring
+│   ├── grafana
+│   └── prometheus
+├── nginx
+│   ├── logs
+│   ├── nginx.conf
+│   └── ssl
+├── scripts
+│   ├── backup.sh
+│   ├── create-admin.sh
+│   ├── deploy.sh
+│   ├── install.sh
+│   ├── restore.sh
+│   └── view-logs.sh
+└── tools
+
+32 directories, 44 files

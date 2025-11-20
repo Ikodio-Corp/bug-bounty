@@ -1,0 +1,18 @@
+apiVersion: v2
+name: ikodio-bugbounty
+description: AI-Powered Bug Bounty Automation Platform
+type: application
+version: 1.0.0
+appVersion: "1.0.0"
+keywords:
+  - security
+  - bug-bounty
+  - vulnerability-scanning
+  - ai
+  - automation
+home: https://ikodio.com
+sources:
+  - https://github.com/ikodio/bugbounty
+maintainers:
+  - name: IKODIO Team
+    email: support@ikodio.com

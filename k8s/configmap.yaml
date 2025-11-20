@@ -1,0 +1,51 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: backend-config
+  namespace: ikodio-bugbounty
+data:
+  PROJECT_NAME: "IKODIO BugBounty Platform"
+  ENVIRONMENT: "production"
+  LOG_LEVEL: "INFO"
+  CORS_ORIGINS: "https://ikodio.com,https://app.ikodio.com"
+  
+  DATABASE_HOST: "postgres-service"
+  DATABASE_PORT: "5432"
+  DATABASE_NAME: "ikodio_bugbounty"
+  
+  REDIS_HOST: "redis-service"
+  REDIS_PORT: "6379"
+  
+  CELERY_BROKER_URL: "redis://redis-service:6379/0"
+  CELERY_RESULT_BACKEND: "redis://redis-service:6379/0"
+
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: backend-secrets
+  namespace: ikodio-bugbounty
+type: Opaque
+stringData:
+  DATABASE_URL: "postgresql+asyncpg://ikodio:changeme@postgres-service:5432/ikodio_bugbounty"
+  SECRET_KEY: "your-secret-key-here-change-in-production"
+  STRIPE_SECRET_KEY: "sk_live_..."
+  STRIPE_WEBHOOK_SECRET: "whsec_..."
+  
+  AWS_ACCESS_KEY_ID: ""
+  AWS_SECRET_ACCESS_KEY: ""
+  GCP_SERVICE_ACCOUNT_KEY: ""
+  AZURE_CLIENT_SECRET: ""
+  
+  GITHUB_CLIENT_ID: ""
+  GITHUB_CLIENT_SECRET: ""
+  GOOGLE_CLIENT_ID: ""
+  GOOGLE_CLIENT_SECRET: ""
+  
+  OPENAI_API_KEY: ""
+  ANTHROPIC_API_KEY: ""
+  
+  SMTP_USERNAME: ""
+  SMTP_PASSWORD: ""
+  SLACK_WEBHOOK_URL: ""
+  DISCORD_WEBHOOK_URL: ""

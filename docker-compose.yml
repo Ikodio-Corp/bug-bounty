@@ -1,0 +1,240 @@
+services:
+  nginx:
+    image: nginx:latest
+    container_name: ikodio-nginx
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/ssl:/etc/nginx/ssl:ro
+      - ./nginx/logs:/var/log/nginx
+    depends_on:
+      - backend-api-1
+      - backend-api-2
+      - frontend
+    restart: always
+    networks:
+      - ikodio-network
+
+  backend-api-1:
+    build: ./backend
+    container_name: ikodio-backend-1
+    environment:
+      - DATABASE_URL=postgresql://${DB_USER}:${DB_PASSWORD}@postgres:${DB_PORT}/${DB_NAME}
+      - REDIS_URL=redis://redis:${REDIS_PORT}/0
+      - RABBITMQ_URL=amqp://${RABBITMQ_USER}:${RABBITMQ_PASSWORD}@rabbitmq:${RABBITMQ_PORT}/${RABBITMQ_VHOST}
+      - ELASTICSEARCH_HOST=${ELASTICSEARCH_HOST}
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - JWT_SECRET=${JWT_SECRET}
+    volumes:
+      - ./backend:/app
+      - ./data/reports:/app/reports
+      - ./data/scans:/app/scans
+      - ./tools:/tools:ro
+    depends_on:
+      - postgres
+      - redis
+      - rabbitmq
+    restart: always
+    networks:
+      - ikodio-network
+    deploy:
+      resources:
+        limits:
+          cpus: '4'
+          memory: 8G
+
+  backend-api-2:
+    build: ./backend
+    container_name: ikodio-backend-2
+    environment:
+      - DATABASE_URL=postgresql://${DB_USER}:${DB_PASSWORD}@postgres:${DB_PORT}/${DB_NAME}
+      - REDIS_URL=redis://redis:${REDIS_PORT}/0
+      - RABBITMQ_URL=amqp://${RABBITMQ_USER}:${RABBITMQ_PASSWORD}@rabbitmq:${RABBITMQ_PORT}/${RABBITMQ_VHOST}
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+    volumes:
+      - ./backend:/app
+      - ./data/reports:/app/reports
+      - ./data/scans:/app/scans
+    depends_on:
+      - postgres
+      - redis
+      - rabbitmq
+    restart: always
+    networks:
+      - ikodio-network
+
+  frontend:
+    build: ./frontend
+    container_name: ikodio-frontend
+    environment:
+      - NEXT_PUBLIC_API_URL=http://localhost/api
+      - NEXT_PUBLIC_WS_URL=ws://localhost/ws
+    ports:
+      - "3000:3000"
+    restart: always
+    networks:
+      - ikodio-network
+
+  postgres:
+    image: postgres:15
+    container_name: ikodio-postgres
+    environment:
+      - POSTGRES_DB=${DB_NAME}
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+      - ./database/init.sql:/docker-entrypoint-initdb.d/init.sql
+    ports:
+      - "5432:5432"
+    restart: always
+    networks:
+      - ikodio-network
+    deploy:
+      resources:
+        limits:
+          memory: 16G
+
+  redis:
+    image: redis:7-alpine
+    container_name: ikodio-redis
+    command: redis-server --maxmemory 8gb --maxmemory-policy allkeys-lru
+    volumes:
+      - redis-data:/data
+    ports:
+      - "6379:6379"
+    restart: always
+    networks:
+      - ikodio-network
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: ikodio-rabbitmq
+    environment:
+      - RABBITMQ_DEFAULT_USER=${RABBITMQ_USER}
+      - RABBITMQ_DEFAULT_PASS=${RABBITMQ_PASSWORD}
+    volumes:
+      - rabbitmq-data:/var/lib/rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    restart: always
+    networks:
+      - ikodio-network
+
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.11.0
+    container_name: ikodio-elasticsearch
+    environment:
+      - discovery.type=single-node
+      - "ES_JAVA_OPTS=-Xms4g -Xmx4g"
+      - xpack.security.enabled=false
+    volumes:
+      - elasticsearch-data:/usr/share/elasticsearch/data
+    ports:
+      - "9200:9200"
+    restart: always
+    networks:
+      - ikodio-network
+
+  worker-scanner:
+    build: ./backend
+    container_name: ikodio-worker-scanner
+    command: celery -A tasks.celery_app worker --loglevel=info --concurrency=8 -Q scanning
+    environment:
+      - DATABASE_URL=postgresql://${DB_USER}:${DB_PASSWORD}@postgres:${DB_PORT}/${DB_NAME}
+      - REDIS_URL=redis://redis:${REDIS_PORT}/0
+      - RABBITMQ_URL=amqp://${RABBITMQ_USER}:${RABBITMQ_PASSWORD}@rabbitmq:${RABBITMQ_PORT}/${RABBITMQ_VHOST}
+    volumes:
+      - ./backend:/app
+      - ./tools:/tools:ro
+    depends_on:
+      - postgres
+      - redis
+      - rabbitmq
+    restart: always
+    networks:
+      - ikodio-network
+
+  worker-ai:
+    build: ./backend
+    container_name: ikodio-worker-ai
+    command: celery -A tasks.celery_app worker --loglevel=info --concurrency=4 -Q ai_processing
+    environment:
+      - DATABASE_URL=postgresql://${DB_USER}:${DB_PASSWORD}@postgres:${DB_PORT}/${DB_NAME}
+      - REDIS_URL=redis://redis:${REDIS_PORT}/0
+      - RABBITMQ_URL=amqp://${RABBITMQ_USER}:${RABBITMQ_PASSWORD}@rabbitmq:${RABBITMQ_PORT}/${RABBITMQ_VHOST}
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+    volumes:
+      - ./backend:/app
+    depends_on:
+      - postgres
+      - redis
+      - rabbitmq
+    restart: always
+    networks:
+      - ikodio-network
+
+  celery-beat:
+    build: ./backend
+    container_name: ikodio-celery-beat
+    command: celery -A tasks.celery_app beat --loglevel=info
+    environment:
+      - DATABASE_URL=postgresql://${DB_USER}:${DB_PASSWORD}@postgres:${DB_PORT}/${DB_NAME}
+      - REDIS_URL=redis://redis:${REDIS_PORT}/0
+      - RABBITMQ_URL=amqp://${RABBITMQ_USER}:${RABBITMQ_PASSWORD}@rabbitmq:${RABBITMQ_PORT}/${RABBITMQ_VHOST}
+    volumes:
+      - ./backend:/app
+    depends_on:
+      - postgres
+      - redis
+      - rabbitmq
+    restart: always
+    networks:
+      - ikodio-network
+
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: ikodio-prometheus
+    volumes:
+      - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus-data:/prometheus
+    ports:
+      - "9090:9090"
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--storage.tsdb.retention.time=30d'
+    restart: always
+    networks:
+      - ikodio-network
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: ikodio-grafana
+    environment:
+      - GF_SECURITY_ADMIN_USER=${GRAFANA_ADMIN_USER}
+      - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_ADMIN_PASSWORD}
+    volumes:
+      - grafana-data:/var/lib/grafana
+    ports:
+      - "3001:3000"
+    depends_on:
+      - prometheus
+    restart: always
+    networks:
+      - ikodio-network
+
+networks:
+  ikodio-network:
+    driver: bridge
+
+volumes:
+  postgres-data:
+  redis-data:
+  rabbitmq-data:
+  elasticsearch-data:
+  prometheus-data:
+  grafana-data:

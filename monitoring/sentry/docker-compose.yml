@@ -1,0 +1,89 @@
+version: '3'
+services:
+  sentry-postgres:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_USER: sentry
+      POSTGRES_PASSWORD: sentry
+      POSTGRES_DB: sentry
+    volumes:
+      - sentry-postgres:/var/lib/postgresql/data
+    networks:
+      - ikodio-network
+
+  sentry-redis:
+    image: redis:7-alpine
+    volumes:
+      - sentry-redis:/data
+    networks:
+      - ikodio-network
+
+  sentry:
+    image: sentry:latest
+    depends_on:
+      - sentry-redis
+      - sentry-postgres
+    ports:
+      - "9000:9000"
+    environment:
+      SENTRY_SECRET_KEY: ${SENTRY_SECRET_KEY}
+      SENTRY_POSTGRES_HOST: sentry-postgres
+      SENTRY_POSTGRES_PORT: 5432
+      SENTRY_DB_NAME: sentry
+      SENTRY_DB_USER: sentry
+      SENTRY_DB_PASSWORD: sentry
+      SENTRY_REDIS_HOST: sentry-redis
+      SENTRY_REDIS_PORT: 6379
+    volumes:
+      - sentry-data:/var/lib/sentry/files
+    networks:
+      - ikodio-network
+
+  sentry-cron:
+    image: sentry:latest
+    depends_on:
+      - sentry-redis
+      - sentry-postgres
+    command: run cron
+    environment:
+      SENTRY_SECRET_KEY: ${SENTRY_SECRET_KEY}
+      SENTRY_POSTGRES_HOST: sentry-postgres
+      SENTRY_POSTGRES_PORT: 5432
+      SENTRY_DB_NAME: sentry
+      SENTRY_DB_USER: sentry
+      SENTRY_DB_PASSWORD: sentry
+      SENTRY_REDIS_HOST: sentry-redis
+      SENTRY_REDIS_PORT: 6379
+    volumes:
+      - sentry-data:/var/lib/sentry/files
+    networks:
+      - ikodio-network
+
+  sentry-worker:
+    image: sentry:latest
+    depends_on:
+      - sentry-redis
+      - sentry-postgres
+    command: run worker
+    environment:
+      SENTRY_SECRET_KEY: ${SENTRY_SECRET_KEY}
+      SENTRY_POSTGRES_HOST: sentry-postgres
+      SENTRY_POSTGRES_PORT: 5432
+      SENTRY_DB_NAME: sentry
+      SENTRY_DB_USER: sentry
+      SENTRY_DB_PASSWORD: sentry
+      SENTRY_REDIS_HOST: sentry-redis
+      SENTRY_REDIS_PORT: 6379
+    volumes:
+      - sentry-data:/var/lib/sentry/files
+    networks:
+      - ikodio-network
+
+volumes:
+  sentry-postgres:
+  sentry-redis:
+  sentry-data:
+
+networks:
+  ikodio-network:
+    external: true

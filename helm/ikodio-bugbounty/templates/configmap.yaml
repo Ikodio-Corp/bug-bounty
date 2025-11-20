@@ -1,0 +1,43 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "ikodio-bugbounty.fullname" . }}-config
+  namespace: {{ .Values.global.namespace }}
+  labels:
+    {{- include "ikodio-bugbounty.labels" . | nindent 4 }}
+data:
+  PROJECT_NAME: {{ .Values.backend.env.PROJECT_NAME | quote }}
+  DEBUG: {{ .Values.backend.env.DEBUG | quote }}
+  ENVIRONMENT: {{ .Values.global.environment | quote }}
+  RELEASE_VERSION: {{ .Values.global.releaseVersion | quote }}
+  CORS_ORIGINS: {{ .Values.backend.env.CORS_ORIGINS | quote }}
+  
+  # Database
+  POSTGRES_SERVER: {{ include "ikodio-bugbounty.fullname" . }}-postgres
+  POSTGRES_PORT: {{ .Values.postgresql.service.port | quote }}
+  POSTGRES_DB: {{ .Values.postgresql.auth.database | quote }}
+  
+  # Redis
+  REDIS_HOST: {{ include "ikodio-bugbounty.fullname" . }}-redis
+  REDIS_PORT: {{ .Values.redis.service.port | quote }}
+  REDIS_DB: "0"
+  
+  # Celery
+  CELERY_BROKER_URL: "redis://{{ include "ikodio-bugbounty.fullname" . }}-redis:{{ .Values.redis.service.port }}/1"
+  CELERY_RESULT_BACKEND: "redis://{{ include "ikodio-bugbounty.fullname" . }}-redis:{{ .Values.redis.service.port }}/2"
+  
+  # Features
+  ENABLE_AI_AGENTS: {{ .Values.backend.env.ENABLE_AI_AGENTS | quote }}
+  ENABLE_MARKETPLACE: {{ .Values.backend.env.ENABLE_MARKETPLACE | quote }}
+  ENABLE_GUILD: {{ .Values.backend.env.ENABLE_GUILD | quote }}
+  ENABLE_UNIVERSITY: {{ .Values.backend.env.ENABLE_UNIVERSITY | quote }}
+  ENABLE_QUANTUM: {{ .Values.backend.env.ENABLE_QUANTUM | quote }}
+  ENABLE_SATELLITE: {{ .Values.backend.env.ENABLE_SATELLITE | quote }}
+  ENABLE_GEOPOLITICAL: {{ .Values.backend.env.ENABLE_GEOPOLITICAL | quote }}
+  ENABLE_DAO: {{ .Values.backend.env.ENABLE_DAO | quote }}
+  
+  # Sentry
+  {{- if .Values.sentry.enabled }}
+  SENTRY_TRACES_SAMPLE_RATE: {{ .Values.sentry.tracesSampleRate | quote }}
+  SENTRY_PROFILES_SAMPLE_RATE: {{ .Values.sentry.profilesSampleRate | quote }}
+  {{- end }}

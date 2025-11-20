@@ -1,0 +1,148 @@
+{
+  "dashboard": {
+    "title": "Revolutionary Features Performance",
+    "tags": ["ikodio", "revolutionary"],
+    "timezone": "browser",
+    "panels": [
+      {
+        "title": "90-Second Auto Fix Success Rate",
+        "type": "stat",
+        "gridPos": {"h": 8, "w": 6, "x": 0, "y": 0},
+        "targets": [
+          {
+            "expr": "(rate(auto_fix_success_total[1h]) / rate(auto_fix_attempts_total[1h])) * 100",
+            "legendFormat": "Success Rate %"
+          }
+        ]
+      },
+      {
+        "title": "Auto Fix Duration (Avg)",
+        "type": "stat",
+        "gridPos": {"h": 8, "w": 6, "x": 6, "y": 0},
+        "targets": [
+          {
+            "expr": "avg(auto_fix_duration_seconds)",
+            "legendFormat": "Avg Duration (s)"
+          }
+        ]
+      },
+      {
+        "title": "Insurance Policies Active",
+        "type": "stat",
+        "gridPos": {"h": 8, "w": 6, "x": 12, "y": 0},
+        "targets": [
+          {
+            "expr": "insurance_policies_active_total"
+          }
+        ]
+      },
+      {
+        "title": "Insurance Claims Processed",
+        "type": "stat",
+        "gridPos": {"h": 8, "w": 6, "x": 18, "y": 0},
+        "targets": [
+          {
+            "expr": "rate(insurance_claims_processed_total[24h])",
+            "legendFormat": "Claims/day"
+          }
+        ]
+      },
+      {
+        "title": "Security Scores Calculated",
+        "type": "graph",
+        "gridPos": {"h": 8, "w": 12, "x": 0, "y": 8},
+        "targets": [
+          {
+            "expr": "rate(security_score_calculations_total[1h])",
+            "legendFormat": "Calculations/hour"
+          }
+        ]
+      },
+      {
+        "title": "Average Security Score",
+        "type": "graph",
+        "gridPos": {"h": 8, "w": 12, "x": 12, "y": 8},
+        "targets": [
+          {
+            "expr": "avg(security_score_current)",
+            "legendFormat": "Avg Score"
+          }
+        ]
+      },
+      {
+        "title": "Marketplace Trading Volume",
+        "type": "graph",
+        "gridPos": {"h": 8, "w": 12, "x": 0, "y": 16},
+        "targets": [
+          {
+            "expr": "sum(rate(marketplace_trades_total[1h])) * 3600",
+            "legendFormat": "Trades/hour"
+          }
+        ]
+      },
+      {
+        "title": "Marketplace Revenue",
+        "type": "graph",
+        "gridPos": {"h": 8, "w": 12, "x": 12, "y": 16},
+        "targets": [
+          {
+            "expr": "sum(rate(marketplace_revenue_total[24h])) * 86400",
+            "legendFormat": "Revenue/day"
+          }
+        ]
+      },
+      {
+        "title": "DAO Proposals Active",
+        "type": "stat",
+        "gridPos": {"h": 8, "w": 6, "x": 0, "y": 24},
+        "targets": [
+          {
+            "expr": "dao_proposals_active_total"
+          }
+        ]
+      },
+      {
+        "title": "DAO Votes Cast",
+        "type": "graph",
+        "gridPos": {"h": 8, "w": 12, "x": 6, "y": 24},
+        "targets": [
+          {
+            "expr": "rate(dao_votes_cast_total[1h])",
+            "legendFormat": "Votes/hour"
+          }
+        ]
+      },
+      {
+        "title": "DevOps Self-Healing Events",
+        "type": "graph",
+        "gridPos": {"h": 8, "w": 12, "x": 0, "y": 32},
+        "targets": [
+          {
+            "expr": "rate(devops_self_healing_events_total[1h])",
+            "legendFormat": "{{incident_type}}"
+          }
+        ]
+      },
+      {
+        "title": "DevOps Self-Healing Success Rate",
+        "type": "stat",
+        "gridPos": {"h": 8, "w": 6, "x": 12, "y": 32},
+        "targets": [
+          {
+            "expr": "(rate(devops_self_healing_success_total[1h]) / rate(devops_self_healing_events_total[1h])) * 100"
+          }
+        ]
+      },
+      {
+        "title": "DevOps Cost Savings",
+        "type": "stat",
+        "gridPos": {"h": 8, "w": 6, "x": 18, "y": 32},
+        "targets": [
+          {
+            "expr": "sum(devops_cost_savings_total)"
+          }
+        ]
+      }
+    ]
+  }
+}

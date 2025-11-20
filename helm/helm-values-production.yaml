@@ -1,0 +1,266 @@
+# Example production values for IKODIO BugBounty
+# Copy this file and customize for your environment
+
+global:
+  namespace: ikodio-bugbounty
+  environment: production
+  releaseVersion: "1.0.0"
+
+backend:
+  replicaCount: 5
+  image:
+    repository: ikodio/bugbounty-backend
+    tag: "1.0.0"
+    pullPolicy: IfNotPresent
+  
+  autoscaling:
+    enabled: true
+    minReplicas: 5
+    maxReplicas: 20
+    targetCPUUtilizationPercentage: 60
+    targetMemoryUtilizationPercentage: 70
+  
+  resources:
+    requests:
+      memory: "1Gi"
+      cpu: "1000m"
+    limits:
+      memory: "4Gi"
+      cpu: "4000m"
+
+frontend:
+  replicaCount: 3
+  image:
+    repository: ikodio/bugbounty-frontend
+    tag: "1.0.0"
+    pullPolicy: IfNotPresent
+  
+  autoscaling:
+    enabled: true
+    minReplicas: 3
+    maxReplicas: 10
+
+postgresql:
+  enabled: true
+  persistence:
+    size: 200Gi
+    storageClass: fast-ssd
+  resources:
+    requests:
+      memory: "2Gi"
+      cpu: "1000m"
+    limits:
+      memory: "8Gi"
+      cpu: "4000m"
+
+redis:
+  enabled: true
+  persistence:
+    size: 20Gi
+  resources:
+    requests:
+      memory: "1Gi"
+      cpu: "500m"
+    limits:
+      memory: "4Gi"
+      cpu: "2000m"
+  config:
+    maxmemory: "4gb"
+
+celery:
+  worker:
+    replicaCount: 5
+    concurrency: 8
+    resources:
+      requests:
+        memory: "2Gi"
+        cpu: "2000m"
+      limits:
+        memory: "8Gi"
+        cpu: "8000m"
+
+ingress:
+  enabled: true
+  className: nginx
+  annotations:
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/proxy-body-size: "100m"
+    nginx.ingress.kubernetes.io/limit-rps: "200"
+    nginx.ingress.kubernetes.io/limit-rpm: "100"
+    nginx.ingress.kubernetes.io/enable-cors: "true"
+  
+  tls:
+    - secretName: ikodio-tls-prod
+      hosts:
+        - ikodio.com
+        - api.ikodio.com
+        - app.ikodio.com
+  
+  hosts:
+    - host: ikodio.com
+      paths:
+        - path: /
+          pathType: Prefix
+          service: frontend
+          port: 3000
+    - host: api.ikodio.com
+      paths:
+        - path: /
+          pathType: Prefix
+          service: backend
+          port: 8000
+    - host: app.ikodio.com
+      paths:
+        - path: /
+          pathType: Prefix
+          service: frontend
+          port: 3000
+
+monitoring:
+  prometheus:
+    enabled: true
+    retention: 90d
+    persistence:
+      size: 200Gi
+    resources:
+      requests:
+        memory: "2Gi"
+        cpu: "1000m"
+      limits:
+        memory: "8Gi"
+        cpu: "4000m"
+  
+  grafana:
+    enabled: true
+    persistence:
+      size: 20Gi
+    resources:
+      requests:
+        memory: "512Mi"
+        cpu: "500m"
+      limits:
+        memory: "2Gi"
+        cpu: "2000m"
+
+logging:
+  elasticsearch:
+    enabled: true
+    replicaCount: 3
+    persistence:
+      size: 500Gi
+    resources:
+      requests:
+        memory: "8Gi"
+        cpu: "2000m"
+      limits:
+        memory: "16Gi"
+        cpu: "4000m"
+  
+  logstash:
+    enabled: true
+    replicaCount: 3
+    resources:
+      requests:
+        memory: "4Gi"
+        cpu: "1000m"
+      limits:
+        memory: "8Gi"
+        cpu: "4000m"
+  
+  kibana:
+    enabled: true
+    replicaCount: 2
+    resources:
+      requests:
+        memory: "2Gi"
+        cpu: "1000m"
+      limits:
+        memory: "4Gi"
+        cpu: "2000m"
+  
+  filebeat:
+    enabled: true
+  
+  metricbeat:
+    enabled: true
+
+sentry:
+  enabled: true
+  tracesSampleRate: 0.2
+  profilesSampleRate: 0.2
+
+security:
+  networkPolicy:
+    enabled: true
+  rbac:
+    create: true
+
+# IMPORTANT: Override these secrets in a secure way
+# Use external secret management in production (e.g., HashiCorp Vault, AWS Secrets Manager)
+secrets:
+  # Generate strong passwords: openssl rand -base64 32
+  postgresPassword: ""  # MUST BE SET
+  secretKey: ""  # MUST BE SET
+  grafanaAdminPassword: ""  # MUST BE SET
+  
+  # API Keys - MUST BE SET
+  openaiApiKey: ""
+  sentryDsn: ""
+  
+  # OAuth - Configure your OAuth apps
+  githubClientId: ""
+  githubClientSecret: ""
+  googleClientId: ""
+  googleClientSecret: ""
+  microsoftClientId: ""
+  microsoftClientSecret: ""
+  gitlabClientId: ""
+  gitlabClientSecret: ""
+  
+  # Payment - Stripe production keys
+  stripeSecretKey: ""
+  stripePublishableKey: ""
+  stripeWebhookSecret: ""
+  
+  # Email - Production SMTP
+  smtpHost: ""
+  smtpPort: "587"
+  smtpUser: ""
+  smtpPassword: ""
+  
+  # Notifications
+  slackBotToken: ""
+  slackSigningSecret: ""
+  discordBotToken: ""
+  discordWebhookUrl: ""
+  
+  # Issue Tracking
+  jiraUrl: ""
+  jiraEmail: ""
+  jiraApiToken: ""
+  linearApiKey: ""
+  asanaAccessToken: ""
+  mondayApiToken: ""
+  
+  # Bug Bounty Platforms
+  hackeroneApiToken: ""
+  bugcrowdApiToken: ""
+  intigritiApiToken: ""
+  yeswehackApiToken: ""
+  
+  # CI/CD
+  jenkinsUrl: ""
+  jenkinsUser: ""
+  jenkinsToken: ""
+  
+  # Cloud Providers
+  awsAccessKeyId: ""
+  awsSecretAccessKey: ""
+  awsRegion: "us-east-1"
+  gcpProjectId: ""
+  gcpServiceAccountKey: ""
+  azureTenantId: ""
+  azureClientId: ""
+  azureClientSecret: ""
+  azureSubscriptionId: ""
