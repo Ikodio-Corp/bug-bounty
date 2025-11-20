@@ -77,10 +77,10 @@ async def api_health():
 print("✓ Minimal routes created")
 print("")
 print("Starting server...")
-print("Access at: http://localhost:8000")
-print("API Docs: http://localhost:8000/api/docs")
+print("Access at: http://localhost:8001")
+print("API Docs: http://localhost:8001/api/docs")
 print("")
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8000, log_level="info")
+    uvicorn.run(app, host="0.0.0.0", port=8001, log_level="info")
