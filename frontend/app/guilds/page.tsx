@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { api } from "@/lib/api";
 
 interface Guild {
@@ -27,14 +28,12 @@ export default function GuildsPage() {
 
   const fetchGuilds = async () => {
     try {
-      const response = await api.get("/guild");
+      const response = await api.get("/guilds");
       setGuilds(response.data);
     } catch (error) {
       console.error("Failed to fetch guilds:", error);
     } finally {
       setLoading(false);
-    }
-  };
     }
   };
 

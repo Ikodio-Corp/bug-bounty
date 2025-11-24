@@ -200,6 +200,150 @@ async def dashboard_stats(current_user = Depends(get_current_user)):
         ]
     }
 
+@app.get("/api/profile")
+async def get_profile(current_user = Depends(get_current_user)):
+    return {
+        "id": current_user["id"],
+        "email": current_user["email"],
+        "username": current_user["username"],
+        "full_name": current_user["full_name"],
+        "role": current_user["role"],
+        "avatar": None,
+        "bio": "Security researcher and bug bounty hunter",
+        "total_bounties": 15000,
+        "bugs_found": 42,
+        "rank": 127,
+        "joined_date": "2024-01-15"
+    }
+
+@app.get("/api/bugs")
+async def get_bugs(current_user = Depends(get_current_user)):
+    return [
+        {
+            "id": 1,
+            "title": "SQL Injection in Login Form",
+            "severity": "critical",
+            "status": "open",
+            "bounty": 5000,
+            "target": "example.com",
+            "created_at": "2024-11-20T10:00:00Z",
+            "vulnerability_type": "SQL Injection"
+        },
+        {
+            "id": 2,
+            "title": "XSS in User Profile",
+            "severity": "high",
+            "status": "resolved",
+            "bounty": 2500,
+            "target": "testsite.com",
+            "created_at": "2024-11-18T15:30:00Z",
+            "vulnerability_type": "Cross-Site Scripting"
+        },
+        {
+            "id": 3,
+            "title": "CSRF Token Bypass",
+            "severity": "medium",
+            "status": "in_review",
+            "bounty": 1000,
+            "target": "webapp.io",
+            "created_at": "2024-11-22T09:15:00Z",
+            "vulnerability_type": "CSRF"
+        }
+    ]
+
+@app.get("/api/scans")
+async def get_scans(current_user = Depends(get_current_user)):
+    return [
+        {
+            "id": 1,
+            "target_url": "https://example.com",
+            "scan_type": "full",
+            "status": "completed",
+            "progress": 100,
+            "vulnerabilities_found": 5,
+            "started_at": "2024-11-20T10:00:00Z",
+            "completed_at": "2024-11-20T10:45:00Z"
+        },
+        {
+            "id": 2,
+            "target_url": "https://testsite.com",
+            "scan_type": "quick",
+            "status": "in_progress",
+            "progress": 65,
+            "vulnerabilities_found": 2,
+            "started_at": "2024-11-24T08:30:00Z",
+            "completed_at": None
+        },
+        {
+            "id": 3,
+            "target_url": "https://webapp.io",
+            "scan_type": "custom",
+            "status": "pending",
+            "progress": 0,
+            "vulnerabilities_found": 0,
+            "started_at": "2024-11-24T09:00:00Z",
+            "completed_at": None
+        }
+    ]
+
+@app.post("/api/scans")
+async def create_scan(target_url: str, scan_type: str = "quick", current_user = Depends(get_current_user)):
+    return {
+        "id": 4,
+        "target_url": target_url,
+        "scan_type": scan_type,
+        "status": "pending",
+        "progress": 0,
+        "vulnerabilities_found": 0,
+        "started_at": datetime.utcnow().isoformat() + "Z",
+        "completed_at": None,
+        "message": "Scan initiated successfully"
+    }
+
+@app.get("/api/guilds")
+async def get_guilds(current_user = Depends(get_current_user)):
+    return [
+        {
+            "id": 1,
+            "name": "Elite Hackers",
+            "members": 156,
+            "total_bounties": 250000,
+            "rank": 5,
+            "description": "Top-tier security researchers"
+        },
+        {
+            "id": 2,
+            "name": "Bug Hunters United",
+            "members": 423,
+            "total_bounties": 180000,
+            "rank": 12,
+            "description": "Community-driven bug bounty guild"
+        }
+    ]
+
+@app.get("/api/marketplace")
+async def get_marketplace(current_user = Depends(get_current_user)):
+    return [
+        {
+            "id": 1,
+            "title": "XSS Vulnerability Report",
+            "price": 500,
+            "severity": "high",
+            "target": "example.com",
+            "seller": "john_doe",
+            "status": "available"
+        },
+        {
+            "id": 2,
+            "title": "API Security Analysis",
+            "price": 1200,
+            "severity": "critical",
+            "target": "api.testsite.com",
+            "seller": "security_pro",
+            "status": "available"
+        }
+    ]
+
 print("=" * 60)
 print("IKODIO BugBounty Backend - With Mock Auth")
 print("=" * 60)
@@ -214,10 +358,10 @@ print("    Email: demo@ikodio.com")
 print("    Password: demo123")
 print("")
 print("Starting server...")
-print("Access at: http://localhost:8001")
-print("API Docs: http://localhost:8001/api/docs")
+print("Access at: http://localhost:8002")
+print("API Docs: http://localhost:8002/api/docs")
 print("")
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8001, log_level="info")
+    uvicorn.run(app, host="0.0.0.0", port=8002, log_level="info")
