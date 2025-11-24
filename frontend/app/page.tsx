@@ -138,9 +138,46 @@ function PricingModal({ isOpen, onClose }: { isOpen: boolean; onClose: () => voi
 
         <div className="grid md:grid-cols-3 gap-6">
           {[
-            { name: 'Free', price: '$0', features: ['5 scans/month', 'Basic AI agents', 'Community support', 'Email reports'] },
-            { name: 'Pro', price: '$49', features: ['Unlimited scans', 'Advanced AI agents', 'Priority support', 'API access', 'Custom reports'], highlight: true },
-            { name: 'Enterprise', price: 'Custom', features: ['Everything in Pro', 'Dedicated support', 'Custom integrations', 'SLA guarantee', 'Training sessions'] }
+            { 
+              name: 'Starter', 
+              price: 'Gratis', 
+              features: [
+                '10 scan per bulan', 
+                'Scanner dasar (Nuclei, ZAP)', 
+                'Report PDF standar',
+                'Community support',
+                'Max 3 target domain'
+              ] 
+            },
+            { 
+              name: 'Professional', 
+              price: 'Rp 450.000', 
+              features: [
+                '100 scan per bulan', 
+                'AI Scanner + semua tools',
+                'Priority support 24/7',
+                'API access & webhooks', 
+                'Custom report template',
+                'Guild & marketplace access',
+                'Advanced analytics',
+                'Unlimited target domain'
+              ], 
+              highlight: true 
+            },
+            { 
+              name: 'Enterprise', 
+              price: 'Rp 2.500.000', 
+              features: [
+                'Unlimited scans', 
+                'Dedicated security expert',
+                'Custom AI model training',
+                'White-label solution',
+                'SLA 99.9% uptime',
+                'On-premise deployment',
+                'Team collaboration (unlimited)',
+                'Compliance reports (ISO, PCI-DSS)'
+              ] 
+            }
           ].map((plan, i) => (
             <motion.div
               key={i}
@@ -148,17 +185,21 @@ function PricingModal({ isOpen, onClose }: { isOpen: boolean; onClose: () => voi
               className={`p-6 rounded-xl border ${plan.highlight ? 'border-white bg-white/5' : 'border-gray-700'}`}
             >
               <h3 className="text-2xl font-bold text-white mb-2">{plan.name}</h3>
-              <div className="text-4xl font-bold text-white mb-6">{plan.price}<span className="text-lg text-gray-400">/mo</span></div>
+              <div className="text-3xl font-bold text-white mb-6">
+                {plan.price}
+                {plan.price !== 'Gratis' && plan.name !== 'Enterprise' && <span className="text-lg text-gray-400">/bulan</span>}
+                {plan.name === 'Enterprise' && <span className="text-lg text-gray-400">/bulan</span>}
+              </div>
               <ul className="space-y-3 mb-6">
                 {plan.features.map((feature, j) => (
-                  <li key={j} className="flex items-center gap-2 text-gray-300">
-                    <Check size={16} className="text-green-400" />
-                    {feature}
+                  <li key={j} className="flex items-start gap-2 text-gray-300 text-sm">
+                    <Check size={16} className="text-green-400 mt-0.5 flex-shrink-0" />
+                    <span>{feature}</span>
                   </li>
                 ))}
               </ul>
               <Button className={plan.highlight ? 'w-full bg-white text-black hover:bg-gray-200' : 'w-full'}>
-                Get Started
+                {plan.name === 'Enterprise' ? 'Hubungi Sales' : 'Mulai Sekarang'}
               </Button>
             </motion.div>
           ))}
