@@ -43,9 +43,10 @@ export default function MarketplacePage() {
       setLoading(false);
     }
   };
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ listing_id: listingId })
-      });
+
+  const handlePurchase = async (listingId: number) => {
+    try {
+      await api.post("/marketplace/purchase", { listing_id: listingId });
       alert("Purchase successful!");
       fetchListings();
     } catch (error) {
