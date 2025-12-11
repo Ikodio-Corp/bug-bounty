@@ -30,13 +30,13 @@ export default function RewardsPage() {
               <div className="text-3xl font-bold text-white mb-1">$15,000</div>
               <div className="text-slate-300">Total Earned</div>
             </div>
-            <div className="bg-gradient-to-br from-blue-600/20 to-cyan-600/20 backdrop-blur-xl border border-white/10 rounded-2xl p-6">
-              <TrendingUp className="text-blue-400 mb-3" size={32} />
+            <div className="bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6">
+              <TrendingUp className="text-gray-400 mb-3" size={32} />
               <div className="text-3xl font-bold text-white mb-1">$2,500</div>
               <div className="text-slate-300">Pending</div>
             </div>
-            <div className="bg-gradient-to-br from-purple-600/20 to-pink-600/20 backdrop-blur-xl border border-white/10 rounded-2xl p-6">
-              <Award className="text-purple-400 mb-3" size={32} />
+            <div className="bg-gradient-to-br from-white/10 to-gray-500/20 backdrop-blur-xl border border-white/10 rounded-2xl p-6">
+              <Award className="text-gray-400 mb-3" size={32} />
               <div className="text-3xl font-bold text-white mb-1">42</div>
               <div className="text-slate-300">Bugs Rewarded</div>
             </div>

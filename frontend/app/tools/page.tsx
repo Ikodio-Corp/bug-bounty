@@ -261,7 +261,7 @@ export default function ToolsPage() {
                   <div className="grid grid-cols-3 gap-4 text-sm">
                     <div>
                       <div className="text-slate-400">Stars</div>
-                      <div className="text-yellow-400 font-semibold">⭐ {tool.stars.toLocaleString()}</div>
+                      <div className="text-yellow-400 font-semibold"> {tool.stars.toLocaleString()}</div>
                     </div>
                     <div>
                       <div className="text-slate-400">Downloads</div>
@@ -298,7 +298,7 @@ export default function ToolsPage() {
                         href={tool.documentationUrl}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg text-white font-semibold transition-colors"
+                        className="px-4 py-2 bg-white hover:bg-gray-200 rounded-lg text-white font-semibold transition-colors"
                       >
                         Docs
                       </a>
@@ -313,7 +313,7 @@ export default function ToolsPage() {
         {filteredTools.length === 0 && (
           <SimpleCard>
             <SimpleCardContent className="py-12 text-center">
-              <div className="text-6xl mb-4">🔧</div>
+              <div className="text-6xl mb-4"></div>
               <h3 className="text-xl font-semibold text-white mb-2">No Tools Found</h3>
               <p className="text-slate-400">Try adjusting your search or filters</p>
             </SimpleCardContent>

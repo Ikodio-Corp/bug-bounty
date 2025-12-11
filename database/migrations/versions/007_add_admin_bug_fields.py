@@ -1,8 +1,8 @@
 """
-Migration to add admin fields to bugs table
+"""Migration to add admin fields to bugs table
 
-Revision ID: 007
-Revises: 006
+Revision ID: 7
+Revises: 006_update_hunter_rank
 Create Date: 2025-01-20
 """
 
@@ -10,8 +10,8 @@ from alembic import op
 import sqlalchemy as sa
 
 
-revision = '007'
-down_revision = '006'
+revision = '7'
+down_revision = '006_update_hunter_rank'
 branch_labels = None
 depends_on = None
 

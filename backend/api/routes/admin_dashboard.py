@@ -8,7 +8,7 @@ from pydantic import BaseModel
 from typing import Optional
 
 from core.database import get_db
-from middleware.auth import get_current_user, check_permissions
+from core.security import get_current_user
 from models.user import User
 from services.admin_service import AdminService
 

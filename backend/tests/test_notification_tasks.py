@@ -111,7 +111,7 @@ class TestSlackNotifications:
             "reporter": "security_researcher"
         }
         
-        message = f"🚨 Critical Bug Alert\n*{bug_data['title']}*\nReported by: {bug_data['reporter']}"
+        message = f" Critical Bug Alert\n*{bug_data['title']}*\nReported by: {bug_data['reporter']}"
         
         result = send_slack_notification.apply(args=[
             "#critical-bugs",

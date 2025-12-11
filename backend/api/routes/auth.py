@@ -11,7 +11,7 @@ import re
 from core.database import get_async_db
 from core.security import Security
 from core.config import settings
-from models.user import User, UserRole
+from models.user import User, UserRole, SubscriptionTier
 from schemas.auth import (
     UserRegister, UserLogin, Token, TokenRefresh,
     PasswordChange, PasswordReset
@@ -73,7 +73,8 @@ async def register(
         username=user_data.username,
         password=user_data.password,
         full_name=user_data.full_name,
-        role=user_data.role or UserRole.HUNTER
+        role=user_data.role or UserRole.HUNTER,
+        subscription_tier=user_data.subscription_tier or SubscriptionTier.FREE
     )
     
     # Generate verification token

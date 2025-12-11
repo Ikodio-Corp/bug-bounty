@@ -89,7 +89,7 @@ export default function AdminDashboardPage() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
           <div className="bg-slate-800 rounded-xl p-6 border border-cyan-500/20">
             <div className="flex items-center justify-between mb-4">
-              <div className="text-4xl">👥</div>
+              <div className="text-4xl"></div>
               <div className="text-sm text-slate-400">Users</div>
             </div>
             <div className="text-3xl font-bold text-white mb-2">
@@ -101,9 +101,9 @@ export default function AdminDashboardPage() {
             </div>
           </div>
 
-          <div className="bg-slate-800 rounded-xl p-6 border border-purple-500/20">
+          <div className="bg-slate-800 rounded-xl p-6 border border-white/20">
             <div className="flex items-center justify-between mb-4">
-              <div className="text-4xl">🐛</div>
+              <div className="text-4xl"></div>
               <div className="text-sm text-slate-400">Bugs</div>
             </div>
             <div className="text-3xl font-bold text-white mb-2">
@@ -115,23 +115,23 @@ export default function AdminDashboardPage() {
             </div>
           </div>
 
-          <div className="bg-slate-800 rounded-xl p-6 border border-blue-500/20">
+          <div className="bg-slate-800 rounded-xl p-6 border border-white/20">
             <div className="flex items-center justify-between mb-4">
-              <div className="text-4xl">🔍</div>
+              <div className="text-4xl"></div>
               <div className="text-sm text-slate-400">Scans</div>
             </div>
             <div className="text-3xl font-bold text-white mb-2">
               {overview.scans.total.toLocaleString()}
             </div>
             <div className="flex gap-4 text-sm">
-              <div className="text-blue-400">{overview.scans.active} active</div>
+              <div className="text-gray-400">{overview.scans.active} active</div>
               <div className="text-slate-400">{overview.scans.completed} completed</div>
             </div>
           </div>
 
           <div className="bg-slate-800 rounded-xl p-6 border border-green-500/20">
             <div className="flex items-center justify-between mb-4">
-              <div className="text-4xl">💰</div>
+              <div className="text-4xl"></div>
               <div className="text-sm text-slate-400">Revenue</div>
             </div>
             <div className="text-3xl font-bold text-white mb-2">
@@ -148,7 +148,7 @@ export default function AdminDashboardPage() {
             <div className="bg-slate-800 rounded-xl p-6 hover:bg-slate-700 transition-colors cursor-pointer border border-slate-700 hover:border-cyan-500">
               <div className="flex items-center justify-between mb-4">
                 <h3 className="text-xl font-bold text-white">User Management</h3>
-                <div className="text-3xl">👥</div>
+                <div className="text-3xl"></div>
               </div>
               <p className="text-slate-400 mb-4">
                 Manage user accounts, roles, and permissions
@@ -173,15 +173,15 @@ export default function AdminDashboardPage() {
           </Link>
 
           <Link href="/admin/bugs">
-            <div className="bg-slate-800 rounded-xl p-6 hover:bg-slate-700 transition-colors cursor-pointer border border-slate-700 hover:border-purple-500">
+            <div className="bg-slate-800 rounded-xl p-6 hover:bg-slate-700 transition-colors cursor-pointer border border-slate-700 hover:border-white">
               <div className="flex items-center justify-between mb-4">
                 <h3 className="text-xl font-bold text-white">Bug Moderation</h3>
-                <div className="text-3xl">🐛</div>
+                <div className="text-3xl"></div>
               </div>
               <p className="text-slate-400 mb-4">
                 Review, validate, and manage bug reports
               </p>
-              <div className="flex items-center text-purple-400">
+              <div className="flex items-center text-gray-400">
                 <span>View all bugs</span>
                 <svg
                   className="w-5 h-5 ml-2"
@@ -201,15 +201,15 @@ export default function AdminDashboardPage() {
           </Link>
 
           <Link href="/admin/scans">
-            <div className="bg-slate-800 rounded-xl p-6 hover:bg-slate-700 transition-colors cursor-pointer border border-slate-700 hover:border-blue-500">
+            <div className="bg-slate-800 rounded-xl p-6 hover:bg-slate-700 transition-colors cursor-pointer border border-slate-700 hover:border-white">
               <div className="flex items-center justify-between mb-4">
                 <h3 className="text-xl font-bold text-white">Scan Monitoring</h3>
-                <div className="text-3xl">🔍</div>
+                <div className="text-3xl"></div>
               </div>
               <p className="text-slate-400 mb-4">
                 Monitor security scans and performance
               </p>
-              <div className="flex items-center text-blue-400">
+              <div className="flex items-center text-gray-400">
                 <span>View all scans</span>
                 <svg
                   className="w-5 h-5 ml-2"
@@ -232,7 +232,7 @@ export default function AdminDashboardPage() {
             <div className="bg-slate-800 rounded-xl p-6 hover:bg-slate-700 transition-colors cursor-pointer border border-slate-700 hover:border-green-500">
               <div className="flex items-center justify-between mb-4">
                 <h3 className="text-xl font-bold text-white">Analytics</h3>
-                <div className="text-3xl">📊</div>
+                <div className="text-3xl"></div>
               </div>
               <p className="text-slate-400 mb-4">
                 View platform analytics and insights
@@ -263,10 +263,10 @@ export default function AdminDashboardPage() {
             <button className="px-4 py-3 bg-cyan-600 hover:bg-cyan-700 rounded-lg text-white transition-colors">
               Create User
             </button>
-            <button className="px-4 py-3 bg-purple-600 hover:bg-purple-700 rounded-lg text-white transition-colors">
+            <button className="px-4 py-3 bg-gray-700 hover:bg-gray-700 rounded-lg text-white transition-colors">
               Export Data
             </button>
-            <button className="px-4 py-3 bg-blue-600 hover:bg-blue-700 rounded-lg text-white transition-colors">
+            <button className="px-4 py-3 bg-white hover:bg-gray-200 rounded-lg text-white transition-colors">
               System Settings
             </button>
             <button className="px-4 py-3 bg-slate-700 hover:bg-slate-600 rounded-lg text-white transition-colors">

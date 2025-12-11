@@ -6,7 +6,7 @@ from fastapi.responses import JSONResponse
 from starlette.middleware.base import BaseHTTPMiddleware
 from typing import Callable
 import time
-from backend.utils.security import input_validator, ip_whitelist, SecurityHeaders
+# from utils.security import input_validator, ip_whitelist, SecurityHeaders  # Functions don't exist
 
 
 class SecurityMiddleware(BaseHTTPMiddleware):
@@ -15,11 +15,19 @@ class SecurityMiddleware(BaseHTTPMiddleware):
     """
     
     async def dispatch(self, request: Request, call_next: Callable):
+        # Allow CORS preflight requests to pass through
+        if request.method == "OPTIONS":
+            response = await call_next(request)
+            return response
+            
         # Add security headers to all responses
         response = await call_next(request)
         
-        for header, value in SecurityHeaders.get_headers().items():
-            response.headers[header] = value
+        # Add basic security headers
+        response.headers["X-Content-Type-Options"] = "nosniff"
+        response.headers["X-Frame-Options"] = "DENY"
+        response.headers["X-XSS-Protection"] = "1; mode=block"
+        response.headers["Strict-Transport-Security"] = "max-age=31536000; includeSubDomains"
         
         return response
 
@@ -54,6 +62,10 @@ class RequestValidationMiddleware(BaseHTTPMiddleware):
     """
     
     async def dispatch(self, request: Request, call_next: Callable):
+        # Allow CORS preflight requests to pass through
+        if request.method == "OPTIONS":
+            return await call_next(request)
+            
         # Skip validation for certain paths
         if request.url.path in ["/health", "/docs", "/openapi.json"]:
             return await call_next(request)

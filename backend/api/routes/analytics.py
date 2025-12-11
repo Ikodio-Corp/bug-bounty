@@ -6,7 +6,7 @@ from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 
 from core.database import get_db
-from middleware.auth import get_current_user
+from core.security import get_current_user
 from models.user import User
 from services.analytics_service import AnalyticsService
 

@@ -85,7 +85,7 @@ export default function SecurityScorePage() {
 
   const getGradeColor = (grade: string) => {
     if (grade.startsWith('A')) return 'text-green-600'
-    if (grade.startsWith('B')) return 'text-blue-600'
+    if (grade.startsWith('B')) return 'text-white'
     if (grade.startsWith('C')) return 'text-yellow-600'
     if (grade.startsWith('D')) return 'text-orange-600'
     return 'text-red-600'
@@ -121,7 +121,7 @@ export default function SecurityScorePage() {
                 </div>
                 <div className="bg-gray-200 h-2 rounded">
                   <div 
-                    className="bg-blue-600 h-2 rounded" 
+                    className="bg-white h-2 rounded" 
                     style={{ width: `${scoreData.components.technical_security}%` }}
                   />
                 </div>
@@ -147,7 +147,7 @@ export default function SecurityScorePage() {
                 </div>
                 <div className="bg-gray-200 h-2 rounded">
                   <div 
-                    className="bg-purple-600 h-2 rounded" 
+                    className="bg-gray-700 h-2 rounded" 
                     style={{ width: `${scoreData.components.compliance}%` }}
                   />
                 </div>
@@ -213,7 +213,7 @@ export default function SecurityScorePage() {
         )}
       </div>
 
-      <div className="mt-8 bg-blue-50 p-6 rounded-lg">
+      <div className="mt-8 bg-gray-800 p-6 rounded-lg">
         <h2 className="text-xl font-semibold mb-4">About Security Credit Score</h2>
         <p className="text-sm mb-4">
           Like FICO for credit, our Security Credit Score provides a standardized measure of your company's security posture.

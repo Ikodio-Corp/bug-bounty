@@ -125,25 +125,25 @@ docker-compose logs -f
 ## Service Architecture
 
 ```
-â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
-â”‚   NGINX         â”‚ (Port 80/443)
-â”‚   Reverse Proxy â”‚
-â””â”€â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”˜
-         â”‚
-    â”Œâ”€â”€â”€â”€â”´â”€â”€â”€â”€â”
-    â”‚         â”‚
-â”Œâ”€â”€â”€â–¼â”€â”€â”€â” â”Œâ”€â”€â–¼â”€â”€â”€â”€â”€â”€â”€â”
-â”‚Frontendâ”‚ â”‚ Backend  â”‚
-â”‚Next.js â”‚ â”‚ FastAPI  â”‚
-â”‚  3000  â”‚ â”‚   8000   â”‚
-â””â”€â”€â”€â”€â”€â”€â”€â”€â”˜ â””â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”˜
-              â”‚
-    â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”¼â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
-    â”‚         â”‚         â”‚
-â”Œâ”€â”€â”€â–¼â”€â”€â”€â” â”Œâ”€â”€â–¼â”€â”€â”€â”€â” â”Œâ”€â”€â–¼â”€â”€â”€â”€â”€â”€â”
-â”‚Postgresâ”‚ â”‚ Redis â”‚ â”‚ Celery  â”‚
-â”‚  5432  â”‚ â”‚ 6379  â”‚ â”‚ Workers â”‚
-â””â”€â”€â”€â”€â”€â”€â”€â”€â”˜ â””â”€â”€â”€â”€â”€â”€â”€â”˜ â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
+”Œ”€”€”€”€”€”€”€”€”€”€”€”€”€”€”€”€”€”
+”‚   NGINX         ”‚ (Port 80/443)
+”‚   Reverse Proxy ”‚
+”””€”€”€”€”€”€”€”€”¬”€”€”€”€”€”€”€”€”˜
+         ”‚
+    ”Œ”€”€”€”€”´”€”€”€”€”
+    ”‚         ”‚
+”Œ”€”€”€–¼”€”€”€” ”Œ”€”€–¼”€”€”€”€”€”€”€”
+”‚Frontend”‚ ”‚ Backend  ”‚
+”‚Next.js ”‚ ”‚ FastAPI  ”‚
+”‚  3000  ”‚ ”‚   8000   ”‚
+”””€”€”€”€”€”€”€”€”˜ ”””€”€”€”€”€”¬”€”€”€”€”˜
+              ”‚
+    ”Œ”€”€”€”€”€”€”€”€”€”¼”€”€”€”€”€”€”€”€”€”
+    ”‚         ”‚         ”‚
+”Œ”€”€”€–¼”€”€”€” ”Œ”€”€–¼”€”€”€”€” ”Œ”€”€–¼”€”€”€”€”€”€”
+”‚Postgres”‚ ”‚ Redis ”‚ ”‚ Celery  ”‚
+”‚  5432  ”‚ ”‚ 6379  ”‚ ”‚ Workers ”‚
+”””€”€”€”€”€”€”€”€”˜ ”””€”€”€”€”€”€”€”˜ ”””€”€”€”€”€”€”€”€”€”˜
 ```
 
 ## Revolutionary Features Endpoints

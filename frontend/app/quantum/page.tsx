@@ -97,7 +97,7 @@ export default function QuantumPage() {
       <div className="grid md:grid-cols-3 gap-6 mb-8">
         <SimpleCard>
           <h3 className="text-lg font-semibold mb-2">Active Jobs</h3>
-          <p className="text-3xl font-bold text-blue-500">
+          <p className="text-3xl font-bold text-white">
             {jobs.filter(j => j.status === 'running').length}
           </p>
         </SimpleCard>
@@ -111,7 +111,7 @@ export default function QuantumPage() {
 
         <SimpleCard>
           <h3 className="text-lg font-semibold mb-2">Total Qubits Used</h3>
-          <p className="text-3xl font-bold text-purple-500">
+          <p className="text-3xl font-bold text-white">
             {jobs.reduce((sum, j) => sum + j.qubits, 0)}
           </p>
         </SimpleCard>

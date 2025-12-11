@@ -75,7 +75,7 @@ export function PerformanceChart() {
               onClick={() => setActiveTab(tab)}
               className={`px-3 py-1.5 text-xs font-semibold rounded-md transition-all ${
                 activeTab === tab
-                  ? 'bg-blue-500/15 border border-blue-500/30 text-blue-400'
+                  ? 'bg-white/15 border border-white/30 text-white'
                   : 'bg-transparent border border-white/10 text-white/60 hover:bg-white/5'
               }`}
             >

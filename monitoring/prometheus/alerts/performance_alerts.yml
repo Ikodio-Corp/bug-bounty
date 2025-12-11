@@ -1,0 +1,60 @@
+# Backend Performance Alert Rules
+
+groups:
+  - name: backend_performance
+    interval: 30s
+    rules:
+      # High API latency
+      - alert: BackendHighLatency
+        expr: histogram_quantile(0.95, rate(http_request_duration_seconds_bucket[5m])) > 1.0
+        for: 5m
+        labels:
+          severity: warning
+          component: backend
+        annotations:
+          summary: "Backend API latency is high"
+          description: "P95 latency is {{ $value }}s (threshold: 1.0s)"
+
+      # High error rate
+      - alert: BackendHighErrorRate
+        expr: rate(http_requests_total{status=~"5.."}[5m]) / rate(http_requests_total[5m]) > 0.05
+        for: 5m
+        labels:
+          severity: warning
+          component: backend
+        annotations:
+          summary: "Backend error rate is high"
+          description: "5xx error rate is {{ $value | humanizePercentage }} (threshold: 5%)"
+
+      # Database connection issues
+      - alert: DatabaseConnectionPoolExhausted
+        expr: sqlalchemy_pool_connections_in_use / sqlalchemy_pool_size > 0.90
+        for: 5m
+        labels:
+          severity: warning
+          component: database
+        annotations:
+          summary: "Database connection pool near exhaustion"
+          description: "Connection pool usage is {{ $value | humanizePercentage }}"
+
+      # Redis connection issues
+      - alert: RedisHighLatency
+        expr: redis_latency_seconds > 0.1
+        for: 5m
+        labels:
+          severity: warning
+          component: redis
+        annotations:
+          summary: "Redis latency is high"
+          description: "Redis latency is {{ $value }}s (threshold: 0.1s)"
+
+      # Celery queue buildup
+      - alert: CeleryQueueBacklog
+        expr: celery_queue_length{queue="ml_training"} > 100
+        for: 10m
+        labels:
+          severity: warning
+          component: celery
+        annotations:
+          summary: "Celery queue has backlog"
+          description: "Queue {{ $labels.queue }} has {{ $value }} pending tasks"

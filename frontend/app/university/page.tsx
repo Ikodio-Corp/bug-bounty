@@ -198,7 +198,7 @@ export default function UniversityPage() {
           </div>
         )}
 
-        <div className="mt-12 bg-gradient-to-r from-cyan-600 to-blue-600 rounded-xl p-8">
+        <div className="mt-12 bg-gradient-to-r from-gray-500 to-gray-600 rounded-xl p-8">
           <div className="text-center">
             <h2 className="text-3xl font-bold text-white mb-4">Ready to Become an Expert?</h2>
             <p className="text-white/90 mb-6 max-w-2xl mx-auto">

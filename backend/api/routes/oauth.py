@@ -10,7 +10,7 @@ import secrets
 
 from core.database import get_db
 from core.oauth import SSOManager
-from core.security import create_access_token, create_refresh_token
+from core import security
 from models.user import User
 from sqlalchemy import select
 
@@ -108,8 +108,8 @@ async def google_callback(
             await db.commit()
         
         # Generate JWT tokens
-        access_token = create_access_token({"sub": str(user.id)})
-        refresh_token = create_refresh_token({"sub": str(user.id)})
+        access_token = security.security.create_access_token({"sub": str(user.id)})
+        refresh_token = security.security.create_refresh_token({"sub": str(user.id)})
         
         return {
             "access_token": access_token,
@@ -187,8 +187,8 @@ async def github_callback(
             user.is_verified = True
             await db.commit()
         
-        access_token = create_access_token({"sub": str(user.id)})
-        refresh_token = create_refresh_token({"sub": str(user.id)})
+        access_token = security.create_access_token({"sub": str(user.id)})
+        refresh_token = security.create_refresh_token({"sub": str(user.id)})
         
         return {
             "access_token": access_token,
@@ -266,8 +266,8 @@ async def microsoft_callback(
             user.is_verified = True
             await db.commit()
         
-        access_token = create_access_token({"sub": str(user.id)})
-        refresh_token = create_refresh_token({"sub": str(user.id)})
+        access_token = security.create_access_token({"sub": str(user.id)})
+        refresh_token = security.create_refresh_token({"sub": str(user.id)})
         
         return {
             "access_token": access_token,
@@ -345,8 +345,8 @@ async def gitlab_callback(
             user.is_verified = True
             await db.commit()
         
-        access_token = create_access_token({"sub": str(user.id)})
-        refresh_token = create_refresh_token({"sub": str(user.id)})
+        access_token = security.create_access_token({"sub": str(user.id)})
+        refresh_token = security.create_refresh_token({"sub": str(user.id)})
         
         return {
             "access_token": access_token,

@@ -39,7 +39,7 @@ const activitiesData: Activity[] = [
     timeAgo: '5 minutes ago',
     type: 'scan',
     icon: Search,
-    gradient: 'from-blue-500 to-blue-600',
+    gradient: 'from-gray-500 to-gray-600',
   },
   {
     id: '3',
@@ -50,7 +50,7 @@ const activitiesData: Activity[] = [
     reward: '$1,250',
     type: 'marketplace',
     icon: ShoppingBag,
-    gradient: 'from-purple-500 to-purple-600',
+    gradient: 'from-gray-400 to-gray-500',
   },
   {
     id: '4',
@@ -127,7 +127,7 @@ export function LiveActivityFeed() {
             >
               {/* Avatar with Badge */}
               <div className="relative flex-shrink-0">
-                <div className="w-9 h-9 rounded-full border-2 border-blue-500/30 bg-gradient-to-br from-blue-600 to-purple-600 flex items-center justify-center">
+                <div className="w-9 h-9 rounded-full border-2 border-white/30 bg-white/10 flex items-center justify-center">
                   <span className="text-xs font-bold text-white">
                     {activity.user.avatar}
                   </span>

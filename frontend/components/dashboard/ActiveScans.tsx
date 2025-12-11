@@ -27,7 +27,7 @@ const scansData: Scan[] = [
     startedTime: '12 minutes ago',
     findings: 8,
     icon: Search,
-    gradient: 'from-blue-500 to-blue-600',
+    gradient: 'from-gray-400 to-gray-500',
   },
   {
     id: '2',
@@ -80,7 +80,7 @@ export function ActiveScans() {
           <button className="px-4 py-2 text-sm font-semibold text-white/70 bg-transparent border border-white/10 rounded-lg hover:bg-white/5 transition-colors">
             View All
           </button>
-          <button className="px-4 py-2 text-sm font-semibold text-white bg-gradient-to-r from-blue-500 to-blue-600 rounded-lg hover:brightness-110 hover:scale-[1.02] transition-all shadow-lg shadow-blue-500/30 flex items-center gap-2">
+          <button className="px-4 py-2 text-sm font-semibold text-black bg-white rounded-lg hover:bg-gray-200 hover:scale-[1.02] transition-all shadow-lg flex items-center gap-2">
             <Plus className="w-4 h-4" />
             New Scan
           </button>
@@ -122,9 +122,9 @@ export function ActiveScans() {
 
               <div className={`px-3 py-1 rounded-md text-xs font-semibold border ${
                 scan.status === 'scanning' 
-                  ? 'bg-blue-500/15 border-blue-500/30 text-blue-400 animate-pulse'
+                  ? 'bg-gray-500/15 border-gray-500/30 text-gray-400 animate-pulse'
                   : scan.status === 'analyzing'
-                  ? 'bg-purple-500/15 border-purple-500/30 text-purple-400'
+                  ? 'bg-white/15 border-white/30 text-white'
                   : 'bg-emerald-500/15 border-emerald-500/30 text-emerald-400'
               }`}>
                 {scan.status.charAt(0).toUpperCase() + scan.status.slice(1)}
@@ -138,7 +138,7 @@ export function ActiveScans() {
                   initial={{ width: 0 }}
                   animate={{ width: `${scan.progress}%` }}
                   transition={{ duration: 1, delay: 1 + index * 0.1 }}
-                  className="h-full bg-gradient-to-r from-blue-500 to-purple-600 rounded-full relative overflow-hidden"
+                  className="h-full bg-gradient-to-r from-gray-500 to-white rounded-full relative overflow-hidden"
                 >
                   <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent animate-shimmer" />
                 </motion.div>
@@ -197,7 +197,7 @@ export function ActiveScans() {
         <p className="text-sm text-white/50 max-w-sm mb-6">
           Start a new security scan to begin discovering vulnerabilities
         </p>
-        <button className="px-6 py-3 text-sm font-semibold text-white bg-gradient-to-r from-blue-500 to-blue-600 rounded-lg hover:brightness-110 hover:scale-105 transition-all shadow-lg shadow-blue-500/30">
+        <button className="px-6 py-3 text-sm font-semibold text-black bg-white rounded-lg hover:bg-gray-200 hover:scale-105 transition-all shadow-lg">
           Start Your First Scan
         </button>
       </div>

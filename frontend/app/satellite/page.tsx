@@ -89,7 +89,7 @@ export default function SatellitePage() {
       <div className="grid md:grid-cols-3 gap-6 mb-8">
         <SimpleCard>
           <h3 className="text-lg font-semibold mb-2">Active Scans</h3>
-          <p className="text-3xl font-bold text-blue-500">
+          <p className="text-3xl font-bold text-white">
             {satelliteData.filter(d => d.analysis_status === 'processing').length}
           </p>
         </SimpleCard>
@@ -103,7 +103,7 @@ export default function SatellitePage() {
 
         <SimpleCard>
           <h3 className="text-lg font-semibold mb-2">Total Coverage</h3>
-          <p className="text-3xl font-bold text-purple-500">
+          <p className="text-3xl font-bold text-white">
             {satelliteData.length} km²
           </p>
         </SimpleCard>

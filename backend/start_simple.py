@@ -16,31 +16,31 @@ print("=" * 60)
 # Test basic imports
 try:
     from fastapi import FastAPI
-    print("✓ FastAPI imported")
+    print("OK: FastAPI imported")
 except Exception as e:
-    print(f"✗ FastAPI import failed: {e}")
+    print(f"FAIL: FastAPI import failed: {e}")
     sys.exit(1)
 
 try:
     from core.config import settings
-    print(f"✓ Config loaded: {settings.PROJECT_NAME}")
+    print(f"OK: Config loaded: {settings.PROJECT_NAME}")
 except Exception as e:
-    print(f"✗ Config failed: {e}")
+    print(f"FAIL: Config failed: {e}")
     sys.exit(1)
 
 try:
     from core.database import engine
-    print("✓ Database engine created")
+    print("OK: Database engine created")
 except Exception as e:
-    print(f"✗ Database failed: {e}")
+    print(f"FAIL: Database failed: {e}")
 
 try:
     import redis
     r = redis.Redis(host='localhost', port=6379)
     r.ping()
-    print("✓ Redis connected")
+    print("OK: Redis connected")
 except Exception as e:
-    print(f"✗ Redis failed: {e}")
+    print(f"FAIL: Redis failed: {e}")
 
 print("=" * 60)
 print("")
@@ -74,7 +74,7 @@ async def health():
 async def api_health():
     return {"status": "ok"}
 
-print("✓ Minimal routes created")
+print("OK: Minimal routes created")
 print("")
 print("Starting server...")
 print("Access at: http://localhost:8001")

@@ -24,7 +24,7 @@ export default function PreferencesPage() {
           {/* Notifications */}
           <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6 mb-6">
             <div className="flex items-center gap-3 mb-4">
-              <Bell className="text-blue-400" size={24} />
+              <Bell className="text-gray-400" size={24} />
               <h2 className="text-xl font-bold text-white">Notifications</h2>
             </div>
             <div className="space-y-4">
@@ -38,7 +38,7 @@ export default function PreferencesPage() {
                     <div className="text-white font-medium">{item.label}</div>
                     <div className="text-slate-400 text-sm">{item.desc}</div>
                   </div>
-                  <button onClick={() => setNotifications({...notifications, [item.key]: !notifications[item.key as keyof typeof notifications]})} className={`w-12 h-6 rounded-full transition ${notifications[item.key as keyof typeof notifications] ? 'bg-blue-600' : 'bg-slate-600'}`}>
+                  <button onClick={() => setNotifications({...notifications, [item.key]: !notifications[item.key as keyof typeof notifications]})} className={`w-12 h-6 rounded-full transition ${notifications[item.key as keyof typeof notifications] ? 'bg-white' : 'bg-slate-600'}`}>
                     <div className={`w-5 h-5 bg-white rounded-full transition-transform ${notifications[item.key as keyof typeof notifications] ? 'translate-x-6' : 'translate-x-1'}`} />
                   </button>
                 </div>
@@ -49,12 +49,12 @@ export default function PreferencesPage() {
           {/* Appearance */}
           <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6 mb-6">
             <div className="flex items-center gap-3 mb-4">
-              <Palette className="text-purple-400" size={24} />
+              <Palette className="text-gray-400" size={24} />
               <h2 className="text-xl font-bold text-white">Appearance</h2>
             </div>
             <div className="grid md:grid-cols-3 gap-4">
               {['dark', 'light', 'auto'].map((t) => (
-                <button key={t} onClick={() => setTheme(t)} className={`p-4 rounded-lg border-2 transition ${theme === t ? 'border-blue-500 bg-blue-600/20' : 'border-white/10 bg-white/5'}`}>
+                <button key={t} onClick={() => setTheme(t)} className={`p-4 rounded-lg border-2 transition ${theme === t ? 'border-white bg-white/20' : 'border-white/10 bg-white/5'}`}>
                   <div className="text-white font-medium capitalize">{t}</div>
                 </button>
               ))}
@@ -82,7 +82,7 @@ export default function PreferencesPage() {
           {/* Language */}
           <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6 mb-6">
             <div className="flex items-center gap-3 mb-4">
-              <Globe className="text-blue-400" size={24} />
+              <Globe className="text-gray-400" size={24} />
               <h2 className="text-xl font-bold text-white">Language & Region</h2>
             </div>
             <select className="w-full p-4 bg-white/5 border border-white/10 rounded-lg text-white">
@@ -93,7 +93,7 @@ export default function PreferencesPage() {
           </div>
 
           {/* Save Button */}
-          <button className="flex items-center gap-2 px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition">
+          <button className="flex items-center gap-2 px-6 py-3 bg-white hover:bg-gray-200 text-white rounded-lg transition">
             <Save size={20} />
             Save Preferences
           </button>

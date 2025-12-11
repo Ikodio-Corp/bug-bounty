@@ -164,7 +164,7 @@ export default function SettingsPage() {
                         onChange={(e) =>
                           setPasswordData({ ...passwordData, current_password: e.target.value })
                         }
-                        className="w-full px-4 py-3 bg-slate-700 border border-slate-600 rounded-lg text-white focus:ring-2 focus:ring-cyan-500 focus:border-transparent"
+                        className="w-full px-4 py-3 bg-slate-700 border border-slate-600 rounded-lg text-white focus:ring-2 focus:ring-white/50 focus:border-transparent"
                         required
                       />
                     </div>
@@ -176,7 +176,7 @@ export default function SettingsPage() {
                         onChange={(e) =>
                           setPasswordData({ ...passwordData, new_password: e.target.value })
                         }
-                        className="w-full px-4 py-3 bg-slate-700 border border-slate-600 rounded-lg text-white focus:ring-2 focus:ring-cyan-500 focus:border-transparent"
+                        className="w-full px-4 py-3 bg-slate-700 border border-slate-600 rounded-lg text-white focus:ring-2 focus:ring-white/50 focus:border-transparent"
                         required
                       />
                     </div>
@@ -190,7 +190,7 @@ export default function SettingsPage() {
                         onChange={(e) =>
                           setPasswordData({ ...passwordData, confirm_password: e.target.value })
                         }
-                        className="w-full px-4 py-3 bg-slate-700 border border-slate-600 rounded-lg text-white focus:ring-2 focus:ring-cyan-500 focus:border-transparent"
+                        className="w-full px-4 py-3 bg-slate-700 border border-slate-600 rounded-lg text-white focus:ring-2 focus:ring-white/50 focus:border-transparent"
                         required
                       />
                     </div>

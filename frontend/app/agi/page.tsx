@@ -97,7 +97,7 @@ export default function AGIPage() {
       <div className="grid md:grid-cols-4 gap-6 mb-8">
         <SimpleCard>
           <h3 className="text-lg font-semibold mb-2">Active Research</h3>
-          <p className="text-3xl font-bold text-blue-500">
+          <p className="text-3xl font-bold text-white">
             {research.filter(r => r.status === 'training' || r.status === 'researching').length}
           </p>
         </SimpleCard>
@@ -111,7 +111,7 @@ export default function AGIPage() {
 
         <SimpleCard>
           <h3 className="text-lg font-semibold mb-2">Avg Accuracy</h3>
-          <p className="text-3xl font-bold text-purple-500">
+          <p className="text-3xl font-bold text-white">
             {research.length > 0 
               ? (research.reduce((sum, r) => sum + r.accuracy, 0) / research.length).toFixed(1)
               : 0}%
@@ -196,7 +196,7 @@ export default function AGIPage() {
                     </div>
                     <div className="w-full bg-gray-700 rounded-full h-2">
                       <div 
-                        className="bg-blue-500 h-2 rounded-full transition-all"
+                        className="bg-white h-2 rounded-full transition-all"
                         style={{ width: `${project.accuracy}%` }}
                       ></div>
                     </div>

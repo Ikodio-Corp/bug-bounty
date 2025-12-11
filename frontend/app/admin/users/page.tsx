@@ -91,8 +91,8 @@ export default function AdminUsersPage() {
     const colors: { [key: string]: string } = {
       admin: 'bg-red-500/20 text-red-400',
       hunter: 'bg-cyan-500/20 text-cyan-400',
-      developer: 'bg-blue-500/20 text-blue-400',
-      company: 'bg-purple-500/20 text-purple-400'
+      developer: 'bg-white/20 text-gray-400',
+      company: 'bg-white/20 text-gray-400'
     }
     return colors[role] || 'bg-slate-500/20 text-slate-400'
   }
@@ -122,12 +122,12 @@ export default function AdminUsersPage() {
               placeholder="Search users..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="px-4 py-2 bg-slate-700 border border-slate-600 rounded-lg text-white placeholder-slate-400 focus:ring-2 focus:ring-cyan-500 focus:border-transparent"
+              className="px-4 py-2 bg-slate-700 border border-slate-600 rounded-lg text-white placeholder-slate-400 focus:ring-2 focus:ring-white/50 focus:border-transparent"
             />
             <select
               value={roleFilter}
               onChange={(e) => setRoleFilter(e.target.value)}
-              className="px-4 py-2 bg-slate-700 border border-slate-600 rounded-lg text-white focus:ring-2 focus:ring-cyan-500 focus:border-transparent"
+              className="px-4 py-2 bg-slate-700 border border-slate-600 rounded-lg text-white focus:ring-2 focus:ring-white/50 focus:border-transparent"
             >
               <option value="">All Roles</option>
               <option value="admin">Admin</option>
@@ -138,7 +138,7 @@ export default function AdminUsersPage() {
             <select
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value)}
-              className="px-4 py-2 bg-slate-700 border border-slate-600 rounded-lg text-white focus:ring-2 focus:ring-cyan-500 focus:border-transparent"
+              className="px-4 py-2 bg-slate-700 border border-slate-600 rounded-lg text-white focus:ring-2 focus:ring-white/50 focus:border-transparent"
             >
               <option value="">All Status</option>
               <option value="active">Active</option>
@@ -191,7 +191,7 @@ export default function AdminUsersPage() {
                             <div className={`text-sm ${user.is_active ? 'text-green-400' : 'text-red-400'}`}>
                               {user.is_active ? 'Active' : 'Inactive'}
                             </div>
-                            <div className={`text-sm ${user.is_verified ? 'text-blue-400' : 'text-slate-400'}`}>
+                            <div className={`text-sm ${user.is_verified ? 'text-gray-400' : 'text-slate-400'}`}>
                               {user.is_verified ? 'Verified' : 'Unverified'}
                             </div>
                           </div>

@@ -93,7 +93,7 @@ export default function ESGPage() {
 
         <SimpleCard>
           <h3 className="text-lg font-semibold mb-2">Companies Assessed</h3>
-          <p className="text-3xl font-bold text-blue-500">
+          <p className="text-3xl font-bold text-white">
             {metrics.length}
           </p>
         </SimpleCard>

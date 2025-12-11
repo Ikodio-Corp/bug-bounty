@@ -6,12 +6,12 @@ import { Check } from 'lucide-react';
 
 export default function IntegrationsPage() {
   const integrations = [
-    { name: 'Slack', desc: 'Get instant notifications', status: 'connected', icon: '📢' },
-    { name: 'GitHub', desc: 'Auto-create issues from bugs', status: 'connected', icon: '👙' },
-    { name: 'Jira', desc: 'Sync bugs with Jira tickets', status: 'available', icon: '🎯' },
-    { name: 'Discord', desc: 'Team notifications', status: 'available', icon: '🎮' },
-    { name: 'Telegram', desc: 'Mobile alerts', status: 'available', icon: '✈️' },
-    { name: 'Burp Suite', desc: 'Import scan results', status: 'connected', icon: '🔍' },
+    { name: 'Slack', desc: 'Get instant notifications', status: 'connected', icon: '' },
+    { name: 'GitHub', desc: 'Auto-create issues from bugs', status: 'connected', icon: '' },
+    { name: 'Jira', desc: 'Sync bugs with Jira tickets', status: 'available', icon: '' },
+    { name: 'Discord', desc: 'Team notifications', status: 'available', icon: '' },
+    { name: 'Telegram', desc: 'Mobile alerts', status: 'available', icon: 'TG' },
+    { name: 'Burp Suite', desc: 'Import scan results', status: 'connected', icon: '' },
   ];
 
   return (
@@ -35,7 +35,7 @@ export default function IntegrationsPage() {
                 </div>
                 <h3 className="text-xl font-bold text-white mb-2">{int.name}</h3>
                 <p className="text-slate-400 mb-4">{int.desc}</p>
-                <button className={`w-full py-2 rounded-lg transition ${int.status === 'connected' ? 'bg-white/10 hover:bg-white/20 text-white' : 'bg-blue-600 hover:bg-blue-700 text-white'}`}>
+                <button className={`w-full py-2 rounded-lg transition ${int.status === 'connected' ? 'bg-white/10 hover:bg-white/20 text-white' : 'bg-white hover:bg-gray-200 text-white'}`}>
                   {int.status === 'connected' ? 'Configure' : 'Connect'}
                 </button>
               </div>

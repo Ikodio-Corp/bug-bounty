@@ -9,7 +9,7 @@
 
 ## ğŸ”¥ P0: CRITICAL - DO IMMEDIATELY (5 min - 1 day)
 
-### â˜‘ï¸ TODO 1: Fix ML Pipeline Syntax Errors
+### ˜‘ TODO 1: Fix ML Pipeline Syntax Errors
 - **Priority:** P0 - BLOCKER
 - **Time:** 5 minutes
 - **File:** `backend/ml/models/exploit_generator.py`
@@ -18,7 +18,7 @@
   - Line 419: Missing `)` parenthesis
 - **Impact:** ML pipeline cannot execute
 - **Assignee:** ML Engineer
-- **Status:** â³ PENDING
+- **Status:** ³ PENDING
 
 **Steps:**
 ```bash
@@ -44,14 +44,14 @@ pytest backend/tests/ml/ -v
 
 ## ğŸš¨ P1: HIGH PRIORITY - THIS WEEK (1-3 weeks)
 
-### â˜‘ï¸ TODO 2: Complete Scanner Orchestrator
+### ˜‘ TODO 2: Complete Scanner Orchestrator
 - **Priority:** P1
 - **Time:** 1 day
 - **File:** `backend/scanners/orchestrator.py`
 - **Issue:** SCA, Secret, Container, IaC scanners not integrated
 - **Impact:** 4 scanners not accessible via orchestrator
 - **Assignee:** Security Engineer
-- **Status:** â³ PENDING
+- **Status:** ³ PENDING
 
 **Implementation:**
 ```python
@@ -77,14 +77,14 @@ class ScannerOrchestrator:
 
 ---
 
-### â˜‘ï¸ TODO 3: Enhance Rate Limiting
+### ˜‘ TODO 3: Enhance Rate Limiting
 - **Priority:** P1
 - **Time:** 3-5 days
 - **Files:** `backend/middleware/rate_limit.py`, `backend/core/redis.py`
 - **Issue:** Basic rate limiting, vulnerable to abuse
 - **Impact:** API security risk
 - **Assignee:** Backend Engineer
-- **Status:** â³ PENDING
+- **Status:** ³ PENDING
 
 **Phase 1: Redis-backed (Day 1-2)**
 ```python
@@ -114,7 +114,7 @@ RATE_LIMITS = {
 
 ---
 
-### â˜‘ï¸ TODO 4: Write ML Model Tests
+### ˜‘ TODO 4: Write ML Model Tests
 - **Priority:** P1
 - **Time:** 2 days
 - **Missing Files:**
@@ -124,7 +124,7 @@ RATE_LIMITS = {
 - **Issue:** 0% test coverage for ML models
 - **Impact:** Cannot verify ML functionality
 - **Assignee:** ML Engineer
-- **Status:** â³ PENDING
+- **Status:** ³ PENDING
 
 **Day 1: Bug Detector Tests**
 ```python
@@ -139,39 +139,39 @@ def test_detect_sql_injection():
 
 ---
 
-### â˜‘ï¸ TODO 5: Write Scanner Tests
+### ˜‘ TODO 5: Write Scanner Tests
 - **Priority:** P1
 - **Time:** 3 days
 - **Missing:** All 9 scanner test files
 - **Issue:** 0% test coverage for scanners
 - **Impact:** Cannot verify scanner functionality
 - **Assignee:** Security Engineer
-- **Status:** â³ PENDING
+- **Status:** ³ PENDING
 
 **Files to Create:**
 ```
 backend/tests/scanners/
-â”œâ”€â”€ test_burp_scanner.py
-â”œâ”€â”€ test_zap_scanner.py
-â”œâ”€â”€ test_nuclei_scanner.py
-â”œâ”€â”€ test_sca_scanner.py
-â”œâ”€â”€ test_secret_scanner.py
-â”œâ”€â”€ test_container_scanner.py
-â”œâ”€â”€ test_iac_scanner.py
-â”œâ”€â”€ test_custom_scanner.py
-â””â”€â”€ test_orchestrator.py
+”œ”€”€ test_burp_scanner.py
+”œ”€”€ test_zap_scanner.py
+”œ”€”€ test_nuclei_scanner.py
+”œ”€”€ test_sca_scanner.py
+”œ”€”€ test_secret_scanner.py
+”œ”€”€ test_container_scanner.py
+”œ”€”€ test_iac_scanner.py
+”œ”€”€ test_custom_scanner.py
+”””€”€ test_orchestrator.py
 ```
 
 ---
 
-### â˜‘ï¸ TODO 6: Increase Test Coverage to 80%
+### ˜‘ TODO 6: Increase Test Coverage to 80%
 - **Priority:** P1
 - **Time:** 2-3 weeks
 - **Current:** 65%
 - **Target:** 80%
 - **Impact:** Production readiness requirement
 - **Assignee:** All Engineers
-- **Status:** â³ PENDING
+- **Status:** ³ PENDING
 
 **Week 1: Service Tests**
 ```bash
@@ -189,13 +189,13 @@ backend/tests/integration/test_auth_flow.py
 
 ---
 
-### â˜‘ï¸ TODO 7: Implement Automated Backups
+### ˜‘ TODO 7: Implement Automated Backups
 - **Priority:** P1 (Critical for production)
 - **Time:** 1 week
 - **Issue:** Only manual backups exist
 - **Impact:** Data loss risk
 - **Assignee:** DevOps Engineer
-- **Status:** â³ PENDING
+- **Status:** ³ PENDING
 
 **Day 1-2: Backup Scripts**
 ```bash
@@ -229,16 +229,16 @@ aws s3 cp $BACKUP_DIR.tar.gz $S3_BUCKET/
 
 ---
 
-## âš ï¸ P2: MEDIUM PRIORITY - THIS MONTH (3-6 weeks)
+##  P2: MEDIUM PRIORITY - THIS MONTH (3-6 weeks)
 
-### â˜‘ï¸ TODO 8: Complete WebAuthn Implementation
+### ˜‘ TODO 8: Complete WebAuthn Implementation
 - **Priority:** P2
 - **Time:** 1-2 weeks
 - **File:** `backend/core/two_factor.py`
 - **Issue:** Hardware key 2FA incomplete (85%)
 - **Impact:** Premium 2FA feature not functional
 - **Assignee:** Security Engineer
-- **Status:** â³ PENDING
+- **Status:** ³ PENDING
 
 **Week 1: Core WebAuthn**
 ```python
@@ -257,13 +257,13 @@ class WebAuthnService:
 
 ---
 
-### â˜‘ï¸ TODO 9: Add Audit Timestamps to Models
+### ˜‘ TODO 9: Add Audit Timestamps to Models
 - **Priority:** P2
 - **Time:** 1 day
 - **Issue:** Models missing created_at/updated_at
 - **Impact:** Cannot track record history
 - **Assignee:** Backend Engineer
-- **Status:** â³ PENDING
+- **Status:** ³ PENDING
 
 **Step 1: Create Mixin**
 ```python
@@ -285,13 +285,13 @@ class User(Base, TimestampMixin):
 
 ---
 
-### â˜‘ï¸ TODO 10: Implement DAO Smart Contracts (OR Reposition)
+### ˜‘ TODO 10: Implement DAO Smart Contracts (OR Reposition)
 - **Priority:** P2 (OR P3 if marking "Coming Soon")
 - **Time:** 3-4 weeks
 - **Issue:** DAO is off-chain only
 - **Impact:** Feature advertised but not functional
 - **Assignee:** Blockchain Engineer
-- **Status:** â³ PENDING - DECISION REQUIRED
+- **Status:** ³ PENDING - DECISION REQUIRED
 
 **Option A: Implement (3-4 weeks)**
 ```solidity
@@ -314,13 +314,13 @@ contract IKODToken is ERC20, Ownable {
 
 ---
 
-### â˜‘ï¸ TODO 11: Run Security Scans
+### ˜‘ TODO 11: Run Security Scans
 - **Priority:** P2
 - **Time:** 2-3 days
 - **Tools:** pip-audit, npm audit, bandit, semgrep
 - **Impact:** Identify vulnerabilities
 - **Assignee:** Security Engineer
-- **Status:** â³ PENDING
+- **Status:** ³ PENDING
 
 **Day 1: Dependency Scans**
 ```bash
@@ -348,14 +348,14 @@ semgrep --config=auto backend/
 
 ---
 
-### â˜‘ï¸ TODO 12: Add Health Checks to Docker
+### ˜‘ TODO 12: Add Health Checks to Docker
 - **Priority:** P2
 - **Time:** 4 hours
 - **File:** `docker-compose.yml`
 - **Issue:** Missing health checks
 - **Impact:** Cannot detect service failures
 - **Assignee:** DevOps Engineer
-- **Status:** â³ PENDING
+- **Status:** ³ PENDING
 
 ```yaml
 # docker-compose.yml
@@ -378,7 +378,7 @@ services:
 
 ---
 
-### â˜‘ï¸ TODO 13: Create Missing Model Files
+### ˜‘ TODO 13: Create Missing Model Files
 - **Priority:** P2
 - **Time:** 1 day
 - **Missing:**
@@ -387,7 +387,7 @@ services:
   - `backend/models/transaction.py`
   - `backend/models/futures.py`
 - **Assignee:** Backend Engineer
-- **Status:** â³ PENDING
+- **Status:** ³ PENDING
 
 ```python
 # backend/models/audit_log.py
@@ -406,13 +406,13 @@ class AuditLog(Base):
 
 ---
 
-### â˜‘ï¸ TODO 14: Optimize Database Indexes
+### ˜‘ TODO 14: Optimize Database Indexes
 - **Priority:** P2
 - **Time:** 2 days
 - **Issue:** Missing indexes causing slow queries
 - **Impact:** Performance degradation
 - **Assignee:** Database Engineer
-- **Status:** â³ PENDING
+- **Status:** ³ PENDING
 
 **Day 1: Add Missing Indexes**
 ```sql
@@ -432,81 +432,81 @@ CREATE INDEX idx_scans_status_created ON scans(status, created_at);
 
 ## ğŸ“ P3: NORMAL PRIORITY - NEXT QUARTER (6-12 weeks)
 
-### â˜‘ï¸ TODO 15-20: Complete Advanced Features
+### ˜‘ TODO 15-20: Complete Advanced Features
 - **Priority:** P3
 - **Time:** 4-6 weeks
 - **Files:** quantum.py, satellite.py, geopolitical.py, esg.py
 - **Current:** 40% implemented
 - **Decision:** Implement OR Remove OR Mark "Beta"
 - **Assignee:** Innovation Team
-- **Status:** â³ PENDING
+- **Status:** ³ PENDING
 
 ---
 
-### â˜‘ï¸ TODO 21-25: Complete Social Features
+### ˜‘ TODO 21-25: Complete Social Features
 - **Priority:** P3
 - **Time:** 2 weeks
 - **Current:** 55%
 - **Missing:** Direct messaging, activity feed enhancements
 - **Assignee:** Backend + Frontend
-- **Status:** â³ PENDING
+- **Status:** ³ PENDING
 
 ---
 
-### â˜‘ï¸ TODO 26-30: Complete Learning Platform
+### ˜‘ TODO 26-30: Complete Learning Platform
 - **Priority:** P3
 - **Time:** 2 weeks
 - **Current:** 60%
 - **Missing:** Interactive labs, quiz system
 - **Assignee:** Backend + Frontend
-- **Status:** â³ PENDING
+- **Status:** ³ PENDING
 
 ---
 
-### â˜‘ï¸ TODO 31-35: Add Distributed Tracing
+### ˜‘ TODO 31-35: Add Distributed Tracing
 - **Priority:** P3
 - **Time:** 1 week
 - **Tool:** Jaeger or Zipkin
 - **Impact:** Better debugging
 - **Assignee:** DevOps
-- **Status:** â³ PENDING
+- **Status:** ³ PENDING
 
 ---
 
-### â˜‘ï¸ TODO 36-40: Complete VCS Webhook Retry
+### ˜‘ TODO 36-40: Complete VCS Webhook Retry
 - **Priority:** P3
 - **Time:** 4 hours
 - **Files:** github_app.py, gitlab_ci.py
 - **Issue:** No retry mechanism
 - **Assignee:** Backend Engineer
-- **Status:** â³ PENDING
+- **Status:** ³ PENDING
 
 ---
 
-### â˜‘ï¸ TODO 41-45: Enhance Monitoring
+### ˜‘ TODO 41-45: Enhance Monitoring
 - **Priority:** P3
 - **Time:** 1 week
 - **Add:** Custom dashboards, alerts
 - **Assignee:** DevOps
-- **Status:** â³ PENDING
+- **Status:** ³ PENDING
 
 ---
 
-### â˜‘ï¸ TODO 46-50: Complete Kubernetes Setup
+### ˜‘ TODO 46-50: Complete Kubernetes Setup
 - **Priority:** P3
 - **Time:** 2 weeks
 - **Missing:** Complete manifests, Helm charts
 - **Assignee:** DevOps
-- **Status:** â³ PENDING
+- **Status:** ³ PENDING
 
 ---
 
-### â˜‘ï¸ TODO 51-52: Documentation Improvements
+### ˜‘ TODO 51-52: Documentation Improvements
 - **Priority:** P3
 - **Time:** 1 week
 - **Missing:** Architecture diagrams, API examples
 - **Assignee:** Tech Writer
-- **Status:** â³ PENDING
+- **Status:** ³ PENDING
 
 ---
 
@@ -516,11 +516,11 @@ CREATE INDEX idx_scans_status_created ON scans(status, created_at);
 
 | Priority | Count | Time | Status |
 |----------|-------|------|--------|
-| **P0** | 1 | 5 min - 1 day | â³ 0% complete |
-| **P1** | 6 | 1-3 weeks | â³ 0% complete |
-| **P2** | 7 | 3-6 weeks | â³ 0% complete |
-| **P3** | 38 | 6-12 weeks | â³ 0% complete |
-| **Total** | **52** | **20 weeks** | â³ **0% complete** |
+| **P0** | 1 | 5 min - 1 day | ³ 0% complete |
+| **P1** | 6 | 1-3 weeks | ³ 0% complete |
+| **P2** | 7 | 3-6 weeks | ³ 0% complete |
+| **P3** | 38 | 6-12 weeks | ³ 0% complete |
+| **Total** | **52** | **20 weeks** | ³ **0% complete** |
 
 ### By Category
 
@@ -537,37 +537,37 @@ CREATE INDEX idx_scans_status_created ON scans(status, created_at);
 ### Timeline Milestones
 
 **Week 1: Critical** (P0 + P1 start)
-- âœ… Fix syntax errors
-- âœ… Scanner orchestrator
-- âœ… Rate limiting (start)
+-  Fix syntax errors
+-  Scanner orchestrator
+-  Rate limiting (start)
 
 **Week 2-3: High Priority** (P1 continue)
-- âœ… ML/Scanner tests
-- âœ… Automated backups
-- âœ… Coverage increase
+-  ML/Scanner tests
+-  Automated backups
+-  Coverage increase
 
 **Month 2: Medium Priority** (P2)
-- âœ… WebAuthn
-- âœ… Security scans
-- âœ… DAO decision
-- âœ… Database optimization
+-  WebAuthn
+-  Security scans
+-  DAO decision
+-  Database optimization
 
 **Quarter 1: Low Priority** (P3)
-- âœ… Advanced features
-- âœ… Social/Learning complete
-- âœ… Monitoring enhancements
-- âœ… Documentation
+-  Advanced features
+-  Social/Learning complete
+-  Monitoring enhancements
+-  Documentation
 
 ---
 
 ## ğŸ¯ QUICK WINS (<1 Day)
 
-1. âœ… Fix 2 syntax errors (5 min)
-2. âœ… Add 4 scanners to orchestrator (3 hours)
-3. âœ… Add timestamps to models (4 hours)
-4. âœ… Create missing model files (4 hours)
-5. âœ… Add health checks to Docker (4 hours)
-6. âœ… VCS webhook retry (4 hours)
+1.  Fix 2 syntax errors (5 min)
+2.  Add 4 scanners to orchestrator (3 hours)
+3.  Add timestamps to models (4 hours)
+4.  Create missing model files (4 hours)
+5.  Add health checks to Docker (4 hours)
+6.  VCS webhook retry (4 hours)
 
 **Total Quick Wins:** ~1.5 days
 

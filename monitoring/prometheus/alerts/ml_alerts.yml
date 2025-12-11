@@ -1,0 +1,104 @@
+# ML Performance Alert Rules
+
+groups:
+  - name: ml_performance
+    interval: 30s
+    rules:
+      # High latency alert
+      - alert: MLHighLatency
+        expr: ml_latency_p95 > 100
+        for: 5m
+        labels:
+          severity: warning
+          component: ml-engine
+        annotations:
+          summary: "ML prediction latency is high"
+          description: "P95 latency is {{ $value }}ms (threshold: 100ms)"
+
+      # Critical latency alert
+      - alert: MLCriticalLatency
+        expr: ml_latency_p95 > 200
+        for: 2m
+        labels:
+          severity: critical
+          component: ml-engine
+        annotations:
+          summary: "ML prediction latency is critically high"
+          description: "P95 latency is {{ $value }}ms (threshold: 200ms)"
+
+      # Low cache hit rate
+      - alert: MLLowCacheHitRate
+        expr: ml_cache_hit_rate < 70
+        for: 10m
+        labels:
+          severity: warning
+          component: ml-engine
+        annotations:
+          summary: "ML cache hit rate is low"
+          description: "Cache hit rate is {{ $value }}% (threshold: 70%)"
+
+      # High error rate
+      - alert: MLHighErrorRate
+        expr: rate(ml_errors_total[5m]) > 0.05
+        for: 5m
+        labels:
+          severity: warning
+          component: ml-engine
+        annotations:
+          summary: "ML prediction error rate is high"
+          description: "Error rate is {{ $value | humanizePercentage }} (threshold: 5%)"
+
+      # Critical error rate
+      - alert: MLCriticalErrorRate
+        expr: rate(ml_errors_total[5m]) > 0.10
+        for: 2m
+        labels:
+          severity: critical
+          component: ml-engine
+        annotations:
+          summary: "ML prediction error rate is critically high"
+          description: "Error rate is {{ $value | humanizePercentage }} (threshold: 10%)"
+
+      # Circuit breaker open
+      - alert: MLCircuitBreakerOpen
+        expr: ml_circuit_breaker_status == 1
+        for: 1m
+        labels:
+          severity: critical
+          component: ml-engine
+        annotations:
+          summary: "ML service circuit breaker is open"
+          description: "ML service is unavailable due to repeated failures"
+
+      # Low model accuracy
+      - alert: MLLowAccuracy
+        expr: ml_model_accuracy{time_window="1h"} < 0.85
+        for: 15m
+        labels:
+          severity: warning
+          component: ml-engine
+        annotations:
+          summary: "ML model accuracy has dropped"
+          description: "Model {{ $labels.model_version }} accuracy is {{ $value | humanizePercentage }} (threshold: 85%)"
+
+      # Throughput drop
+      - alert: MLLowThroughput
+        expr: rate(ml_predictions_total[5m]) < 10
+        for: 10m
+        labels:
+          severity: warning
+          component: ml-engine
+        annotations:
+          summary: "ML prediction throughput is low"
+          description: "Throughput is {{ $value }} predictions/sec (threshold: 10/sec)"
+
+      # High memory usage
+      - alert: MLHighMemoryUsage
+        expr: (process_resident_memory_bytes{job="ikodio-ml-engine"} / 1024 / 1024) > 2048
+        for: 5m
+        labels:
+          severity: warning
+          component: ml-engine
+        annotations:
+          summary: "ML engine memory usage is high"
+          description: "Memory usage is {{ $value }}MB (threshold: 2048MB)"

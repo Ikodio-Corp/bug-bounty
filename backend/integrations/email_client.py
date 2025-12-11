@@ -284,7 +284,7 @@ async def send_verification_email(email: str, token: str, username: str) -> bool
         <html>
             <body style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
                 <div style="background-color: #fff3cd; border: 2px solid #ffc107; padding: 30px; border-radius: 10px;">
-                    <h2 style="color: #856404; margin-bottom: 20px;">⚠️ Account Deletion Reminder</h2>
+                    <h2 style="color: #856404; margin-bottom: 20px;">Account Deletion Reminder</h2>
                     <p style="color: #856404; font-size: 16px;">Hi {user_name},</p>
                     <p style="color: #856404; font-size: 16px; margin: 20px 0;">
                         Your IKODIO account is scheduled for permanent deletion in <strong>{days_remaining} day(s)</strong>.

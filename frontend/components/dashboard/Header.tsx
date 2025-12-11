@@ -66,7 +66,7 @@ export function Header() {
         <div className="flex items-center gap-2 text-xs text-white/50 mb-2">
           <span>Home</span>
           <ChevronRight className="w-3.5 h-3.5 text-white/30" />
-          <span className="text-blue-500 font-semibold">Dashboard</span>
+          <span className="text-white font-semibold">Dashboard</span>
         </div>
         <h1 className="text-2xl font-bold text-white tracking-tight mb-1">
           Welcome back, Hylmii
@@ -124,7 +124,7 @@ export function Header() {
 
         {/* Profile Dropdown */}
         <button className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-white/5 border border-white/10 hover:bg-white/10 transition-colors">
-          <div className="w-8 h-8 rounded-full border-2 border-blue-500/50 bg-gradient-to-br from-blue-600 to-purple-600 flex items-center justify-center">
+          <div className="w-8 h-8 rounded-full border-2 border-white/50 bg-white/10 flex items-center justify-center">
             <span className="text-white font-semibold text-xs">H</span>
           </div>
           <span className="text-sm font-semibold text-white">Hylmii</span>

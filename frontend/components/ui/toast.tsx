@@ -24,9 +24,9 @@ export function Toast({ title, description, variant = 'default', duration = 5000
 
   const variants = {
     default: 'bg-slate-800 border-slate-700',
-    success: 'bg-green-800 border-green-700',
-    error: 'bg-red-800 border-red-700',
-    warning: 'bg-yellow-800 border-yellow-700',
+    success: 'bg-gray-700 border-gray-600',
+    error: 'bg-gray-800 border-gray-700',
+    warning: 'bg-gray-600 border-gray-500',
   };
 
   return (
@@ -43,7 +43,7 @@ export function Toast({ title, description, variant = 'default', duration = 5000
           }}
           className="text-gray-400 hover:text-white ml-4"
         >
-          ✕
+          X
         </button>
       </div>
     </div>

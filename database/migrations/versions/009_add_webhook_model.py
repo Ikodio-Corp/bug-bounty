@@ -1,7 +1,7 @@
 """add webhook model
 
-Revision ID: 009
-Revises: 008
+Revision ID: 9
+Revises: 8
 Create Date: 2025-11-20 07:05:00.000000
 
 """
@@ -10,8 +10,8 @@ import sqlalchemy as sa
 from sqlalchemy.dialects import postgresql
 
 # revision identifiers, used by Alembic.
-revision = '009'
-down_revision = '008'
+revision = '9'
+down_revision = '8'
 branch_labels = None
 depends_on = None
 

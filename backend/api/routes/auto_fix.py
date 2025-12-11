@@ -46,7 +46,7 @@ async def run_auto_fix(
     current_user: User = Depends(security.get_current_user)
 ):
     """
-    🚀 90-Second Bug Finding + Auto-Fix
+     90-Second Bug Finding + Auto-Fix
     
     Revolutionary pipeline:
     1. Scan & Detect (30s)

@@ -21,7 +21,10 @@ import {
   HelpCircle,
   ChevronLeft,
   ChevronRight,
+  Lock,
+  Crown,
 } from 'lucide-react';
+import { useSubscription, SubscriptionTier } from '@/contexts/SubscriptionContext';
 
 interface NavItem {
   icon: any;
@@ -29,22 +32,60 @@ interface NavItem {
   href: string;
   badge?: string | number;
   badgeColor?: string;
+  requiresFeature?: keyof ReturnType<typeof useSubscription>['features'];
+  requiredTier?: SubscriptionTier;
 }
 
 const mainMenu: NavItem[] = [
   { icon: Home, label: 'Dashboard', href: '/dashboard' },
   { icon: Search, label: 'Scan Management', href: '/scans', badge: 3, badgeColor: 'blue' },
   { icon: Shield, label: 'Vulnerabilities', href: '/bugs', badge: 12, badgeColor: 'red' },
-  { icon: ShoppingBag, label: 'Marketplace', href: '/marketplace' },
-  { icon: Users, label: 'Guild Center', href: '/guilds' },
-  { icon: BarChart, label: 'Analytics', href: '/analytics' },
+  { 
+    icon: ShoppingBag, 
+    label: 'Marketplace', 
+    href: '/marketplace',
+    requiresFeature: 'marketplaceAccess',
+    requiredTier: 'professional'
+  },
+  { 
+    icon: Users, 
+    label: 'Guild Center', 
+    href: '/guilds',
+    requiresFeature: 'guildAccess',
+    requiredTier: 'professional'
+  },
+  { 
+    icon: BarChart, 
+    label: 'Analytics', 
+    href: '/analytics',
+    requiresFeature: 'advancedAnalytics',
+    requiredTier: 'professional'
+  },
   { icon: Trophy, label: 'Rewards', href: '/rewards' },
 ];
 
 const toolsMenu: NavItem[] = [
-  { icon: Zap, label: 'AI Scanner', href: '/ai-scanner' },
-  { icon: Code, label: 'API Documentation', href: '/api-docs' },
-  { icon: Workflow, label: 'Integrations', href: '/integrations' },
+  { 
+    icon: Zap, 
+    label: 'AI Scanner', 
+    href: '/ai-scanner',
+    requiresFeature: 'aiScanner',
+    requiredTier: 'professional'
+  },
+  { 
+    icon: Code, 
+    label: 'API Documentation', 
+    href: '/api-docs',
+    requiresFeature: 'apiAccess',
+    requiredTier: 'professional'
+  },
+  { 
+    icon: Workflow, 
+    label: 'Integrations', 
+    href: '/integrations',
+    requiresFeature: 'slackDiscordIntegration',
+    requiredTier: 'professional'
+  },
   { icon: FileText, label: 'Reports', href: '/reports' },
 ];
 
@@ -58,6 +99,21 @@ const accountMenu: NavItem[] = [
 export function Sidebar() {
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [activeItem, setActiveItem] = useState('/dashboard');
+  const { user, tier, features } = useSubscription();
+
+  const tierColors: Record<SubscriptionTier, string> = {
+    free: 'from-gray-700 to-gray-700',
+    starter: 'from-gray-600 to-gray-600',
+    professional: 'from-gray-500 to-gray-500',
+    enterprise: 'from-white to-white',
+  };
+
+  const tierNames: Record<SubscriptionTier, string> = {
+    free: 'Free',
+    starter: 'Starter',
+    professional: 'Pro',
+    enterprise: 'Enterprise',
+  };
 
   return (
     <motion.aside
@@ -67,10 +123,10 @@ export function Sidebar() {
         width: isCollapsed ? 80 : 280 
       }}
       transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
-      className="fixed left-0 top-0 h-screen z-50 bg-gradient-to-b from-slate-900 to-slate-800 flex flex-col"
+      className="fixed left-0 top-0 h-screen z-50 bg-black flex flex-col"
       style={{
         backdropFilter: 'blur(20px)',
-        borderRight: '1px solid rgba(255, 255, 255, 0.06)',
+        borderRight: '1px solid rgba(255, 255, 255, 0.1)',
       }}
     >
       {/* Logo Section */}
@@ -106,7 +162,7 @@ export function Sidebar() {
       {/* Collapse Toggle */}
       <button
         onClick={() => setIsCollapsed(!isCollapsed)}
-        className="absolute top-6 -right-3 w-6 h-6 bg-slate-800 rounded-full border border-white/10 flex items-center justify-center hover:scale-110 hover:border-blue-500/50 hover:shadow-lg hover:shadow-blue-500/30 transition-all z-10"
+        className="absolute top-6 -right-3 w-6 h-6 bg-gray-900 rounded-full border border-white/10 flex items-center justify-center hover:scale-110 hover:border-white/30 hover:shadow-lg hover:shadow-white/10 transition-all z-10"
       >
         {isCollapsed ? (
           <ChevronRight className="w-4 h-4 text-white/70" />
@@ -177,8 +233,8 @@ export function Sidebar() {
         style={{ borderColor: 'rgba(255, 255, 255, 0.06)' }}
       >
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-full border-2 border-blue-500/50 shadow-lg shadow-blue-500/30 bg-gradient-to-br from-blue-600 to-purple-600 flex items-center justify-center">
-            <span className="text-white font-semibold text-sm">H</span>
+          <div className={`w-10 h-10 rounded-full border-2 shadow-lg bg-gradient-to-br ${tierColors[tier]} flex items-center justify-center`}>
+            <span className="text-white font-semibold text-sm">{user?.fullName?.charAt(0) || 'U'}</span>
           </div>
           <AnimatePresence>
             {!isCollapsed && (
@@ -188,8 +244,11 @@ export function Sidebar() {
                 exit={{ opacity: 0, x: -10 }}
                 className="flex-1 min-w-0"
               >
-                <p className="text-sm font-semibold text-white truncate">Hylmii</p>
-                <p className="text-xs text-white/50">Pro Member</p>
+                <p className="text-sm font-semibold text-white truncate">{user?.fullName || 'User'}</p>
+                <div className="flex items-center gap-1">
+                  {tier !== 'free' && <Crown className="w-3 h-3 text-white" />}
+                  <p className="text-xs text-white/50 capitalize">{tierNames[tier]}</p>
+                </div>
               </motion.div>
             )}
           </AnimatePresence>
@@ -214,6 +273,41 @@ function NavMenuItem({
   onClick: () => void;
 }) {
   const Icon = item.icon;
+  const { features } = useSubscription();
+  
+  const isLocked = item.requiresFeature && !features[item.requiresFeature];
+  
+  if (isLocked) {
+    return (
+      <div>
+        <motion.div
+          className={`
+            relative flex items-center gap-3 px-4 py-2.5 mx-2 rounded-lg cursor-not-allowed opacity-50
+            text-white/40
+          `}
+        >
+          <Lock className="w-5 h-5" strokeWidth={2} />
+          
+          <AnimatePresence>
+            {!isCollapsed && (
+              <motion.span
+                initial={{ opacity: 0, x: -10 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -10 }}
+                className="text-sm font-medium flex-1"
+              >
+                {item.label}
+              </motion.span>
+            )}
+          </AnimatePresence>
+
+          {!isCollapsed && (
+            <Crown className="w-4 h-4 text-white" />
+          )}
+        </motion.div>
+      </div>
+    );
+  }
   
   return (
     <Link href={item.href} onClick={onClick}>
@@ -222,11 +316,11 @@ function NavMenuItem({
         className={`
           relative flex items-center gap-3 px-4 py-2.5 mx-2 rounded-lg transition-all cursor-pointer
           ${isActive 
-            ? 'bg-gradient-to-r from-blue-500/15 to-transparent border-l-3 border-blue-500 text-white font-semibold' 
-            : 'text-white/60 hover:bg-white/5 hover:text-white/90'
+            ? 'bg-gray-800 border-l-3 border-white text-white font-semibold' 
+            : 'text-white/60 hover:bg-gray-800 hover:text-white/90'
           }
         `}
-        style={isActive ? { borderLeftWidth: '3px', borderLeftColor: '#3b82f6' } : {}}
+        style={isActive ? { borderLeftWidth: '3px', borderLeftColor: '#ffffff' } : {}}
       >
         <motion.div
           whileHover={{ scale: 1.1, rotate: 5 }}
@@ -255,8 +349,8 @@ function NavMenuItem({
             className={`
               px-2 py-0.5 rounded-full text-xs font-bold
               ${item.badgeColor === 'red' 
-                ? 'bg-gradient-to-r from-red-500 to-red-600 text-white shadow-lg shadow-red-500/30' 
-                : 'bg-gradient-to-r from-blue-500 to-blue-600 text-white shadow-lg shadow-blue-500/30'
+                ? 'bg-gray-700 text-white shadow-lg shadow-black/30' 
+                : 'bg-gray-600 text-white shadow-lg shadow-black/30'
               }
             `}
           >

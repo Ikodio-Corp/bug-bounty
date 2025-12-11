@@ -99,7 +99,7 @@ export default function DAOPage() {
               <SimpleCardTitle className="text-lg">Your Voting Power</SimpleCardTitle>
             </SimpleCardHeader>
             <SimpleCardContent>
-              <div className="text-4xl font-bold text-purple-400">1,250</div>
+              <div className="text-4xl font-bold text-gray-400">1,250</div>
               <p className="text-slate-400 text-sm mt-2">Based on reputation score</p>
             </SimpleCardContent>
           </SimpleCard>
@@ -213,21 +213,21 @@ export default function DAOPage() {
           <h2 className="text-2xl font-bold text-white mb-4">How DAO Governance Works</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div>
-              <div className="text-4xl mb-3">📝</div>
+              <div className="text-4xl mb-3"></div>
               <h3 className="text-xl font-semibold text-white mb-2">1. Create Proposal</h3>
               <p className="text-slate-400">
                 Any member with 500+ reputation can create proposals for platform improvements.
               </p>
             </div>
             <div>
-              <div className="text-4xl mb-3">🗳️</div>
+              <div className="text-4xl mb-3"></div>
               <h3 className="text-xl font-semibold text-white mb-2">2. Community Vote</h3>
               <p className="text-slate-400">
                 Members vote using their reputation-based voting power during the 7-day period.
               </p>
             </div>
             <div>
-              <div className="text-4xl mb-3">✅</div>
+              <div className="text-4xl mb-3">[OK]</div>
               <h3 className="text-xl font-semibold text-white mb-2">3. Execute Decision</h3>
               <p className="text-slate-400">
                 Proposals with 60%+ approval are automatically implemented by smart contracts.

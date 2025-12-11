@@ -8,7 +8,7 @@ import json
 
 from core.database import get_db
 from core.websocket_manager import manager
-from middleware.auth import decode_token
+from core.security import Security
 
 router = APIRouter()
 
@@ -21,7 +21,7 @@ async def websocket_endpoint(
 ):
     """Main WebSocket endpoint"""
     try:
-        payload = decode_token(token)
+        payload = Security.decode_access_token(token)
         user_id = payload.get("sub")
         
         if not user_id:

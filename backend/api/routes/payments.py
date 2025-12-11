@@ -1,519 +1,269 @@
 """
-Payment & Subscription Routes
-Stripe integration for payments and subscriptions
+Payment API Routes - Midtrans Integration
 """
-from fastapi import APIRouter, HTTPException, Depends, Request, Body
+
+from fastapi import APIRouter, Depends, HTTPException, Request
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy import select
 from pydantic import BaseModel
-from typing import Optional
+from datetime import datetime
+import json
 
-from core.database import get_db
-from core.security import get_current_user
-from services.payment_service import PaymentProcessor, SubscriptionManager
-from models.user import User
-import stripe
+from core.database import get_async_db
+from core.security import Security
+from models.user import User, SubscriptionTier
+from integrations.midtrans_client import midtrans_client
 
-router = APIRouter(prefix="/payments", tags=["Payments & Subscriptions"])
-
-payment_processor = PaymentProcessor()
-subscription_manager = SubscriptionManager()
+router = APIRouter()
+security = Security()
 
 
-class CreateSubscriptionRequest(BaseModel):
-    """Request model for creating subscription"""
+class PaymentRequest(BaseModel):
     tier: str
-    payment_method_id: str
-
-
-class UpdateSubscriptionRequest(BaseModel):
-    """Request model for updating subscription"""
-    new_tier: str
-
-
-class CreatePaymentIntentRequest(BaseModel):
-    """Request model for creating payment intent"""
-    amount: int
-    currency: str = "idr"
-    description: Optional[str] = None
-
-
-@router.post("/create-customer")
-async def create_customer(
-    current_user: User = Depends(get_current_user),
-    db: AsyncSession = Depends(get_db)
-):
-    """
-    Create Stripe customer for user
+    billing_cycle: str = "monthly"
     
-    Args:
-        current_user: Authenticated user
-        db: Database session
-        
-    Returns:
-        dict: Customer information
-    """
-    try:
-        if current_user.stripe_customer_id:
-            return {
-                "message": "Customer already exists",
-                "customer_id": current_user.stripe_customer_id
-            }
-        
-        customer = await payment_processor.create_customer(
-            email=current_user.email,
-            name=current_user.full_name or current_user.username,
-            metadata={"user_id": str(current_user.id)}
-        )
-        
-        # Save customer ID to user
-        current_user.stripe_customer_id = customer["id"]
-        await db.commit()
-        
-        return {
-            "message": "Customer created successfully",
-            "customer_id": customer["id"]
-        }
-        
-    except Exception as e:
-        raise HTTPException(
-            status_code=500,
-            detail=f"Failed to create customer: {str(e)}"
-        )
+
+class PaymentResponse(BaseModel):
+    payment_url: str
+    invoice_number: str
+    amount: float
+    status: str
 
 
-@router.post("/subscriptions/create")
-async def create_subscription(
-    request: CreateSubscriptionRequest,
-    current_user: User = Depends(get_current_user),
-    db: AsyncSession = Depends(get_db)
-):
-    """
-    Create new subscription for user
-    
-    Args:
-        request: Subscription creation request
-        current_user: Authenticated user
-        db: Database session
-        
-    Returns:
-        dict: Subscription details
-    """
-    try:
-        # Ensure customer exists
-        if not current_user.stripe_customer_id:
-            customer = await payment_processor.create_customer(
-                email=current_user.email,
-                name=current_user.full_name or current_user.username,
-                metadata={"user_id": str(current_user.id)}
-            )
-            current_user.stripe_customer_id = customer["id"]
-            await db.commit()
-        
-        # Create subscription
-        subscription = await payment_processor.create_subscription(
-            customer_id=current_user.stripe_customer_id,
-            tier=request.tier,
-            payment_method_id=request.payment_method_id
-        )
-        
-        # Update user subscription info
-        current_user.subscription_tier = request.tier
-        current_user.stripe_subscription_id = subscription["id"]
-        await db.commit()
-        
-        return {
-            "message": "Subscription created successfully",
-            "subscription_id": subscription["id"],
-            "tier": request.tier,
-            "status": subscription["status"],
-            "current_period_end": subscription["current_period_end"]
-        }
-        
-    except Exception as e:
-        raise HTTPException(
-            status_code=500,
-            detail=f"Failed to create subscription: {str(e)}"
-        )
-
-
-@router.post("/subscriptions/cancel")
-async def cancel_subscription(
-    current_user: User = Depends(get_current_user),
-    db: AsyncSession = Depends(get_db)
-):
-    """
-    Cancel user's subscription
-    
-    Args:
-        current_user: Authenticated user
-        db: Database session
-        
-    Returns:
-        dict: Cancellation confirmation
-    """
-    try:
-        if not current_user.stripe_subscription_id:
-            raise HTTPException(
-                status_code=400,
-                detail="No active subscription found"
-            )
-        
-        subscription = await payment_processor.cancel_subscription(
-            subscription_id=current_user.stripe_subscription_id
-        )
-        
-        # Update user subscription info
-        current_user.subscription_tier = "free"
-        current_user.stripe_subscription_id = None
-        await db.commit()
-        
-        return {
-            "message": "Subscription cancelled successfully",
-            "cancel_at_period_end": subscription["cancel_at_period_end"],
-            "current_period_end": subscription["current_period_end"]
-        }
-        
-    except Exception as e:
-        raise HTTPException(
-            status_code=500,
-            detail=f"Failed to cancel subscription: {str(e)}"
-        )
-
-
-@router.post("/subscriptions/update")
-async def update_subscription(
-    request: UpdateSubscriptionRequest,
-    current_user: User = Depends(get_current_user),
-    db: AsyncSession = Depends(get_db)
-):
-    """
-    Update user's subscription tier
-    
-    Args:
-        request: Subscription update request
-        current_user: Authenticated user
-        db: Database session
-        
-    Returns:
-        dict: Updated subscription details
-    """
-    try:
-        if not current_user.stripe_subscription_id:
-            raise HTTPException(
-                status_code=400,
-                detail="No active subscription found"
-            )
-        
-        # Cancel old subscription
-        await payment_processor.cancel_subscription(
-            subscription_id=current_user.stripe_subscription_id
-        )
-        
-        # Create new subscription with new tier
-        subscription = await payment_processor.create_subscription(
-            customer_id=current_user.stripe_customer_id,
-            tier=request.new_tier
-        )
-        
-        # Update user subscription info
-        current_user.subscription_tier = request.new_tier
-        current_user.stripe_subscription_id = subscription["id"]
-        await db.commit()
-        
-        return {
-            "message": "Subscription updated successfully",
-            "new_tier": request.new_tier,
-            "subscription_id": subscription["id"],
-            "status": subscription["status"]
-        }
-        
-    except Exception as e:
-        raise HTTPException(
-            status_code=500,
-            detail=f"Failed to update subscription: {str(e)}"
-        )
-
-
-@router.get("/subscriptions/status")
-async def get_subscription_status(
-    current_user: User = Depends(get_current_user)
-):
-    """
-    Get current subscription status
-    
-    Args:
-        current_user: Authenticated user
-        
-    Returns:
-        dict: Subscription status and features
-    """
-    tier = current_user.subscription_tier or "free"
-    features = subscription_manager.get_tier_features(tier)
-    
-    return {
-        "tier": tier,
-        "subscription_id": current_user.stripe_subscription_id,
-        "features": features,
-        "limits": {
-            "scans_per_month": features["scans_per_month"],
-            "ai_scans": features["ai_scans"],
-            "team_members": features["team_members"],
-            "api_access": features["api_access"]
-        }
+# Pricing in IDR
+PRICING = {
+    "professional": {
+        "monthly": 299000,
+        "yearly": 2990000
+    },
+    "business": {
+        "monthly": 999000,
+        "yearly": 9990000
+    },
+    "enterprise": {
+        "monthly": 4990000,
+        "yearly": 49900000
+    },
+    "government": {
+        "monthly": 9990000,
+        "yearly": 99900000
     }
+}
 
 
-@router.post("/payment-intent")
-async def create_payment_intent(
-    request: CreatePaymentIntentRequest,
-    current_user: User = Depends(get_current_user)
-):
-    """
-    Create payment intent for one-time payment
-    
-    Args:
-        request: Payment intent request
-        current_user: Authenticated user
-        
-    Returns:
-        dict: Payment intent client secret
-    """
-    try:
-        if not current_user.stripe_customer_id:
-            raise HTTPException(
-                status_code=400,
-                detail="Customer not created. Call /create-customer first"
-            )
-        
-        payment_intent = await payment_processor.create_payment_intent(
-            amount=request.amount,
-            currency=request.currency,
-            customer_id=current_user.stripe_customer_id,
-            description=request.description
-        )
-        
-        return {
-            "client_secret": payment_intent["client_secret"],
-            "payment_intent_id": payment_intent["id"],
-            "amount": request.amount,
-            "currency": request.currency
-        }
-        
-    except Exception as e:
-        raise HTTPException(
-            status_code=500,
-            detail=f"Failed to create payment intent: {str(e)}"
-        )
-
-
-@router.post("/checkout/session")
-async def create_checkout_session(
-    tier: str = Body(...),
-    success_url: str = Body(...),
-    cancel_url: str = Body(...),
-    current_user: User = Depends(get_current_user)
-):
-    """
-    Create Stripe Checkout session for subscription
-    
-    Args:
-        tier: Subscription tier
-        success_url: URL to redirect on success
-        cancel_url: URL to redirect on cancel
-        current_user: Authenticated user
-        
-    Returns:
-        dict: Checkout session URL
-    """
-    try:
-        if not current_user.stripe_customer_id:
-            customer = await payment_processor.create_customer(
-                email=current_user.email,
-                name=current_user.full_name or current_user.username,
-                metadata={"user_id": str(current_user.id)}
-            )
-            current_user.stripe_customer_id = customer["id"]
-        
-        session = await payment_processor.create_checkout_session(
-            customer_id=current_user.stripe_customer_id,
-            tier=tier,
-            success_url=success_url,
-            cancel_url=cancel_url
-        )
-        
-        return {
-            "session_id": session["id"],
-            "url": session["url"]
-        }
-        
-    except Exception as e:
-        raise HTTPException(
-            status_code=500,
-            detail=f"Failed to create checkout session: {str(e)}"
-        )
-
-
-@router.post("/billing-portal")
-async def create_billing_portal_session(
-    return_url: str = Body(...),
-    current_user: User = Depends(get_current_user)
-):
-    """
-    Create Stripe billing portal session
-    
-    Args:
-        return_url: URL to return to after portal session
-        current_user: Authenticated user
-        
-    Returns:
-        dict: Billing portal URL
-    """
-    try:
-        if not current_user.stripe_customer_id:
-            raise HTTPException(
-                status_code=400,
-                detail="No customer found"
-            )
-        
-        session = await payment_processor.create_billing_portal_session(
-            customer_id=current_user.stripe_customer_id,
-            return_url=return_url
-        )
-        
-        return {
-            "url": session["url"]
-        }
-        
-    except Exception as e:
-        raise HTTPException(
-            status_code=500,
-            detail=f"Failed to create billing portal session: {str(e)}"
-        )
-
-
-@router.post("/webhook")
-async def stripe_webhook(
+@router.post("/create", response_model=PaymentResponse)
+async def create_payment(
+    payment_request: PaymentRequest,
     request: Request,
-    db: AsyncSession = Depends(get_db)
+    db: AsyncSession = Depends(get_async_db),
+    current_user: User = Depends(security.get_current_user)
 ):
-    """
-    Handle Stripe webhooks
+    """Create payment for subscription upgrade using Midtrans"""
+    if payment_request.tier not in PRICING:
+        raise HTTPException(status_code=400, detail=f"Invalid tier")
     
-    Args:
-        request: FastAPI request with webhook payload
-        db: Database session
-        
-    Returns:
-        dict: Success response
-    """
+    amount = PRICING[payment_request.tier][payment_request.billing_cycle]
+    order_id = f"ORDER-{current_user.id}-{int(datetime.utcnow().timestamp())}"
+    
+    # Map tier to item name
+    tier_names = {
+        "free": "IKODIO Free Plan",
+        "professional": "IKODIO Professional Plan",
+        "business": "IKODIO Business Plan",
+        "enterprise": "IKODIO Enterprise Plan"
+    }
+    
+    item_name = f"{tier_names.get(payment_request.tier, 'IKODIO')} - {payment_request.billing_cycle.title()}"
+    
+    result = midtrans_client.create_payment(
+        order_id=order_id,
+        amount=amount,
+        customer_name=current_user.full_name or current_user.username,
+        customer_email=current_user.email,
+        item_name=item_name,
+        item_quantity=1
+    )
+    
+    if "error" in result:
+        raise HTTPException(status_code=500, detail=f"Payment creation failed: {result['error']}")
+    
+    return PaymentResponse(
+        payment_url=result.get("redirect_url", ""),
+        invoice_number=order_id,
+        amount=amount,
+        status="pending"
+    )
+
+
+@router.get("/status/{order_id}")
+async def get_payment_status(
+    order_id: str,
+    db: AsyncSession = Depends(get_async_db),
+    current_user: User = Depends(security.get_current_user)
+):
+    """Check payment status from Midtrans"""
+    result = midtrans_client.check_transaction_status(order_id)
+    if "error" in result:
+        raise HTTPException(status_code=500, detail=f"Failed to check status")
+    return result
+
+
+@router.post("/midtrans/notification")
+async def midtrans_notification(request: Request, db: AsyncSession = Depends(get_async_db)):
+    """Webhook notification from Midtrans"""
     try:
-        payload = await request.body()
-        sig_header = request.headers.get("stripe-signature")
+        data = await request.json()
         
-        # Verify webhook signature
-        is_valid = await payment_processor.verify_webhook_signature(
-            payload=payload,
-            signature=sig_header
-        )
+        # Extract transaction details
+        order_id = data.get("order_id")
+        transaction_status = data.get("transaction_status")
+        fraud_status = data.get("fraud_status")
+        signature_key = data.get("signature_key")
         
-        if not is_valid:
-            raise HTTPException(status_code=400, detail="Invalid signature")
+        # Verify signature
+        status_code = data.get("status_code")
+        gross_amount = data.get("gross_amount")
         
-        # Parse event
-        import json
-        event = json.loads(payload)
+        if not midtrans_client.verify_signature(order_id, status_code, gross_amount, signature_key):
+            raise HTTPException(status_code=401, detail="Invalid signature")
         
-        # Handle different event types
-        if event["type"] == "customer.subscription.created":
-            # Handle subscription created
-            subscription = event["data"]["object"]
-            customer_id = subscription["customer"]
-            
-            # Update user subscription status
-            from sqlalchemy import select
-            result = await db.execute(
-                select(User).where(User.stripe_customer_id == customer_id)
-            )
-            user = result.scalar_one_or_none()
-            
-            if user:
-                user.stripe_subscription_id = subscription["id"]
-                await db.commit()
+        # Extract user ID from order_id (ORDER-{user_id}-{timestamp})
+        try:
+            user_id = int(order_id.split('-')[1])
+        except (IndexError, ValueError):
+            raise HTTPException(status_code=400, detail="Invalid order format")
         
-        elif event["type"] == "customer.subscription.deleted":
-            # Handle subscription cancelled
-            subscription = event["data"]["object"]
-            customer_id = subscription["customer"]
-            
-            from sqlalchemy import select
-            result = await db.execute(
-                select(User).where(User.stripe_customer_id == customer_id)
-            )
-            user = result.scalar_one_or_none()
-            
-            if user:
-                user.subscription_tier = "free"
-                user.stripe_subscription_id = None
-                await db.commit()
+        # Get user from database
+        result = await db.execute(select(User).where(User.id == user_id))
+        user = result.scalar_one_or_none()
         
-        elif event["type"] == "invoice.payment_succeeded":
-            # Handle successful payment
-            pass
+        if not user:
+            raise HTTPException(status_code=404, detail="User not found")
         
-        elif event["type"] == "invoice.payment_failed":
-            # Handle failed payment
-            pass
+        # Update subscription based on transaction status
+        if transaction_status == "capture" or transaction_status == "settlement":
+            if fraud_status == "accept" or fraud_status is None:
+                # Payment successful - upgrade subscription
+                amount = int(gross_amount)
+                tier_map = {
+                    299000: SubscriptionTier.PROFESSIONAL, 
+                    2990000: SubscriptionTier.PROFESSIONAL,
+                    799000: SubscriptionTier.BUSINESS, 
+                    7990000: SubscriptionTier.BUSINESS,
+                    1999000: SubscriptionTier.ENTERPRISE, 
+                    19990000: SubscriptionTier.ENTERPRISE,
+                }
+                
+                new_tier = tier_map.get(amount)
+                if new_tier:
+                    user.subscription_tier = new_tier
+                    user.is_premium = True
+                    await db.commit()
+                    
+                    return {"status": "success", "message": "Subscription upgraded"}
         
-        return {"status": "success"}
+        elif transaction_status == "cancel" or transaction_status == "deny" or transaction_status == "expire":
+            # Payment failed/cancelled
+            return {"status": "failed", "message": "Payment not successful"}
+        
+        elif transaction_status == "pending":
+            # Payment pending
+            return {"status": "pending", "message": "Payment pending"}
+        
+        return {"status": "received"}
         
     except Exception as e:
-        raise HTTPException(
-            status_code=400,
-            detail=f"Webhook error: {str(e)}"
-        )
+        raise HTTPException(status_code=500, detail=str(e))
 
 
-@router.get("/tiers")
-async def get_subscription_tiers():
-    """
-    Get available subscription tiers and pricing
-    
-    Returns:
-        dict: All subscription tiers with features and pricing
-    """
+@router.get("/pricing")
+async def get_pricing():
+    """Get pricing information"""
     return {
-        "tiers": subscription_manager.TIERS
-    }
-
-
-@router.get("/usage")
-async def get_usage_stats(
-    current_user: User = Depends(get_current_user)
-):
-    """
-    Get current usage statistics
-    
-    Args:
-        current_user: Authenticated user
-        
-    Returns:
-        dict: Usage statistics for current billing period
-    """
-    # TODO: Implement usage tracking
-    tier = current_user.subscription_tier or "free"
-    features = subscription_manager.get_tier_features(tier)
-    
-    return {
-        "tier": tier,
-        "limits": {
-            "scans_per_month": features["scans_per_month"]
-        },
-        "usage": {
-            "scans_used": 0,
-            "scans_remaining": features["scans_per_month"]
-        },
-        "billing_period": {
-            "start": None,
-            "end": None
+        "currency": "IDR",
+        "tiers": {
+            "professional": {
+                "name": "Professional",
+                "monthly": {
+                    "price": 299000,
+                    "price_formatted": "Rp 299.000",
+                    "features": ["50 scans/month", "20 auto-fixes", "5,000 API calls", "10GB storage"]
+                },
+                "yearly": {
+                    "price": 2990000,
+                    "price_formatted": "Rp 2.990.000",
+                    "save": 598000,
+                    "features": ["50 scans/month", "20 auto-fixes", "5,000 API calls", "10GB storage", "Save 2 months"]
+                }
+            },
+            "business": {
+                "name": "Business",
+                "monthly": {
+                    "price": 999000,
+                    "price_formatted": "Rp 999.000",
+                    "features": ["200 scans/month", "Unlimited auto-fixes", "25,000 API calls", "50GB storage"]
+                },
+                "yearly": {
+                    "price": 9990000,
+                    "price_formatted": "Rp 9.990.000",
+                    "save": 1998000,
+                    "features": ["200 scans/month", "Unlimited auto-fixes", "25,000 API calls", "50GB storage", "Save 2 months"]
+                }
+            },
+            "enterprise": {
+                "name": "Enterprise",
+                "monthly": {
+                    "price": 4990000,
+                    "price_formatted": "Rp 4.990.000",
+                    "features": ["Unlimited scans", "Unlimited auto-fixes", "Unlimited API", "500GB storage"]
+                },
+                "yearly": {
+                    "price": 49900000,
+                    "price_formatted": "Rp 49.900.000",
+                    "save": 9980000,
+                    "features": ["Unlimited scans", "Unlimited auto-fixes", "Unlimited API", "500GB storage", "Save 2 months"]
+                }
+            },
+            "government": {
+                "name": "Government",
+                "monthly": {
+                    "price": 9990000,
+                    "price_formatted": "Rp 9.990.000",
+                    "features": ["Unlimited everything", "1000GB storage", "On-premise", "Compliance"]
+                },
+                "yearly": {
+                    "price": 99900000,
+                    "price_formatted": "Rp 99.900.000",
+                    "save": 19980000,
+                    "features": ["Unlimited everything", "1000GB storage", "On-premise", "Compliance", "Save 2 months"]
+                }
+            }
         }
     }
+
+
+@router.post("/doku/token")
+async def doku_token_endpoint(request: Request):
+    """
+    Endpoint untuk menerima access token dari Doku
+    URL ini harus diisi di dashboard Doku sebagai Token URL
+    """
+    try:
+        body = await request.json()
+        
+        # Log token yang diterima
+        print(f"Received token from Doku: {body}")
+        
+        # Simpan token jika diperlukan (optional)
+        # Biasanya token ini digunakan untuk komunikasi B2B dengan Doku
+        
+        return {
+            "status": "success",
+            "message": "Token received"
+        }
+    except Exception as e:
+        print(f"Error receiving Doku token: {e}")
+        return {
+            "status": "error",
+            "message": str(e)
+        }

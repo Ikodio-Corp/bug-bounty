@@ -64,7 +64,7 @@ export default function AdminAnalyticsPage() {
             <select
               value={days}
               onChange={(e) => setDays(parseInt(e.target.value))}
-              className="px-4 py-2 bg-slate-700 border border-slate-600 rounded-lg text-white focus:ring-2 focus:ring-cyan-500 focus:border-transparent"
+              className="px-4 py-2 bg-slate-700 border border-slate-600 rounded-lg text-white focus:ring-2 focus:ring-white/50 focus:border-transparent"
             >
               <option value={7}>Last 7 days</option>
               <option value={30}>Last 30 days</option>
@@ -81,7 +81,7 @@ export default function AdminAnalyticsPage() {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
               <div className="bg-slate-800 rounded-xl p-6 border border-cyan-500/20">
                 <div className="flex items-center justify-between mb-4">
-                  <div className="text-3xl">👥</div>
+                  <div className="text-3xl"></div>
                   <div className="text-sm text-slate-400">New Users</div>
                 </div>
                 <div className="text-4xl font-bold text-white mb-2">
@@ -90,26 +90,26 @@ export default function AdminAnalyticsPage() {
                 <div className="text-sm text-cyan-400">{analytics.period}</div>
               </div>
 
-              <div className="bg-slate-800 rounded-xl p-6 border border-purple-500/20">
+              <div className="bg-slate-800 rounded-xl p-6 border border-white/20">
                 <div className="flex items-center justify-between mb-4">
-                  <div className="text-3xl">🐛</div>
+                  <div className="text-3xl"></div>
                   <div className="text-sm text-slate-400">New Bugs</div>
                 </div>
                 <div className="text-4xl font-bold text-white mb-2">
                   {analytics.new_bugs.toLocaleString()}
                 </div>
-                <div className="text-sm text-purple-400">{analytics.period}</div>
+                <div className="text-sm text-gray-400">{analytics.period}</div>
               </div>
 
-              <div className="bg-slate-800 rounded-xl p-6 border border-blue-500/20">
+              <div className="bg-slate-800 rounded-xl p-6 border border-white/20">
                 <div className="flex items-center justify-between mb-4">
-                  <div className="text-3xl">🔍</div>
+                  <div className="text-3xl"></div>
                   <div className="text-sm text-slate-400">New Scans</div>
                 </div>
                 <div className="text-4xl font-bold text-white mb-2">
                   {analytics.new_scans.toLocaleString()}
                 </div>
-                <div className="text-sm text-blue-400">{analytics.period}</div>
+                <div className="text-sm text-gray-400">{analytics.period}</div>
               </div>
             </div>
 
@@ -135,10 +135,10 @@ export default function AdminAnalyticsPage() {
                           <div className="text-cyan-400 font-semibold">{stat.users}</div>
                         </td>
                         <td className="px-6 py-4">
-                          <div className="text-purple-400 font-semibold">{stat.bugs}</div>
+                          <div className="text-gray-400 font-semibold">{stat.bugs}</div>
                         </td>
                         <td className="px-6 py-4">
-                          <div className="text-blue-400 font-semibold">{stat.scans}</div>
+                          <div className="text-gray-400 font-semibold">{stat.scans}</div>
                         </td>
                       </tr>
                     ))}

@@ -16,7 +16,8 @@ import secrets
 from urllib.parse import urlencode, parse_qs
 
 from core.database import get_db
-from core.security import create_access_token, get_current_user
+from core import security
+from core.security import get_current_user
 from models.user import User
 from pydantic import BaseModel, HttpUrl
 
@@ -360,7 +361,7 @@ async def assertion_consumer_service(
     if in_response_to:
         del SAML_PENDING_REQUESTS[in_response_to]
     
-    access_token = create_access_token(data={"sub": user.email})
+    access_token = security.create_access_token(data={"sub": user.email})
     
     response_html = f"""
     <!DOCTYPE html>

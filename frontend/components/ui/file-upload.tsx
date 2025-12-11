@@ -155,17 +155,17 @@ export function FileUpload({
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'success': return 'text-green-500';
-      case 'error': return 'text-red-500';
-      case 'uploading': return 'text-blue-500';
+      case 'success': return 'text-white';
+      case 'error': return 'text-gray-300';
+      case 'uploading': return 'text-gray-400';
       default: return 'text-gray-400';
     }
   };
 
   const getStatusIcon = (status: string) => {
     switch (status) {
-      case 'success': return '✓';
-      case 'error': return '✗';
+      case 'success': return 'OK';
+      case 'error': return 'ERR';
       case 'uploading': return '↻';
       default: return '○';
     }
@@ -181,7 +181,7 @@ export function FileUpload({
         onDrop={handleDrop}
         className={`border-2 border-dashed rounded-lg p-8 text-center transition-colors ${
           dragActive
-            ? 'border-blue-500 bg-blue-500/10'
+            ? 'border-white bg-white/10'
             : 'border-slate-700 bg-slate-900'
         }`}
       >
@@ -257,9 +257,9 @@ export function FileUpload({
                   </span>
                   <button
                     onClick={() => removeFile(index)}
-                    className="text-gray-400 hover:text-red-500 transition-colors"
+                    className="text-gray-400 hover:text-white transition-colors"
                   >
-                    ✕
+                    X
                   </button>
                 </div>
               </div>
@@ -267,12 +267,12 @@ export function FileUpload({
               {uploadFile.status === 'uploading' && (
                 <div className="mb-2">
                   <div className="flex justify-between text-sm mb-1">
-                    <span className="text-blue-400">Uploading...</span>
+                    <span className="text-white">Uploading...</span>
                     <span className="text-gray-400">{uploadFile.progress}%</span>
                   </div>
                   <div className="w-full bg-gray-700 rounded-full h-2">
                     <div
-                      className="bg-blue-500 h-2 rounded-full transition-all"
+                      className="bg-white h-2 rounded-full transition-all"
                       style={{ width: `${uploadFile.progress}%` }}
                     ></div>
                   </div>
@@ -280,7 +280,7 @@ export function FileUpload({
               )}
 
               {uploadFile.status === 'error' && uploadFile.error && (
-                <p className="text-sm text-red-500">{uploadFile.error}</p>
+                <p className="text-sm text-gray-300">{uploadFile.error}</p>
               )}
 
               {uploadFile.status === 'pending' && (
@@ -294,7 +294,7 @@ export function FileUpload({
               )}
 
               {uploadFile.status === 'success' && (
-                <p className="text-sm text-green-500">Upload complete</p>
+                <p className="text-sm text-white">Upload complete</p>
               )}
             </div>
           ))}

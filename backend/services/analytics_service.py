@@ -8,7 +8,7 @@ from sqlalchemy import func, and_, extract
 from datetime import datetime, timedelta
 
 from models.bug import Bug
-from models.community import Scan
+# from models.community import Scan  # Model doesn't exist
 from models.user import User
 from core.redis import get_redis
 

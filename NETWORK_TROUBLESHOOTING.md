@@ -1,17 +1,17 @@
 # 🔧 Network Troubleshooting - IKODIO BugBounty
 
-## ❌ Masalah: ERR_CONNECTION_TIMED_OUT
+##  Masalah: ERR_CONNECTION_TIMED_OUT
 
 Aplikasi deployed di server **192.168.100.6** tapi tidak bisa diakses dari Mac/browser.
 
-## ✅ Status Deployment
+##  Status Deployment
 
 | Component | Status | Port | Accessible |
 |-----------|--------|------|------------|
-| Backend | ✅ Running | 8001 | ✅ From server itself |
-| Frontend | ✅ Running | 3003 | ✅ From server itself |
-| Firewall | ✅ Configured | 8001, 3003 | ✅ Rules added |
-| SSH | ✅ Working | 7420 | ✅ From Mac |
+| Backend |  Running | 8001 |  From server itself |
+| Frontend |  Running | 3003 |  From server itself |
+| Firewall |  Configured | 8001, 3003 |  Rules added |
+| SSH |  Working | 7420 |  From Mac |
 
 ## 🔍 Root Cause
 
@@ -21,28 +21,28 @@ Aplikasi deployed di server **192.168.100.6** tapi tidak bisa diakses dari Mac/b
 ```bash
 # Dari server sendiri:
 curl http://192.168.100.6:8001/health
-# ✅ {"status":"healthy","database":"connected","redis":"connected"}
+#  {"status":"healthy","database":"connected","redis":"connected"}
 
 curl http://192.168.100.6:3003
-# ✅ HTTP/1.1 200 OK
+#  HTTP/1.1 200 OK
 ```
 
 **Test dari Mac timeout:**
 ```bash
 # Dari Mac:
 curl http://192.168.100.6:8001/health
-# ❌ Connection timeout
+#  Connection timeout
 ```
 
 ## 💡 Solusi
 
-### Option 1: Akses dari Komputer di Network yang Sama ⭐ RECOMMENDED
+### Option 1: Akses dari Komputer di Network yang Sama �� RECOMMENDED
 
 Gunakan komputer/device yang terhubung ke **network 192.168.100.x**:
 
 ```
-http://192.168.100.6:3003  ← Frontend
-http://192.168.100.6:8001  ← Backend
+http://192.168.100.6:3003  �� Frontend
+http://192.168.100.6:8001  �� Backend
 ```
 
 ### Option 2: SSH Tunnel (Untuk Development)
@@ -55,8 +55,8 @@ ssh -p 7420 -L 3003:localhost:3003 -L 8001:localhost:8001 ikodioxlapo@192.168.10
 # Password: Mi252512@
 
 # Lalu akses via localhost:
-http://localhost:3003  ← Frontend via tunnel
-http://localhost:8001  ← Backend via tunnel
+http://localhost:3003  �� Frontend via tunnel
+http://localhost:8001  �� Backend via tunnel
 ```
 
 ### Option 3: VPN ke Network Server
@@ -87,7 +87,7 @@ Lalu akses via: `http://bugbounty.ikodio.com`
 
 ## 🧪 Verification Tests
 
-### Test dari Server (Always Works) ✅
+### Test dari Server (Always Works) 
 
 ```bash
 ssh -p 7420 ikodioxlapo@192.168.100.6
@@ -192,5 +192,5 @@ chmod +x connect-via-tunnel.sh
 
 ---
 
-**Status:** ✅ Server running, network access limited to local network
+**Status:**  Server running, network access limited to local network
 **Last Updated:** November 20, 2025

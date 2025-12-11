@@ -1,0 +1,510 @@
+"""
+SAML 2.0 Authentication Routes
+Enterprise SSO integration with support for multiple Identity Providers
+"""
+from fastapi import APIRouter, Depends, HTTPException, Request, Response
+from fastapi.responses import RedirectResponse, HTMLResponse
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy import select, update
+from typing import Optional, Dict, Any
+import xml.etree.ElementTree as ET
+from datetime import datetime, timedelta
+import base64
+import zlib
+import hashlib
+import secrets
+from urllib.parse import urlencode, parse_qs
+
+from core.database import get_db
+from core import security, get_current_user
+from models.user import User
+from pydantic import BaseModel, HttpUrl
+
+
+router = APIRouter(prefix="/saml", tags=["SAML Authentication"])
+
+
+class SAMLIdPConfig(BaseModel):
+    """SAML Identity Provider Configuration"""
+    name: str
+    entity_id: str
+    sso_url: HttpUrl
+    slo_url: Optional[HttpUrl] = None
+    x509_cert: str
+    attribute_mapping: Dict[str, str] = {
+        "email": "urn:oid:0.9.2342.19200300.100.1.3",
+        "first_name": "urn:oid:2.5.4.42",
+        "last_name": "urn:oid:2.5.4.4",
+        "display_name": "urn:oid:2.16.840.1.113730.3.1.241"
+    }
+
+
+class SAMLSPConfig(BaseModel):
+    """SAML Service Provider Configuration"""
+    entity_id: str = "https://ikodio.com/saml"
+    acs_url: HttpUrl = "https://ikodio.com/api/saml/acs"
+    slo_url: HttpUrl = "https://ikodio.com/api/saml/slo"
+    name_id_format: str = "urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress"
+    want_assertions_signed: bool = True
+    want_message_signed: bool = True
+
+
+SAML_IDP_CONFIGS = {}
+SAML_PENDING_REQUESTS = {}
+
+
+class SAMLService:
+    """SAML 2.0 Service"""
+    
+    @staticmethod
+    def generate_saml_request(idp_config: SAMLIdPConfig, sp_config: SAMLSPConfig, relay_state: Optional[str] = None) -> str:
+        """Generate SAML AuthnRequest"""
+        request_id = f"_id_{secrets.token_urlsafe(32)}"
+        issue_instant = datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%SZ")
+        
+        saml_request = f"""<?xml version="1.0" encoding="UTF-8"?>
+<samlp:AuthnRequest xmlns:samlp="urn:oasis:names:tc:SAML:2.0:protocol"
+                    xmlns:saml="urn:oasis:names:tc:SAML:2.0:assertion"
+                    ID="{request_id}"
+                    Version="2.0"
+                    IssueInstant="{issue_instant}"
+                    Destination="{idp_config.sso_url}"
+                    ProtocolBinding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST"
+                    AssertionConsumerServiceURL="{sp_config.acs_url}">
+    <saml:Issuer>{sp_config.entity_id}</saml:Issuer>
+    <samlp:NameIDPolicy Format="{sp_config.name_id_format}" AllowCreate="true"/>
+</samlp:AuthnRequest>"""
+        
+        SAML_PENDING_REQUESTS[request_id] = {
+            "created_at": datetime.utcnow(),
+            "relay_state": relay_state
+        }
+        
+        return saml_request, request_id
+    
+    @staticmethod
+    def encode_saml_request(saml_request: str) -> str:
+        """Encode SAML request for HTTP-Redirect binding"""
+        compressed = zlib.compress(saml_request.encode('utf-8'))[2:-4]
+        encoded = base64.b64encode(compressed).decode('utf-8')
+        return encoded
+    
+    @staticmethod
+    def decode_saml_response(saml_response: str) -> ET.Element:
+        """Decode and parse SAML response"""
+        decoded = base64.b64decode(saml_response)
+        root = ET.fromstring(decoded)
+        return root
+    
+    @staticmethod
+    def validate_saml_response(response_xml: ET.Element, idp_config: SAMLIdPConfig) -> Dict[str, Any]:
+        """Validate SAML response and extract attributes"""
+        namespaces = {
+            'samlp': 'urn:oasis:names:tc:SAML:2.0:protocol',
+            'saml': 'urn:oasis:names:tc:SAML:2.0:assertion'
+        }
+        
+        status = response_xml.find('.//samlp:StatusCode', namespaces)
+        if status is None or status.get('Value') != 'urn:oasis:names:tc:SAML:2.0:status:Success':
+            raise HTTPException(status_code=400, detail="SAML authentication failed")
+        
+        assertion = response_xml.find('.//saml:Assertion', namespaces)
+        if assertion is None:
+            raise HTTPException(status_code=400, detail="No assertion found in SAML response")
+        
+        conditions = assertion.find('.//saml:Conditions', namespaces)
+        if conditions is not None:
+            not_before = conditions.get('NotBefore')
+            not_on_or_after = conditions.get('NotOnOrAfter')
+            
+            now = datetime.utcnow()
+            if not_before:
+                not_before_dt = datetime.fromisoformat(not_before.replace('Z', '+00:00'))
+                if now < not_before_dt:
+                    raise HTTPException(status_code=400, detail="Assertion not yet valid")
+            
+            if not_on_or_after:
+                not_on_or_after_dt = datetime.fromisoformat(not_on_or_after.replace('Z', '+00:00'))
+                if now >= not_on_or_after_dt:
+                    raise HTTPException(status_code=400, detail="Assertion expired")
+        
+        name_id = assertion.find('.//saml:NameID', namespaces)
+        if name_id is None:
+            raise HTTPException(status_code=400, detail="No NameID found in assertion")
+        
+        attributes = {}
+        attribute_statement = assertion.find('.//saml:AttributeStatement', namespaces)
+        if attribute_statement is not None:
+            for attr in attribute_statement.findall('.//saml:Attribute', namespaces):
+                attr_name = attr.get('Name')
+                attr_value_elem = attr.find('.//saml:AttributeValue', namespaces)
+                if attr_value_elem is not None:
+                    attributes[attr_name] = attr_value_elem.text
+        
+        user_data = {
+            "name_id": name_id.text,
+            "email": None,
+            "first_name": None,
+            "last_name": None,
+            "display_name": None
+        }
+        
+        for field, saml_attr in idp_config.attribute_mapping.items():
+            if saml_attr in attributes:
+                user_data[field] = attributes[saml_attr]
+        
+        if not user_data["email"]:
+            user_data["email"] = name_id.text
+        
+        return user_data
+    
+    @staticmethod
+    def generate_saml_metadata(sp_config: SAMLSPConfig, x509_cert: Optional[str] = None) -> str:
+        """Generate SAML Service Provider metadata"""
+        valid_until = (datetime.utcnow() + timedelta(days=365)).strftime("%Y-%m-%dT%H:%M:%SZ")
+        
+        metadata = f"""<?xml version="1.0" encoding="UTF-8"?>
+<md:EntityDescriptor xmlns:md="urn:oasis:names:tc:SAML:2.0:metadata"
+                     xmlns:ds="http://www.w3.org/2000/09/xmldsig#"
+                     entityID="{sp_config.entity_id}"
+                     validUntil="{valid_until}">
+    <md:SPSSODescriptor AuthnRequestsSigned="true"
+                        WantAssertionsSigned="{str(sp_config.want_assertions_signed).lower()}"
+                        protocolSupportEnumeration="urn:oasis:names:tc:SAML:2.0:protocol">
+        <md:NameIDFormat>{sp_config.name_id_format}</md:NameIDFormat>
+        <md:AssertionConsumerService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST"
+                                    Location="{sp_config.acs_url}"
+                                    index="1"
+                                    isDefault="true"/>
+        <md:SingleLogoutService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect"
+                               Location="{sp_config.slo_url}"/>
+    </md:SPSSODescriptor>
+</md:EntityDescriptor>"""
+        
+        return metadata
+
+
+@router.post("/idp/configure")
+async def configure_idp(
+    config: SAMLIdPConfig,
+    current_user: User = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db)
+):
+    """
+    Configure SAML Identity Provider
+    Requires admin privileges
+    """
+    if current_user.role != "admin":
+        raise HTTPException(status_code=403, detail="Admin access required")
+    
+    SAML_IDP_CONFIGS[config.name] = config
+    
+    result = await db.execute(
+        update(User)
+        .where(User.id == current_user.id)
+        .values(saml_idp_configs=SAML_IDP_CONFIGS)
+    )
+    await db.commit()
+    
+    return {
+        "message": "SAML IdP configured successfully",
+        "idp_name": config.name,
+        "entity_id": config.entity_id
+    }
+
+
+@router.get("/idp/list")
+async def list_idps(current_user: User = Depends(get_current_user)):
+    """List configured SAML Identity Providers"""
+    return {
+        "idps": [
+            {
+                "name": name,
+                "entity_id": config.entity_id,
+                "sso_url": str(config.sso_url)
+            }
+            for name, config in SAML_IDP_CONFIGS.items()
+        ]
+    }
+
+
+@router.delete("/idp/{idp_name}")
+async def remove_idp(
+    idp_name: str,
+    current_user: User = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db)
+):
+    """Remove SAML Identity Provider configuration"""
+    if current_user.role != "admin":
+        raise HTTPException(status_code=403, detail="Admin access required")
+    
+    if idp_name not in SAML_IDP_CONFIGS:
+        raise HTTPException(status_code=404, detail="IdP not found")
+    
+    del SAML_IDP_CONFIGS[idp_name]
+    
+    return {"message": f"IdP {idp_name} removed successfully"}
+
+
+@router.get("/login/{idp_name}")
+async def saml_login(idp_name: str, relay_state: Optional[str] = None):
+    """
+    Initiate SAML authentication with specified Identity Provider
+    """
+    if idp_name not in SAML_IDP_CONFIGS:
+        raise HTTPException(status_code=404, detail="IdP not configured")
+    
+    idp_config = SAML_IDP_CONFIGS[idp_name]
+    sp_config = SAMLSPConfig()
+    
+    saml_request, request_id = SAMLService.generate_saml_request(
+        idp_config, sp_config, relay_state
+    )
+    
+    encoded_request = SAMLService.encode_saml_request(saml_request)
+    
+    params = {
+        'SAMLRequest': encoded_request
+    }
+    if relay_state:
+        params['RelayState'] = relay_state
+    
+    redirect_url = f"{idp_config.sso_url}?{urlencode(params)}"
+    
+    return RedirectResponse(url=redirect_url, status_code=302)
+
+
+@router.post("/acs")
+async def assertion_consumer_service(
+    request: Request,
+    db: AsyncSession = Depends(get_db)
+):
+    """
+    Assertion Consumer Service - handles SAML response from IdP
+    """
+    form_data = await request.form()
+    saml_response = form_data.get('SAMLResponse')
+    relay_state = form_data.get('RelayState')
+    
+    if not saml_response:
+        raise HTTPException(status_code=400, detail="No SAML response provided")
+    
+    try:
+        response_xml = SAMLService.decode_saml_response(saml_response)
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=f"Invalid SAML response: {str(e)}")
+    
+    in_response_to = response_xml.get('InResponseTo')
+    if in_response_to and in_response_to not in SAML_PENDING_REQUESTS:
+        raise HTTPException(status_code=400, detail="Invalid or expired SAML request")
+    
+    idp_entity_id = None
+    issuer = response_xml.find('.//{urn:oasis:names:tc:SAML:2.0:assertion}Issuer')
+    if issuer is not None:
+        idp_entity_id = issuer.text
+    
+    idp_config = None
+    for config in SAML_IDP_CONFIGS.values():
+        if config.entity_id == idp_entity_id:
+            idp_config = config
+            break
+    
+    if not idp_config:
+        raise HTTPException(status_code=400, detail="Unknown Identity Provider")
+    
+    user_data = SAMLService.validate_saml_response(response_xml, idp_config)
+    
+    result = await db.execute(
+        select(User).where(User.email == user_data["email"])
+    )
+    user = result.scalar_one_or_none()
+    
+    if not user:
+        username = user_data["email"].split('@')[0]
+        counter = 1
+        original_username = username
+        
+        while True:
+            existing = await db.execute(
+                select(User).where(User.username == username)
+            )
+            if existing.scalar_one_or_none() is None:
+                break
+            username = f"{original_username}{counter}"
+            counter += 1
+        
+        user = User(
+            username=username,
+            email=user_data["email"],
+            full_name=user_data.get("display_name") or f"{user_data.get('first_name', '')} {user_data.get('last_name', '')}".strip(),
+            saml_name_id=user_data["name_id"],
+            saml_idp=idp_config.name,
+            email_verified=True,
+            is_active=True
+        )
+        db.add(user)
+        await db.commit()
+        await db.refresh(user)
+    else:
+        await db.execute(
+            update(User)
+            .where(User.id == user.id)
+            .values(
+                saml_name_id=user_data["name_id"],
+                saml_idp=idp_config.name,
+                last_login=datetime.utcnow()
+            )
+        )
+        await db.commit()
+    
+    if in_response_to:
+        del SAML_PENDING_REQUESTS[in_response_to]
+    
+    access_token = create_access_token(data={"sub": user.email})
+    
+    response_html = f"""
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <title>SAML Authentication</title>
+        <script>
+            localStorage.setItem('access_token', '{access_token}');
+            window.location.href = '{relay_state or "/dashboard"}';
+        </script>
+    </head>
+    <body>
+        <p>Authenticating...</p>
+    </body>
+    </html>
+    """
+    
+    return HTMLResponse(content=response_html)
+
+
+@router.get("/logout")
+async def saml_logout(
+    current_user: User = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db)
+):
+    """
+    Initiate SAML Single Logout
+    """
+    if not current_user.saml_idp or not current_user.saml_name_id:
+        raise HTTPException(status_code=400, detail="User not authenticated via SAML")
+    
+    idp_config = SAML_IDP_CONFIGS.get(current_user.saml_idp)
+    if not idp_config or not idp_config.slo_url:
+        return {"message": "Logged out locally (IdP does not support SLO)"}
+    
+    sp_config = SAMLSPConfig()
+    logout_request_id = f"_logout_{secrets.token_urlsafe(32)}"
+    issue_instant = datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%SZ")
+    
+    logout_request = f"""<?xml version="1.0" encoding="UTF-8"?>
+<samlp:LogoutRequest xmlns:samlp="urn:oasis:names:tc:SAML:2.0:protocol"
+                     xmlns:saml="urn:oasis:names:tc:SAML:2.0:assertion"
+                     ID="{logout_request_id}"
+                     Version="2.0"
+                     IssueInstant="{issue_instant}"
+                     Destination="{idp_config.slo_url}">
+    <saml:Issuer>{sp_config.entity_id}</saml:Issuer>
+    <saml:NameID Format="{sp_config.name_id_format}">{current_user.saml_name_id}</saml:NameID>
+</samlp:LogoutRequest>"""
+    
+    encoded_request = SAMLService.encode_saml_request(logout_request)
+    redirect_url = f"{idp_config.slo_url}?{urlencode({'SAMLRequest': encoded_request})}"
+    
+    return RedirectResponse(url=redirect_url, status_code=302)
+
+
+@router.post("/slo")
+async def single_logout_service(request: Request, db: AsyncSession = Depends(get_db)):
+    """
+    Single Logout Service - handles logout requests from IdP
+    """
+    form_data = await request.form()
+    saml_request = form_data.get('SAMLRequest')
+    
+    if not saml_request:
+        raise HTTPException(status_code=400, detail="No SAML logout request provided")
+    
+    decoded = base64.b64decode(saml_request)
+    logout_xml = ET.fromstring(decoded)
+    
+    name_id = logout_xml.find('.//{urn:oasis:names:tc:SAML:2.0:assertion}NameID')
+    if name_id is not None:
+        result = await db.execute(
+            select(User).where(User.saml_name_id == name_id.text)
+        )
+        user = result.scalar_one_or_none()
+        
+        if user:
+            await db.execute(
+                update(User)
+                .where(User.id == user.id)
+                .values(saml_name_id=None)
+            )
+            await db.commit()
+    
+    sp_config = SAMLSPConfig()
+    response_id = f"_response_{secrets.token_urlsafe(32)}"
+    issue_instant = datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%SZ")
+    in_response_to = logout_xml.get('ID')
+    
+    logout_response = f"""<?xml version="1.0" encoding="UTF-8"?>
+<samlp:LogoutResponse xmlns:samlp="urn:oasis:names:tc:SAML:2.0:protocol"
+                      xmlns:saml="urn:oasis:names:tc:SAML:2.0:assertion"
+                      ID="{response_id}"
+                      Version="2.0"
+                      IssueInstant="{issue_instant}"
+                      InResponseTo="{in_response_to}">
+    <saml:Issuer>{sp_config.entity_id}</saml:Issuer>
+    <samlp:Status>
+        <samlp:StatusCode Value="urn:oasis:names:tc:SAML:2.0:status:Success"/>
+    </samlp:Status>
+</samlp:LogoutResponse>"""
+    
+    encoded_response = base64.b64encode(logout_response.encode('utf-8')).decode('utf-8')
+    
+    return {"SAMLResponse": encoded_response}
+
+
+@router.get("/metadata")
+async def get_sp_metadata():
+    """
+    Get Service Provider SAML metadata
+    """
+    sp_config = SAMLSPConfig()
+    metadata = SAMLService.generate_saml_metadata(sp_config)
+    
+    return Response(content=metadata, media_type="application/xml")
+
+
+@router.get("/test-config/{idp_name}")
+async def test_saml_config(
+    idp_name: str,
+    current_user: User = Depends(get_current_user)
+):
+    """
+    Test SAML configuration for specified IdP
+    """
+    if current_user.role != "admin":
+        raise HTTPException(status_code=403, detail="Admin access required")
+    
+    if idp_name not in SAML_IDP_CONFIGS:
+        raise HTTPException(status_code=404, detail="IdP not configured")
+    
+    idp_config = SAML_IDP_CONFIGS[idp_name]
+    sp_config = SAMLSPConfig()
+    
+    saml_request, request_id = SAMLService.generate_saml_request(idp_config, sp_config)
+    encoded_request = SAMLService.encode_saml_request(saml_request)
+    
+    return {
+        "idp_name": idp_name,
+        "entity_id": idp_config.entity_id,
+        "sso_url": str(idp_config.sso_url),
+        "test_request_id": request_id,
+        "encoded_request_sample": encoded_request[:100] + "...",
+        "status": "Configuration valid"
+    }

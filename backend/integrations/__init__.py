@@ -7,50 +7,50 @@ CI/CD platforms, payment processing, and email services.
 
 from .stripe_client import StripeClient
 from .email_client import EmailClient
-from .github_app import (
-    GitHubApp,
-    GitHubAppConfig,
-    CheckStatus,
-    CheckConclusion,
-    create_github_app
-)
-from .gitlab_ci import (
-    GitLabCI,
-    GitLabConfig,
-    PipelineStatus,
-    JobStatus,
-    NoteType,
-    create_gitlab_ci
-)
-from .bitbucket import (
-    BitbucketIntegration,
-    BitbucketConfig,
-    BuildState,
-    PullRequestState,
-    create_bitbucket_integration
-)
+# from .github_app import (
+#     GitHubApp,
+#     GitHubAppConfig,
+#     CheckStatus,
+#     CheckConclusion,
+#     create_github_app
+# )
+# from .gitlab_ci import (
+#     GitLabCI,
+#     GitLabConfig,
+#     PipelineStatus,
+#     JobStatus,
+#     NoteType,
+#     create_gitlab_ci
+# )
+# from .bitbucket import (
+#     BitbucketIntegration,
+#     BitbucketConfig,
+#     BuildState,
+#     PullRequestState,
+#     create_bitbucket_integration
+# )
 
 __all__ = [
     # Existing
     "StripeClient",
     "EmailClient",
-    # GitHub
-    "GitHubApp",
-    "GitHubAppConfig",
-    "CheckStatus",
-    "CheckConclusion",
-    "create_github_app",
-    # GitLab
-    "GitLabCI",
-    "GitLabConfig",
-    "PipelineStatus",
-    "JobStatus",
-    "NoteType",
-    "create_gitlab_ci",
-    # Bitbucket
-    "BitbucketIntegration",
-    "BitbucketConfig",
-    "BuildState",
-    "PullRequestState",
-    "create_bitbucket_integration"
+    # # GitHub
+    # "GitHubApp",
+    # "GitHubAppConfig",
+    # "CheckStatus",
+    # "CheckConclusion",
+    # "create_github_app",
+    # # GitLab
+    # "GitLabCI",
+    # "GitLabConfig",
+    # "PipelineStatus",
+    # "JobStatus",
+    # "NoteType",
+    # "create_gitlab_ci",
+    # # Bitbucket
+    # "BitbucketIntegration",
+    # "BitbucketConfig",
+    # "BuildState",
+    # "PullRequestState",
+    # "create_bitbucket_integration"
 ]

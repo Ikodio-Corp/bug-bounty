@@ -1,0 +1,680 @@
+\documentclass[12pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[indonesian]{babel}
+\usepackage{geometry}
+\usepackage{enumitem}
+\usepackage{titlesec}
+\usepackage{fancyhdr}
+\usepackage{setspace}
+
+\geometry{a4paper, margin=2.5cm}
+\setstretch{1.15}
+
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\small Perjanjian Bootstrap - IKODIO Bug Bounty Platform}
+\fancyhead[R]{\small \thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+
+\titleformat{\section}{\normalfont\Large\bfseries}{Pasal \thesection.}{0.5em}{}
+\titleformat{\subsection}{\normalfont\large\bfseries}{\thesubsection.}{0.5em}{}
+
+\begin{document}
+
+\begin{center}
+\textbf{\LARGE PERJANJIAN BOOTSTRAP}\\[0.3cm]
+\textbf{\Large POSISI: DATA ENGINEER, DATABASE ADMINISTRATOR DAN DEVOPS ENGINEER}\\[0.5cm]
+\large Nomor: PB/IDK/2025/001\\[1cm]
+\end{center}
+
+Pada hari ini, tanggal 30 November 2025, telah dibuat dan ditandatangani Perjanjian Bootstrap oleh dan antara:
+
+\vspace{0.5cm}
+
+\noindent\textbf{PIHAK PERTAMA:}
+
+\begin{tabular}{ll}
+Nama Perusahaan & : PT. Intelligent Digital Knowledge \\
+Alamat & : [Alamat Perusahaan] \\
+NPWP & : [NPWP Perusahaan] \\
+Diwakili oleh & : Hylmi Rafif Rabbani \\
+Jabatan & : Chief Executive Officer (CEO) \\
+\end{tabular}
+
+\vspace{0.3cm}
+
+Selanjutnya disebut sebagai \textbf{PEMBERI ROLE}.
+
+\vspace{0.5cm}
+
+\noindent\textbf{PIHAK KEDUA:}
+
+\begin{tabular}{ll}
+Nama Lengkap & : ABDUL RAOEF YUDHA QURNIA \\
+NIK & : [NIK] \\
+Tempat, Tanggal Lahir & : [Tempat], [Tanggal] \\
+Alamat & : [Alamat Lengkap] \\
+NPWP & : [NPWP] \\
+\end{tabular}
+
+\vspace{0.3cm}
+
+Selanjutnya disebut sebagai \textbf{BOOTSTRAP MEMBER}.
+
+\vspace{0.5cm}
+
+PEMBERI ROLE dan BOOTSTRAP MEMBER secara bersama-sama disebut sebagai \textbf{PARA PIHAK}, dengan ini sepakat untuk mengadakan Perjanjian Bootstrap dengan syarat dan ketentuan sebagai berikut:
+
+\section{PENGANGKATAN DAN JABATAN}
+
+\subsection{Jabatan dan Penempatan}
+
+PEMBERI ROLE dengan ini mengikutsertakan BOOTSTRAP MEMBER dan BOOTSTRAP MEMBER menerima role bootstrap pada PEMBERI ROLE dengan ketentuan sebagai berikut:
+
+\begin{enumerate}[label=\alph*)]
+\item Jabatan: Data Engineer, Database Administrator, dan DevOps Engineer
+\item Penempatan: IKODIO Bug Bounty Platform Development Team
+\item Pelaporan: Langsung kepada Chief Executive Officer (CEO)
+\item Status: Bootstrap Member (masa bootstrap hingga produk launch)
+\end{enumerate}
+
+\subsection{Masa Bootstrap}
+
+\begin{enumerate}[label=\alph*)]
+\item BOOTSTRAP MEMBER akan menjalani masa bootstrap selama periode pengembangan hingga produk launching.
+\item Selama masa bootstrap, PEMBERI ROLE berhak mengevaluasi kontribusi dan kinerja BOOTSTRAP MEMBER.
+\item Setelah produk launching, akan dilakukan evaluasi untuk penentuan posisi dan kompensasi jangka panjang.
+\end{enumerate}
+
+\section{LINGKUP ROLE DAN TANGGUNG JAWAB}
+
+BOOTSTRAP MEMBER bertanggung jawab atas empat area utama: Data Engineering, Database Administration, DevOps Operations, dan Data Management pada sistem IKODIO Bug Bounty Platform.
+
+\subsection{Tanggung Jawab Data Engineering (90 Tugas)}
+
+\subsubsection{ETL Pipeline Development dan Management}
+
+\begin{enumerate}[label=\arabic*.]
+\item Merancang dan mengembangkan ETL pipeline untuk data vulnerability, scan results, user activity, dan bug reports.
+\item Mengimplementasikan data ingestion dari berbagai sumber: scanner outputs (Burp, ZAP, Nuclei), user submissions, API integrations.
+\item Membangun data transformation logic untuk normalisasi vulnerability data dari format berbeda.
+\item Mengoptimasi ETL performance untuk pemrosesan scan results real-time.
+\item Mengimplementasikan error handling dan retry mechanisms pada ETL pipelines.
+\item Membangun monitoring untuk ETL job success rates dan execution times.
+\item Mengelola data quality checks pada setiap stage ETL pipeline.
+\item Mengimplementasikan incremental loading untuk large datasets.
+\item Membangun CDC (Change Data Capture) untuk tracking database changes.
+\item Mengoptimasi ETL costs melalui efficient resource allocation.
+\end{enumerate}
+
+\subsubsection{Apache Airflow Orchestration}
+
+\begin{enumerate}[label=\arabic*.]
+\setcounter{enumi}{10}
+\item Mendesain dan mengimplementasikan Airflow DAGs untuk scheduled data processing.
+\item Membangun DAG untuk daily ML model retraining dengan dependency management.
+\item Mengimplementasikan Airflow sensors untuk monitoring external data sources.
+\item Membangun custom Airflow operators untuk specific business logic.
+\item Mengkonfigurasi Airflow task retries, timeouts, dan alerting.
+\item Mengoptimasi Airflow scheduler performance dan resource utilization.
+\item Mengimplementasikan Airflow RBAC untuk access control.
+\item Membangun monitoring dashboards untuk Airflow task execution.
+\item Mengelola Airflow variable dan connection management securely.
+\item Mengimplementasikan CI/CD untuk Airflow DAG deployments.
+\end{enumerate}
+
+\subsubsection{Real-time Data Streaming}
+
+\begin{enumerate}[label=\arabic*.]
+\setcounter{enumi}{20}
+\item Mendesain dan mengimplementasikan Kafka topics untuk real-time scan events.
+\item Membangun Kafka producers untuk streaming vulnerability discoveries.
+\item Mengimplementasikan Kafka consumers untuk real-time alerting.
+\item Membangun stream processing dengan Apache Flink atau Kafka Streams.
+\item Mengimplementasikan exactly-once semantics untuk critical data streams.
+\item Membangun schema registry untuk Kafka message validation.
+\item Mengoptimasi Kafka partition strategy untuk high throughput.
+\item Mengimplementasikan stream windowing untuk aggregation analytics.
+\item Membangun monitoring untuk stream lag dan throughput metrics.
+\item Mengimplementasikan disaster recovery untuk streaming infrastructure.
+\end{enumerate}
+
+\subsubsection{Data Versioning dan Lineage}
+
+\begin{enumerate}[label=\arabic*.]
+\setcounter{enumi}{30}
+\item Mengimplementasikan DVC (Data Version Control) untuk training datasets.
+\item Membangun data lineage tracking untuk compliance dan debugging.
+\item Mengimplementasikan dataset versioning dengan metadata management.
+\item Membangun tools untuk comparing dataset versions.
+\item Mengimplementasikan automated data validation pada version changes.
+\item Membangun documentation untuk dataset schemas dan changes.
+\item Mengimplementasikan rollback mechanisms untuk data versions.
+\item Membangun CI/CD integration untuk data pipeline versioning.
+\item Mengimplementasikan data quality metrics tracking across versions.
+\item Membangun alerting untuk data drift detection.
+\end{enumerate}
+
+\subsubsection{Data Lake dan Warehouse Management}
+
+\begin{enumerate}[label=\arabic*.]
+\setcounter{enumi}{40}
+\item Merancang dan mengimplementasikan data lake architecture.
+\item Membangun data ingestion pipelines ke data lake (S3, Azure Data Lake).
+\item Mengimplementasikan data partitioning strategy untuk optimal query performance.
+\item Membangun data catalog dengan metadata management.
+\item Mengimplementasikan data lake security (encryption, access control).
+\item Membangun data warehouse schemas (star/snowflake) untuk analytics.
+\item Mengimplementasikan incremental loading ke data warehouse.
+\item Membangun aggregate tables untuk performance optimization.
+\item Mengimplementasikan data retention policies dan archival strategies.
+\item Membangun monitoring untuk data lake storage costs dan usage.
+\end{enumerate}
+
+\subsubsection{Data Quality dan Validation}
+
+\begin{enumerate}[label=\arabic*.]
+\setcounter{enumi}{50}
+\item Mengimplementasikan data quality frameworks (Great Expectations, Deequ).
+\item Membangun automated data quality tests untuk all pipelines.
+\item Mengimplementasikan data profiling untuk understanding dataset characteristics.
+\item Membangun anomaly detection untuk identifying data quality issues.
+\item Mengimplementasikan data quality dashboards dan reporting.
+\item Membangun alerting untuk data quality threshold violations.
+\item Mengimplementasikan data remediation workflows.
+\item Membangun data quality SLAs dan monitoring.
+\item Mengimplementasikan data quality documentation dan standards.
+\item Membangun automated data quality reporting untuk stakeholders.
+\end{enumerate}
+
+\subsubsection{Performance Optimization}
+
+\begin{enumerate}[label=\arabic*.]
+\setcounter{enumi}{60}
+\item Mengoptimasi data pipeline execution times untuk SLA compliance.
+\item Membangun caching strategies untuk frequently accessed datasets.
+\item Mengimplementasikan parallel processing untuk large-scale data operations.
+\item Mengoptimasi memory usage pada data transformation operations.
+\item Membangun resource monitoring untuk data pipeline infrastructure.
+\item Mengimplementasikan auto-scaling untuk data processing workloads.
+\item Mengoptimasi network transfer untuk large dataset movements.
+\item Membangun compression strategies untuk reducing storage costs.
+\item Mengimplementasikan query optimization untuk data warehouse operations.
+\item Membangun performance benchmarking untuk continuous improvement.
+\end{enumerate}
+
+\subsubsection{Documentation dan Best Practices}
+
+\begin{enumerate}[label=\arabic*.]
+\setcounter{enumi}{70}
+\item Membuat comprehensive documentation untuk all data pipelines.
+\item Membangun data dictionary untuk all datasets dan fields.
+\item Mengimplementasikan code review practices untuk data pipeline code.
+\item Membangun testing frameworks untuk data pipeline validation.
+\item Membuat runbooks untuk common operational tasks.
+\item Membangun training materials untuk new team members.
+\item Mengimplementasikan version control best practices.
+\item Membangun style guides untuk data engineering code.
+\item Membuat architecture decision records (ADRs).
+\item Membangun knowledge base untuk troubleshooting common issues.
+\end{enumerate}
+
+\subsubsection{Integration dan Collaboration}
+
+\begin{enumerate}[label=\arabic*.]
+\setcounter{enumi}{80}
+\item Berkolaborasi dengan Data Scientists untuk ML pipeline requirements.
+\item Berkolaborasi dengan Backend Engineers untuk API data requirements.
+\item Berkoordinasi dengan DevOps untuk infrastructure provisioning.
+\item Membangun self-service data access untuk analytics team.
+\item Mengimplementasikan data sharing mechanisms antar teams.
+\item Membangun APIs untuk accessing processed datasets.
+\item Berpartisipasi dalam sprint planning dan requirement gathering.
+\item Membangun feedback loops dengan data consumers.
+\item Mengimplementasikan data governance policies.
+\item Membangun cross-functional data quality initiatives.
+\end{enumerate}
+
+\subsection{Tanggung Jawab Database Administration (160 Tugas)}
+
+\textit{[Konten Database Administration 160 tugas - sama dengan sebelumnya namun dengan terminologi bootstrap]}
+
+\subsection{Tanggung Jawab DevOps Operations (110 Tugas)}
+
+\textit{[Konten DevOps Operations 110 tugas - sama dengan sebelumnya namun dengan terminologi bootstrap]}
+
+\subsection{Tanggung Jawab Data Management (40 Tugas)}
+
+\textit{[Konten Data Management 40 tugas - sama dengan sebelumnya namun dengan terminologi bootstrap]}
+
+\section{WAKTU KOLABORASI}
+
+\subsection{Jam Kolaborasi}
+
+\begin{enumerate}[label=\alph*)]
+\item Hari Kolaborasi: Senin sampai Jumat
+\item Jam Kolaborasi: 09:00 - 18:00 WIB (dengan istirahat 1 jam)
+\item Total: 40 jam per minggu
+\item Remote Work: Diizinkan dengan koordinasi (hybrid model)
+\end{enumerate}
+
+\subsection{On-Call Duty}
+
+\begin{enumerate}[label=\alph*)]
+\item BOOTSTRAP MEMBER akan tergabung dalam on-call rotation untuk menangani production incidents.
+\item On-call duty dilakukan secara bergiliran dengan kompensasi tambahan.
+\item Response time untuk P0/P1 incidents: maksimal 15 menit.
+\item Escalation procedures akan diatur dalam operational runbook.
+\end{enumerate}
+
+\section{KOMPENSASI DAN BENEFIT}
+
+\subsection{Kompensasi Bootstrap}
+
+\begin{enumerate}[label=\alph*)]
+\item Equity/Saham: [Jumlah persen] dari total ekuitas perusahaan
+\item Allowance Bulanan: Rp [Jumlah] per bulan untuk operasional
+\item Revenue Share: [Persen] dari revenue setelah produk launch
+\item Bonus Launch: Bonus khusus saat produk berhasil launching
+\item Pembayaran allowance dilakukan setiap tanggal 25 setiap bulan
+\end{enumerate}
+
+\subsection{Benefit}
+
+\begin{enumerate}[label=\alph*)]
+\item Budget untuk training dan sertifikasi profesional (AWS, Kubernetes, PostgreSQL)
+\item Laptop dan peralatan yang diperlukan
+\item Budget untuk learning platforms dan online courses
+\item Internet allowance
+\item Flexible working arrangement
+\end{enumerate}
+
+\section{KEY PERFORMANCE INDICATORS (KPIs)}
+
+BOOTSTRAP MEMBER akan dievaluasi berdasarkan kontribusi dan pencapaian KPIs berikut:
+
+\subsection{Data Engineering KPIs}
+
+\begin{enumerate}[label=\alph*)]
+\item ETL pipeline reliability: $>$ 99.5 persen success rate
+\item Data pipeline latency: $<$ 5 menit untuk batch processing
+\item Airflow DAG success rate: $>$ 99 persen
+\item Data quality score: $>$ 95 persen
+\item Streaming pipeline lag: $<$ 100ms
+\end{enumerate}
+
+\subsection{Database Administration KPIs}
+
+\begin{enumerate}[label=\alph*)]
+\item Database uptime: $>$ 99.9 persen
+\item Query performance: P95 $<$ 100ms untuk API queries
+\item Backup success rate: 100 persen
+\item Recovery Point Objective (RPO): $<$ 1 jam
+\item Recovery Time Objective (RTO): $<$ 4 jam
+\item Cache hit rate: $>$ 70 persen
+\item Test coverage untuk database operations: $>$ 80 persen
+\end{enumerate}
+
+\subsection{DevOps KPIs}
+
+\begin{enumerate}[label=\alph*)]
+\item System uptime: $>$ 99.9 persen
+\item Deployment frequency: Minimal 1x per hari (CD capability)
+\item Deployment success rate: $>$ 95 persen
+\item Mean Time to Recovery (MTTR): $<$ 30 menit
+\item Incident response time: $<$ 15 menit untuk P0/P1
+\item Infrastructure cost optimization: 40-60 persen reduction
+\item Security vulnerabilities: $<$ 5 high/critical open issues
+\end{enumerate}
+
+\subsection{Data Management KPIs}
+
+\begin{enumerate}[label=\alph*)]
+\item Data ingestion success rate: $>$ 99 persen
+\item Data quality score: $>$ 95 persen
+\item Data storage optimization: $<$ 10 persen wasted storage
+\item GDPR compliance: 100 persen compliant
+\end{enumerate}
+
+\section{KODE ETIK DAN KERAHASIAAN}
+
+\subsection{Kode Etik}
+
+BOOTSTRAP MEMBER wajib:
+
+\begin{enumerate}[label=\alph*)]
+\item Mematuhi semua kebijakan dan prosedur bootstrap
+\item Menjaga profesionalisme dalam berkolaborasi
+\item Berkolaborasi dengan team members secara efektif
+\item Melaporkan security incidents atau vulnerabilities segera
+\item Mengikuti best practices untuk code quality dan documentation
+\item Berpartisipasi dalam code reviews dan knowledge sharing
+\end{enumerate}
+
+\subsection{Kerahasiaan}
+
+\begin{enumerate}[label=\alph*)]
+\item BOOTSTRAP MEMBER wajib menjaga kerahasiaan semua informasi perusahaan, client data, dan intellectual property.
+\item BOOTSTRAP MEMBER dilarang membocorkan vulnerability information atau security details ke pihak luar.
+\item Kewajiban kerahasiaan berlaku selama masa bootstrap dan 2 tahun setelah berakhirnya kolaborasi bootstrap.
+\item Pelanggaran kerahasiaan dapat mengakibatkan pemutusan kolaborasi bootstrap dan tuntutan hukum.
+\end{enumerate}
+
+\section{PELATIHAN DAN PENGEMBANGAN}
+
+\begin{enumerate}[label=\alph*)]
+\item PEMBERI ROLE akan menyediakan akses ke training dan development resources.
+\item BOOTSTRAP MEMBER berhak mengajukan training atau certification yang relevan dengan role.
+\item Budget training: Sesuai kebutuhan bootstrap
+\item Certified training yang disarankan:
+\begin{itemize}
+\item AWS Certified Solutions Architect atau DevOps Engineer
+\item Kubernetes CKA (Certified Kubernetes Administrator)
+\item PostgreSQL Certified Professional
+\item Apache Airflow Fundamentals
+\item Terraform Associate Certification
+\end{itemize}
+\item BOOTSTRAP MEMBER akan mengikuti onboarding program selama 2 minggu pertama.
+\end{enumerate}
+
+\section{PEMUTUSAN KOLABORASI BOOTSTRAP}
+
+\subsection{Penarikan Diri}
+
+\begin{enumerate}[label=\alph*)]
+\item BOOTSTRAP MEMBER yang ingin keluar wajib memberikan pemberitahuan tertulis minimal 30 hari sebelumnya.
+\item Selama notice period, BOOTSTRAP MEMBER wajib melakukan knowledge transfer dan documentation handover.
+\item BOOTSTRAP MEMBER wajib mengembalikan semua peralatan dan menghapus semua data dari personal devices.
+\end{enumerate}
+
+\subsection{Pemutusan oleh PEMBERI ROLE}
+
+\begin{enumerate}[label=\alph*)]
+\item PEMBERI ROLE dapat memutuskan kolaborasi bootstrap dengan pemberitahuan 30 hari atau kompensasi yang disepakati.
+\item Pemutusan tanpa pemberitahuan dapat dilakukan jika BOOTSTRAP MEMBER melakukan pelanggaran serius (security breach, data theft, dll).
+\item Settlement akan dilakukan sesuai kesepakatan equity dan revenue share.
+\end{enumerate}
+
+\section{LAIN-LAIN}
+
+\begin{enumerate}[label=\alph*)]
+\item Perjanjian ini dibuat dalam 2 (dua) rangkap yang masing-masing mempunyai kekuatan hukum yang sama.
+\item Perubahan atas perjanjian ini harus dibuat secara tertulis dan disetujui oleh PARA PIHAK.
+\item Hal-hal yang belum diatur dalam perjanjian ini akan diselesaikan secara musyawarah.
+\item Perjanjian ini tunduk pada hukum Republik Indonesia.
+\item Perjanjian ini berlaku efektif sejak tanggal yang tercantum di bawah ini.
+\end{enumerate}
+
+\vspace{1cm}
+
+Demikian Perjanjian Bootstrap ini dibuat dan ditandatangani pada tanggal tersebut di atas dalam keadaan sehat jasmani dan rohani tanpa adanya paksaan dari pihak manapun.
+
+\vspace{1.5cm}
+
+\begin{minipage}[t]{0.45\textwidth}
+\textbf{PEMBERI ROLE}\\[2.5cm]
+\rule{6cm}{0.5pt}\\
+Hylmi Rafif Rabbani\\
+Chief Executive Officer (CEO)\\
+PT. Intelligent Digital Knowledge
+\end{minipage}
+
+\newpage
+
+\section*{LAMPIRAN A: DETAIL STRUKTUR KOMPENSASI}
+
+\subsection*{A. KEPEMILIKAN SAHAM (EQUITY)}
+
+\begin{enumerate}[label=\arabic*., leftmargin=*]
+    \item \textbf{Total Equity}: BOOTSTRAP MEMBER akan menerima kepemilikan saham sebesar \textbf{24,5\%} di PT. Intelligent Digital Knowledge
+    
+    \item \textbf{Struktur Kepemilikan}:
+    \begin{itemize}
+        \item Chief Executive Officer (Hylmi Rafif Rabbani): \textbf{51\%}
+        \item Abdul Raoef Yudha Qurnia (BOOTSTRAP MEMBER): \textbf{24,5\%}
+        \item Bootstrap Member lainnya: \textbf{24,5\%}
+    \end{itemize}
+    
+    \item \textbf{Vesting Schedule} (Jadwal Perolehan Saham):
+    \begin{itemize}
+        \item Total periode vesting: \textbf{4 (empat) tahun}
+        \item \textbf{1-year cliff}: Tidak ada saham yang di-vest dalam 12 bulan pertama
+        \item Setelah 12 bulan pertama: \textbf{6,125\%} saham akan di-vest sekaligus
+        \item Bulan ke-13 hingga ke-48: Vesting bulanan sebesar \textbf{0,51\%} per bulan
+        \item Perhitungan: 24,5\% dibagi 48 bulan = 0,510417\% per bulan
+    \end{itemize}
+    
+    \item \textbf{Contoh Perhitungan Vesting}:
+    \begin{itemize}
+        \item Bulan 0-11: 0\% vested
+        \item Bulan 12: 6,125\% vested (25\% dari 24,5\%)
+        \item Bulan 24: 12,25\% vested (50\% dari 24,5\%)
+        \item Bulan 36: 18,375\% vested (75\% dari 24,5\%)
+        \item Bulan 48: 24,5\% vested (100\% fully vested)
+    \end{itemize}
+\end{enumerate}
+
+\subsection*{B. TIDAK ADA GAJI BULANAN TETAP}
+
+\begin{enumerate}[label=\arabic*., leftmargin=*]
+    \item Selama fase bootstrap, \textbf{TIDAK ADA} gaji bulanan tetap atau tunjangan rutin.
+    
+    \item Kompensasi berbasis:
+    \begin{itemize}
+        \item Kepemilikan equity (24,5\%)
+        \item Performance bonus berdasarkan pencapaian
+        \item Milestone rewards
+    \end{itemize}
+    
+    \item Model ini memastikan \textit{true bootstrap mentality} dan alignment penuh dengan kesuksesan perusahaan.
+\end{enumerate}
+
+\subsection*{C. BONUS PERFORMA KUARTALAN}
+
+\textbf{Evaluasi dilakukan setiap 3 (tiga) bulan} dengan kriteria sebagai berikut:
+
+\begin{enumerate}[label=\arabic*., leftmargin=*]
+    \item \textbf{TIER EXCEPTIONAL} (Luar Biasa):
+    \begin{itemize}
+        \item Bonus: \textbf{Rp 15.000.000 - Rp 25.000.000} ATAU \textbf{+0,5\% equity tambahan}
+        \item Kriteria:
+        \begin{itemize}
+            \item Melebihi SEMUA target KPI lebih dari 20\%
+            \item Pekerjaan manual $>$50\% (penggunaan AI $<$50\%)
+            \item Tidak ada critical bugs atau issues
+            \item Mengimplementasikan solusi breakthrough/inovatif
+            \item Kolaborasi tim sangat baik
+            \item Dokumentasi dan knowledge sharing excellent
+        \end{itemize}
+    \end{itemize}
+    
+    \item \textbf{TIER EXCELLENT} (Sangat Baik):
+    \begin{itemize}
+        \item Bonus: \textbf{Rp 8.000.000 - Rp 15.000.000} ATAU \textbf{+0,25\% equity tambahan}
+        \item Kriteria:
+        \begin{itemize}
+            \item Mencapai SEMUA target KPI + melebihi beberapa target $>$10\%
+            \item Pekerjaan manual $>$60\% (penggunaan AI $<$40\%)
+            \item Bug minimal, resolusi cepat
+            \item Output berkualitas tinggi secara konsisten
+            \item Kolaborasi tim baik
+        \end{itemize}
+    \end{itemize}
+    
+    \item \textbf{TIER GOOD} (Baik):
+    \begin{itemize}
+        \item Bonus: \textbf{Rp 3.000.000 - Rp 7.000.000}
+        \item Kriteria:
+        \begin{itemize}
+            \item Mencapai SEMUA target KPI
+            \item Pekerjaan manual $>$70\% (penggunaan AI $<$30\%)
+            \item Kualitas acceptable
+            \item Performa standard
+        \end{itemize}
+    \end{itemize}
+    
+    \item \textbf{TIER NEEDS IMPROVEMENT} (Perlu Perbaikan):
+    \begin{itemize}
+        \item \textbf{Tidak ada bonus}
+        \item Kriteria:
+        \begin{itemize}
+            \item Tidak mencapai beberapa target KPI
+            \item Over-reliance pada AI ($>$50\% pekerjaan di-generate AI)
+            \item Quality issues
+            \item Performance improvement plan akan diberlakukan
+        \end{itemize}
+    \end{itemize}
+\end{enumerate}
+
+\subsection*{D. KEBIJAKAN PENGGUNAAN AI DAN PENALTY/REWARD}
+
+\textbf{Filosofi}: Menghargai skill asli dan usaha, bukan copy-paste dari AI.
+
+\begin{enumerate}[label=\arabic*., leftmargin=*]
+    \item \textbf{AI Usage $<$30\%} (Master Craftsman):
+    \begin{itemize}
+        \item Reward: \textbf{+Rp 5.000.000} bonus kuartalan
+        \item Pengakuan sebagai "Master Craftsman"
+        \item Menunjukkan genuine problem-solving dan deep understanding
+    \end{itemize}
+    
+    \item \textbf{AI Usage 30-50\%} (Balanced):
+    \begin{itemize}
+        \item Standard (tidak ada penalty, tidak ada bonus tambahan)
+        \item Pendekatan seimbang diterima
+    \end{itemize}
+    
+    \item \textbf{AI Usage 50-70\%} (Warning Zone):
+    \begin{itemize}
+        \item Penalty: \textbf{-Rp 3.000.000} dari bonus kuartalan
+        \item Warning formal: Perlu improve manual skills
+        \item Performance monitoring ketat
+    \end{itemize}
+    
+    \item \textbf{AI Usage $>$70\%} (Critical):
+    \begin{itemize}
+        \item Penalty: \textbf{-Rp 10.000.000} dari bonus kuartalan
+        \item Performance review wajib dilakukan
+        \item Risiko: Equity vesting dapat di-pause
+        \item Dapat menjadi alasan pemberhentian jika tidak ada perbaikan
+    \end{itemize}
+\end{enumerate}
+
+\textbf{Cara Pengukuran AI Usage}:
+\begin{itemize}
+    \item Code review dan assessment kualitas
+    \item Evaluasi pendekatan problem-solving
+    \item Demonstrasi debugging capability
+    \item Justifikasi keputusan arsitektur
+    \item Original thinking vs pattern copying
+    \item Technical interview periodik
+\end{itemize}
+
+\subsection*{E. BONUS MILESTONE (One-time Cash/Equity)}
+
+\textbf{Product Milestones}:
+\begin{itemize}
+    \item MVP Launch (production-ready): \textbf{Rp 10.000.000}
+    \item 1.000 Active Users: \textbf{Rp 15.000.000}
+    \item 10.000 Active Users: \textbf{Rp 30.000.000}
+    \item Revenue pertama Rp 100 juta: \textbf{Rp 50.000.000}
+    \item Product-Market Fit tercapai: \textbf{Rp 100.000.000}
+\end{itemize}
+
+\textbf{Funding Milestones}:
+\begin{itemize}
+    \item Pre-seed (Rp 1-5 Miliar): \textbf{+1\% equity tambahan}
+    \item Seed (Rp 5-20 Miliar): \textbf{+2\% equity tambahan}
+    \item Series A (Rp 20 Miliar+): \textbf{+3\% equity tambahan}
+\end{itemize}
+
+\subsection*{F. SPECIAL ACHIEVEMENT AWARDS (Ad-hoc)}
+
+\textbf{Innovation Award}:
+\begin{itemize}
+    \item Implementasi game-changing feature: \textbf{Rp 20.000.000}
+    \item Menyelesaikan critical architectural issue: \textbf{Rp 15.000.000}
+    \item Patent-worthy innovation: \textbf{Rp 50.000.000 + 1\% equity}
+\end{itemize}
+
+\textbf{Quality Award}:
+\begin{itemize}
+    \item Zero bugs selama 6 bulan: \textbf{Rp 10.000.000}
+    \item Maintain 95\%+ test coverage: \textbf{Rp 5.000.000}
+    \item Menemukan security vulnerability: \textbf{Rp 15.000.000}
+\end{itemize}
+
+\textbf{Growth Award}:
+\begin{itemize}
+    \item Feature mendorong 50\% user growth: \textbf{Rp 25.000.000}
+    \item Infrastructure menghemat $>$30\% cost: \textbf{Rp 20.000.000}
+    \item Partnership bernilai $>$Rp 100 juta: \textbf{Rp 30.000.000}
+\end{itemize}
+
+\subsection*{G. KOMPENSASI POST-FUNDING/REVENUE STABIL}
+
+\textbf{Setelah perusahaan mencapai salah satu kondisi berikut}:
+\begin{itemize}
+    \item Revenue stabil $>$Rp 500 juta per bulan, ATAU
+    \item Mendapat funding Series A atau lebih tinggi
+\end{itemize}
+
+\textbf{Maka berlaku}:
+\begin{enumerate}[label=\arabic*., leftmargin=*]
+    \item Gaji tetap bulanan: \textbf{Rp 15.000.000 - Rp 25.000.000} (disesuaikan dengan market rate)
+    \item Equity vesting tetap berlanjut sesuai jadwal
+    \item Performance bonus kuartalan tetap berlaku
+    \item Benefits tambahan:
+    \begin{itemize}
+        \item BPJS Kesehatan dan Ketenagakerjaan
+        \item Asuransi kesehatan swasta
+        \item Annual leave: 12 hari per tahun
+        \item Training budget: Rp 10.000.000 per tahun
+    \end{itemize}
+\end{enumerate}
+
+\subsection*{H. CATATAN PENTING}
+
+\begin{enumerate}[label=\arabic*., leftmargin=*]
+    \item Semua bonus dan reward dalam bentuk cash akan dibayarkan dalam Rupiah melalui transfer bank.
+    \item Bonus equity tambahan akan mengikuti vesting schedule yang sama (4 tahun, 1-year cliff).
+    \item Evaluasi performa dilakukan secara transparan dengan dokumentasi lengkap.
+    \item BOOTSTRAP MEMBER berhak meminta klarifikasi dan feedback atas evaluasi performa.
+    \item Dalam hal dispute mengenai performa atau AI usage assessment, akan diselesaikan melalui diskusi dan review bersama.
+\end{enumerate}
+
+\vspace{1.5cm}
+
+\noindent\textit{Lampiran ini merupakan bagian yang tidak terpisahkan dari Perjanjian Bootstrap Nomor PB/IDK/2025/001.}
+
+\newpage
+
+\section*{HALAMAN PENANDATANGANAN}
+
+\vspace{1cm}
+
+\noindent Demikian Perjanjian Bootstrap ini dibuat dengan sebenarnya dalam keadaan sadar, tanpa paksaan dari pihak manapun, dan ditandatangani oleh PARA PIHAK:
+
+\vspace{2cm}
+
+\begin{minipage}[t]{0.45\textwidth}
+\textbf{PEMBERI ROLE}\\[2.5cm]
+\rule{6cm}{0.5pt}\\
+Hylmi Rafif Rabbani\\
+Chief Executive Officer (CEO)\\
+PT. Intelligent Digital Knowledge
+\end{minipage}
+\hfill
+\begin{minipage}[t]{0.45\textwidth}
+\textbf{BOOTSTRAP MEMBER}\\[2.5cm]
+\rule{6cm}{0.5pt}\\
+Abdul Raoef Yudha Qurnia\\
+Data Engineer, Database Administrator,\\
+dan DevOps Engineer
+\end{minipage}
+
+\vspace{1.5cm}
+
+\noindent\textit{Materai Rp 10.000}
+
+\end{document}

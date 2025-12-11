@@ -5,9 +5,9 @@ import { motion } from 'framer-motion';
 
 const codeLines = [
   { text: '> Scanning target: example.com', delay: 0 },
-  { text: '> Running SQL injection tests... ✓', delay: 1000 },
-  { text: '> Checking XSS vulnerabilities... ⚠️  FOUND!', delay: 2000, warning: true },
-  { text: '> Analyzing authentication flow... ✓', delay: 3000 },
+  { text: '> Running SQL injection tests... OK', delay: 1000 },
+  { text: '> Checking XSS vulnerabilities... FOUND!', delay: 2000, warning: true },
+  { text: '> Analyzing authentication flow... OK', delay: 3000 },
   { text: '> [ERROR] Critical vulnerability detected!', delay: 4000, error: true },
   { text: '> CVE-2024-XXXX: Remote Code Execution', delay: 5000, error: true },
   { text: '> Severity: HIGH | CVSS: 9.8', delay: 6000, error: true },

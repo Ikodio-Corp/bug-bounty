@@ -15,7 +15,7 @@ interface ScanStatus {
 }
 
 const statusColors = {
-  running: { text: 'text-blue-400', bg: 'bg-blue-400', label: 'RUNNING' },
+  running: { text: 'text-gray-400', bg: 'bg-gray-400', label: 'RUNNING' },
   paused: { text: 'text-orange-400', bg: 'bg-orange-400', label: 'PAUSED' },
   completed: { text: 'text-emerald-400', bg: 'bg-emerald-400', label: 'COMPLETED' },
 };

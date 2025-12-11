@@ -1,7 +1,7 @@
 """add certificate model
 
-Revision ID: 008
-Revises: 007
+Revision ID: 8
+Revises: 7
 Create Date: 2025-11-20 07:00:00.000000
 
 """
@@ -10,8 +10,8 @@ import sqlalchemy as sa
 from sqlalchemy.dialects import postgresql
 
 # revision identifiers, used by Alembic.
-revision = '008'
-down_revision = '007'
+revision = '8'
+down_revision = '7'
 branch_labels = None
 depends_on = None
 

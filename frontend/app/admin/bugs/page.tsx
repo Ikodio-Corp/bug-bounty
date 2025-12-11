@@ -101,7 +101,7 @@ export default function AdminBugsPage() {
       high: 'bg-orange-500/20 text-orange-400',
       medium: 'bg-yellow-500/20 text-yellow-400',
       low: 'bg-green-500/20 text-green-400',
-      info: 'bg-blue-500/20 text-blue-400'
+      info: 'bg-white/20 text-gray-400'
     }
     return colors[severity] || 'bg-slate-500/20 text-slate-400'
   }
@@ -131,12 +131,12 @@ export default function AdminBugsPage() {
               placeholder="Search bugs..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="px-4 py-2 bg-slate-700 border border-slate-600 rounded-lg text-white placeholder-slate-400 focus:ring-2 focus:ring-cyan-500 focus:border-transparent"
+              className="px-4 py-2 bg-slate-700 border border-slate-600 rounded-lg text-white placeholder-slate-400 focus:ring-2 focus:ring-white/50 focus:border-transparent"
             />
             <select
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value)}
-              className="px-4 py-2 bg-slate-700 border border-slate-600 rounded-lg text-white focus:ring-2 focus:ring-cyan-500 focus:border-transparent"
+              className="px-4 py-2 bg-slate-700 border border-slate-600 rounded-lg text-white focus:ring-2 focus:ring-white/50 focus:border-transparent"
             >
               <option value="">All Status</option>
               <option value="pending">Pending</option>
@@ -146,7 +146,7 @@ export default function AdminBugsPage() {
             <select
               value={severityFilter}
               onChange={(e) => setSeverityFilter(e.target.value)}
-              className="px-4 py-2 bg-slate-700 border border-slate-600 rounded-lg text-white focus:ring-2 focus:ring-cyan-500 focus:border-transparent"
+              className="px-4 py-2 bg-slate-700 border border-slate-600 rounded-lg text-white focus:ring-2 focus:ring-white/50 focus:border-transparent"
             >
               <option value="">All Severity</option>
               <option value="critical">Critical</option>
@@ -207,7 +207,7 @@ export default function AdminBugsPage() {
                               <div className="text-yellow-400 text-sm">Pending</div>
                             )}
                             {bug.paid_out && (
-                              <div className="text-blue-400 text-sm">Paid</div>
+                              <div className="text-gray-400 text-sm">Paid</div>
                             )}
                           </div>
                         </td>
@@ -287,7 +287,7 @@ export default function AdminBugsPage() {
               placeholder="Bounty amount ($)"
               value={bountyAmount}
               onChange={(e) => setBountyAmount(e.target.value)}
-              className="w-full px-4 py-2 bg-slate-700 border border-slate-600 rounded-lg text-white placeholder-slate-400 focus:ring-2 focus:ring-cyan-500 focus:border-transparent mb-6"
+              className="w-full px-4 py-2 bg-slate-700 border border-slate-600 rounded-lg text-white placeholder-slate-400 focus:ring-2 focus:ring-white/50 focus:border-transparent mb-6"
             />
             <div className="flex gap-4">
               <button
@@ -321,7 +321,7 @@ export default function AdminBugsPage() {
               value={rejectionReason}
               onChange={(e) => setRejectionReason(e.target.value)}
               rows={4}
-              className="w-full px-4 py-2 bg-slate-700 border border-slate-600 rounded-lg text-white placeholder-slate-400 focus:ring-2 focus:ring-cyan-500 focus:border-transparent mb-6"
+              className="w-full px-4 py-2 bg-slate-700 border border-slate-600 rounded-lg text-white placeholder-slate-400 focus:ring-2 focus:ring-white/50 focus:border-transparent mb-6"
             />
             <div className="flex gap-4">
               <button

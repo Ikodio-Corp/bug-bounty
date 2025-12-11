@@ -209,7 +209,7 @@ export default function WebhooksPage() {
               <SimpleCardTitle className="text-lg">Total Deliveries</SimpleCardTitle>
             </SimpleCardHeader>
             <SimpleCardContent>
-              <div className="text-4xl font-bold text-purple-400">
+              <div className="text-4xl font-bold text-gray-400">
                 {webhooks.reduce((acc, w) => acc + w.successCount + w.failureCount, 0)}
               </div>
               <p className="text-slate-400 text-sm mt-2">
@@ -274,7 +274,7 @@ export default function WebhooksPage() {
                   <div className="flex gap-4 pt-4 border-t border-slate-700">
                     <button
                       onClick={() => testWebhook(webhook.id)}
-                      className="px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg text-white font-semibold transition-colors"
+                      className="px-4 py-2 bg-white hover:bg-gray-200 rounded-lg text-white font-semibold transition-colors"
                     >
                       Test
                     </button>
@@ -307,7 +307,7 @@ export default function WebhooksPage() {
         {webhooks.length === 0 && (
           <SimpleCard>
             <SimpleCardContent className="py-12 text-center">
-              <div className="text-6xl mb-4">🔗</div>
+              <div className="text-6xl mb-4"></div>
               <h3 className="text-xl font-semibold text-white mb-2">No Webhooks Yet</h3>
               <p className="text-slate-400 mb-4">Create your first webhook to start receiving events</p>
               <button

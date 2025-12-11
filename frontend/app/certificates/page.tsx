@@ -116,11 +116,11 @@ export default function CertificatesPage() {
 
   const getTypeIcon = (type: string) => {
     const icons: { [key: string]: string } = {
-      certification: '🏆',
-      course: '📚',
-      achievement: '⭐'
+      certification: '',
+      course: '',
+      achievement: ''
     }
-    return icons[type] || '📜'
+    return icons[type] || ''
   }
 
   const isExpiringSoon = (expiresAt?: string) => {
@@ -188,7 +188,7 @@ export default function CertificatesPage() {
               <SimpleCardTitle className="text-lg">Courses</SimpleCardTitle>
             </SimpleCardHeader>
             <SimpleCardContent>
-              <div className="text-4xl font-bold text-blue-400">
+              <div className="text-4xl font-bold text-gray-400">
                 {certificates.filter(c => c.type === 'course').length}
               </div>
             </SimpleCardContent>
@@ -268,7 +268,7 @@ export default function CertificatesPage() {
                       </SimpleBadge>
                       {certificate.verified && (
                         <SimpleBadge variant="success">
-                          ✓ Verified
+                          Verified
                         </SimpleBadge>
                       )}
                       {isExpired(certificate.expiresAt) && (
@@ -348,7 +348,7 @@ export default function CertificatesPage() {
         {filteredCertificates.length === 0 && (
           <SimpleCard>
             <SimpleCardContent className="py-12 text-center">
-              <div className="text-6xl mb-4">🎓</div>
+              <div className="text-6xl mb-4"></div>
               <h3 className="text-xl font-semibold text-white mb-2">No Certificates Yet</h3>
               <p className="text-slate-400 mb-4">Complete courses and earn achievements to get certificates</p>
               <Link href="/university">

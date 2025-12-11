@@ -146,7 +146,7 @@ export default function TutorialsPage() {
               <SimpleCardTitle className="text-lg">Categories</SimpleCardTitle>
             </SimpleCardHeader>
             <SimpleCardContent>
-              <div className="text-4xl font-bold text-purple-400">{categories.length - 1}</div>
+              <div className="text-4xl font-bold text-gray-400">{categories.length - 1}</div>
             </SimpleCardContent>
           </SimpleCard>
 
@@ -221,7 +221,7 @@ export default function TutorialsPage() {
                   </SimpleBadge>
                   {tutorial.videoUrl && (
                     <SimpleBadge variant="success">
-                      📹 Video
+                       Video
                     </SimpleBadge>
                   )}
                 </div>
@@ -255,7 +255,7 @@ export default function TutorialsPage() {
         {filteredTutorials.length === 0 && (
           <SimpleCard>
             <SimpleCardContent className="py-12 text-center">
-              <div className="text-6xl mb-4">📚</div>
+              <div className="text-6xl mb-4"></div>
               <h3 className="text-xl font-semibold text-white mb-2">No Tutorials Found</h3>
               <p className="text-slate-400">Try adjusting your filters</p>
             </SimpleCardContent>
@@ -271,7 +271,7 @@ export default function TutorialsPage() {
               <p className="text-slate-300 mb-4">
                 Follow our structured learning path from beginner to advanced
               </p>
-              <button className="w-full px-4 py-2 bg-purple-600 hover:bg-purple-700 rounded-lg text-white font-semibold transition-colors">
+              <button className="w-full px-4 py-2 bg-gray-700 hover:bg-gray-700 rounded-lg text-white font-semibold transition-colors">
                 View Learning Path
               </button>
             </SimpleCardContent>
@@ -299,7 +299,7 @@ export default function TutorialsPage() {
               <p className="text-slate-300 mb-4">
                 Get help from experienced hunters in our community forum
               </p>
-              <button className="w-full px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg text-white font-semibold transition-colors">
+              <button className="w-full px-4 py-2 bg-white hover:bg-gray-200 rounded-lg text-white font-semibold transition-colors">
                 Join Forum
               </button>
             </SimpleCardContent>

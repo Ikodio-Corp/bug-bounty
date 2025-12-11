@@ -21,9 +21,9 @@ async def test():
             full_name="Test User",
             role=UserRole.HUNTER
         )
-        print(f"✅ User created: {user.id}, {user.email}")
+        print(f"User created: {user.id}, {user.email}")
     except Exception as e:
-        print(f"❌ Error: {e}")
+        print(f"Error: {e}")
         import traceback
         traceback.print_exc()
     finally:

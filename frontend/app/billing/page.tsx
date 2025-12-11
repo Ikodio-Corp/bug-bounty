@@ -43,7 +43,7 @@ export default function BillingPage() {
           </div>
 
           {/* Current Plan */}
-          <div className="bg-gradient-to-r from-blue-600/20 to-purple-600/20 backdrop-blur-xl border border-white/10 rounded-2xl p-6 mb-8">
+          <div className="bg-gradient-to-r from-white/10 to-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6 mb-8">
             <div className="flex items-center justify-between">
               <div>
                 <h2 className="text-xl font-bold text-white mb-2">Paket Saat Ini: Professional Bulanan</h2>
@@ -56,8 +56,8 @@ export default function BillingPage() {
           {/* Plans */}
           <div className="grid md:grid-cols-3 gap-6 mb-8">
             {plans.map((plan) => (
-              <div key={plan.name} className={`bg-white/5 backdrop-blur-xl border rounded-2xl p-6 ${plan.current ? 'border-blue-500' : 'border-white/10'}`}>
-                {plan.current && <span className="inline-block px-3 py-1 bg-blue-600 text-white text-xs rounded-full mb-3">Aktif</span>}
+              <div key={plan.name} className={`bg-white/5 backdrop-blur-xl border rounded-2xl p-6 ${plan.current ? 'border-white' : 'border-white/10'}`}>
+                {plan.current && <span className="inline-block px-3 py-1 bg-white text-white text-xs rounded-full mb-3">Aktif</span>}
                 <h3 className="text-2xl font-bold text-white mb-2">{plan.name}</h3>
                 <div className="text-2xl font-bold text-white mb-4">
                   {plan.price === 0 ? 'Gratis' : `Rp ${plan.price.toLocaleString('id-ID')}`}
@@ -77,7 +77,7 @@ export default function BillingPage() {
           <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6 mb-8">
             <h2 className="text-xl font-bold text-white mb-4">Metode Pembayaran</h2>
             <div className="flex items-center gap-4 p-4 bg-white/5 rounded-lg">
-              <CreditCard className="text-blue-400" size={32} />
+              <CreditCard className="text-gray-400" size={32} />
               <div className="flex-1">
                 <div className="text-white font-medium">BCA •••• •••• 8899</div>
                 <div className="text-slate-400 text-sm">Virtual Account</div>

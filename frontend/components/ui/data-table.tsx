@@ -120,7 +120,7 @@ export function DataTable<T extends Record<string, any>>({
                 setSearchTerm(e.target.value);
                 setCurrentPage(1);
               }}
-              className="w-full px-4 py-2 bg-slate-800 border border-slate-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-4 py-2 bg-slate-800 border border-slate-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-white/50"
             />
           </div>
         )}
@@ -149,12 +149,12 @@ export function DataTable<T extends Record<string, any>>({
                     {column.sortable && (
                       <button
                         onClick={() => handleSort(String(column.key))}
-                        className="hover:text-blue-400 transition-colors"
+                        className="hover:text-gray-400 transition-colors"
                       >
                         {sortColumn === column.key ? (
                           sortDirection === 'asc' ? '↑' : '↓'
                         ) : (
-                          '↕'
+                          ''
                         )}
                       </button>
                     )}
@@ -171,7 +171,7 @@ export function DataTable<T extends Record<string, any>>({
                         });
                         setCurrentPage(1);
                       }}
-                      className="mt-2 w-full px-2 py-1 text-xs bg-slate-900 border border-slate-600 rounded focus:outline-none focus:ring-1 focus:ring-blue-500"
+                      className="mt-2 w-full px-2 py-1 text-xs bg-slate-900 border border-slate-600 rounded focus:outline-none focus:ring-1 focus:ring-white/50"
                       onClick={(e) => e.stopPropagation()}
                     />
                   )}

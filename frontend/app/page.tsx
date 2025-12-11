@@ -11,6 +11,7 @@ import {
   FileText, RefreshCw, Trophy
 } from 'lucide-react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 
 // Animated background particles
@@ -77,11 +78,11 @@ function FloatingElements() {
 function CodeTerminal() {
   const [currentLine, setCurrentLine] = useState(0);
   const codeLines = [
-    '$ ikodio scan --target example.com',
-    '✓ AI agents initialized',
-    '✓ Scanning for vulnerabilities...',
-    '✓ Found 3 critical bugs in 90 seconds!',
-    '$ Reward: $5,000',
+    { text: '$ ikodio scan --target example.com', color: 'text-gray-300' },
+    { text: 'AI agents initialized', color: 'text-green-400' },
+    { text: 'Scanning for vulnerabilities...', color: 'text-yellow-400' },
+    { text: 'Found 3 critical bugs in 90 seconds!', color: 'text-green-400' },
+    { text: '$ Reward: $5,000', color: 'text-gray-300' },
   ];
 
   useEffect(() => {
@@ -103,11 +104,11 @@ function CodeTerminal() {
           key={i}
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
-          className={line.includes('$') ? 'text-green-400' : 'text-gray-300'}
+          className={line.color}
         >
-          {line}
+          {line.text}
         </motion.div>
-      ))}
+      ))})
       <motion.div
         animate={{ opacity: [1, 0] }}
         transition={{ duration: 0.8, repeat: Infinity }}
@@ -119,39 +120,73 @@ function CodeTerminal() {
 
 // Pricing Modal
 function PricingModal({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) {
+  const router = useRouter();
+  
   if (!isOpen) return null;
 
+  const handleSelectPlan = (planName: string) => {
+    if (planName === 'Enterprise') {
+      router.push('/enterprise-inquiry');
+    } else {
+      const tier = planName.toLowerCase();
+      router.push(`/auth/register?tier=${tier}&redirect=payment`);
+    }
+  };
+
   return (
-    <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4" onClick={onClose}>
+    <div className="fixed inset-0 bg-black/90 backdrop-blur-sm z-50 flex items-center justify-center p-8" onClick={onClose}>
       <motion.div
-        initial={{ opacity: 0, scale: 0.9 }}
+        initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
-        className="bg-gradient-to-br from-gray-900 to-black border border-gray-700 rounded-2xl max-w-4xl w-full p-8"
+        className="bg-black border border-white/20 rounded-2xl w-full max-w-7xl h-[90vh] flex flex-col overflow-hidden"
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="flex justify-between items-start mb-6">
-          <h2 className="text-3xl font-bold text-white">Pricing Plans</h2>
-          <button onClick={onClose} className="text-gray-400 hover:text-white">
-            <X size={24} />
+        {/* Header - Fixed */}
+        <div className="flex justify-between items-center px-8 py-5 border-b border-white/10 flex-shrink-0">
+          <div>
+            <h2 className="text-3xl font-bold text-white">Pricing Plans</h2>
+            <p className="text-gray-400 text-sm mt-1">Pilih paket yang sesuai dengan kebutuhan Anda</p>
+          </div>
+          <button onClick={onClose} className="text-gray-400 hover:text-white transition-colors">
+            <X size={28} />
           </button>
         </div>
 
-        <div className="grid md:grid-cols-3 gap-6">
+        {/* Pricing Cards - Scrollable if needed */}
+        <div className="flex-1 grid grid-cols-4 divide-x divide-white/10 min-h-0">
           {[
             { 
-              name: 'Starter', 
-              price: 'Gratis', 
+              name: 'Free', 
+              price: 'Rp 0',
+              period: '/bulan',
               features: [
-                '10 scan per bulan', 
-                'Scanner dasar (Nuclei, ZAP)', 
+                '5 scan per bulan', 
+                'Scanner dasar (Nuclei)', 
                 'Report PDF standar',
                 'Community support',
-                'Max 3 target domain'
+                'Max 2 target domain',
+                'Basic vulnerability detection'
+              ] 
+            },
+            { 
+              name: 'Starter', 
+              price: 'Rp 199K',
+              period: '/bulan',
+              features: [
+                '25 scan per bulan', 
+                'Scanner: Nuclei + ZAP', 
+                'Report PDF + HTML',
+                'Email support (24h response)',
+                'Max 5 target domain',
+                'Basic vulnerability detection',
+                'Email notifications',
+                'Scan history (30 hari)'
               ] 
             },
             { 
               name: 'Professional', 
-              price: 'Rp 450.000', 
+              price: 'Rp 450K',
+              period: '/bulan',
               features: [
                 '100 scan per bulan', 
                 'AI Scanner + semua tools',
@@ -159,50 +194,94 @@ function PricingModal({ isOpen, onClose }: { isOpen: boolean; onClose: () => voi
                 'API access & webhooks', 
                 'Custom report template',
                 'Guild & marketplace access',
-                'Advanced analytics',
-                'Unlimited target domain'
+                'Advanced analytics dashboard',
+                'Unlimited target domain',
+                'Scheduled scans',
+                'Real-time alerts',
+                'Integration Slack/Discord',
+                'Export data (JSON, CSV, XML)',
+                'Scan history (unlimited)',
+                'Team collaboration (5 users)'
               ], 
               highlight: true 
             },
             { 
               name: 'Enterprise', 
-              price: 'Rp 2.500.000', 
+              price: 'Custom',
+              period: '',
               features: [
                 'Unlimited scans', 
                 'Dedicated security expert',
                 'Custom AI model training',
                 'White-label solution',
                 'SLA 99.9% uptime',
-                'On-premise deployment',
+                'On-premise deployment option',
                 'Team collaboration (unlimited)',
-                'Compliance reports (ISO, PCI-DSS)'
+                'Compliance reports (ISO, PCI-DSS)',
+                'Custom integrations',
+                'Dedicated account manager',
+                'Training & onboarding',
+                'Custom security policies',
+                'Advanced threat intelligence',
+                'Multi-region deployment',
+                'SSO & LDAP integration',
+                'Custom contract & billing'
               ] 
             }
           ].map((plan, i) => (
-            <motion.div
+            <div
               key={i}
-              whileHover={{ y: -10 }}
-              className={`p-6 rounded-xl border ${plan.highlight ? 'border-white bg-white/5' : 'border-gray-700'}`}
+              className={`flex flex-col p-6 min-h-0 ${
+                plan.highlight ? 'bg-gradient-to-b from-white/5 to-black' : 'bg-black'
+              }`}
             >
-              <h3 className="text-2xl font-bold text-white mb-2">{plan.name}</h3>
-              <div className="text-3xl font-bold text-white mb-6">
-                {plan.price}
-                {plan.price !== 'Gratis' && plan.name !== 'Enterprise' && <span className="text-lg text-gray-400">/bulan</span>}
-                {plan.name === 'Enterprise' && <span className="text-lg text-gray-400">/bulan</span>}
+              <div className="flex-1 overflow-y-auto min-h-0 pr-2">
+                {plan.highlight && (
+                  <div className="inline-block self-start px-3 py-1 bg-white text-black text-xs font-bold rounded-full mb-4">
+                    POPULAR
+                  </div>
+                )}
+                
+                <h3 className="text-2xl font-bold text-white mb-6">{plan.name}</h3>
+                
+                <div className="mb-6">
+                  <div className="flex items-baseline gap-1">
+                    <span className="text-4xl font-bold text-white">{plan.price}</span>
+                    {plan.period && <span className="text-gray-500 text-xs">{plan.period}</span>}
+                  </div>
+                </div>
+                
+                <ul className="space-y-2.5 pb-4">
+                  {plan.features.map((feature, j) => (
+                    <li key={j} className="flex items-start gap-2 text-gray-400 text-xs">
+                      <span className="text-white mt-0.5 text-sm"></span>
+                      <span>{feature}</span>
+                    </li>
+                  ))}
+                </ul>
               </div>
-              <ul className="space-y-3 mb-6">
-                {plan.features.map((feature, j) => (
-                  <li key={j} className="flex items-start gap-2 text-gray-300 text-sm">
-                    <Check size={16} className="text-green-400 mt-0.5 flex-shrink-0" />
-                    <span>{feature}</span>
-                  </li>
-                ))}
-              </ul>
-              <Button className={plan.highlight ? 'w-full bg-white text-black hover:bg-gray-200' : 'w-full'}>
-                {plan.name === 'Enterprise' ? 'Hubungi Sales' : 'Mulai Sekarang'}
-              </Button>
-            </motion.div>
+              
+              <div className="flex-shrink-0 pt-4 border-t border-white/10">
+                <button 
+                  onClick={() => handleSelectPlan(plan.name)}
+                  className={`w-full py-3 text-sm font-semibold transition-all rounded-lg ${
+                    plan.highlight 
+                      ? 'bg-white text-black hover:bg-gray-200' 
+                      : 'bg-white/10 text-white hover:bg-white/20 border border-white/20'
+                  }`}
+                >
+                  {plan.name === 'Enterprise' ? 'Hubungi Sales' : 'Mulai Sekarang'}
+                </button>
+              </div>
+            </div>
           ))}
+        </div>
+
+        {/* Footer - Fixed */}
+        <div className="px-8 py-4 border-t border-white/10 text-center flex-shrink-0">
+          <p className="text-gray-500 text-xs">
+            Semua paket termasuk SSL gratis & backup harian • <a href="mailto:support@ikodio.com" className="text-white underline">Hubungi kami</a>
+          </p>
         </div>
       </motion.div>
     </div>
@@ -431,14 +510,12 @@ export default function Home() {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.6, delay: 0.6 }}
                 >
-                  <Link href="/dashboard">
-                    <motion.div whileHover={{ scale: 1.05, boxShadow: "0 0 30px rgba(255, 255, 255, 0.3)" }} whileTap={{ scale: 0.95 }}>
-                      <Button size="lg" className="bg-white hover:bg-gray-200 text-black px-8 py-6 text-lg group">
-                        Get Started
-                        <ArrowRight className="ml-2 group-hover:translate-x-1 transition-transform" />
-                      </Button>
-                    </motion.div>
-                  </Link>
+                  <motion.div whileHover={{ scale: 1.05, boxShadow: "0 0 30px rgba(255, 255, 255, 0.3)" }} whileTap={{ scale: 0.95 }}>
+                    <Button size="lg" className="bg-white hover:bg-gray-200 text-black px-8 py-6 text-lg group" onClick={() => setPricingModalOpen(true)}>
+                      Get Started
+                      <ArrowRight className="ml-2 group-hover:translate-x-1 transition-transform" />
+                    </Button>
+                  </motion.div>
                   
                   <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
                     <Button 
@@ -496,78 +573,206 @@ export default function Home() {
       </section>
 
       {/* FEATURES SECTION */}
-      <section id="features" className="relative py-20 md:py-32 overflow-hidden">
-        {/* Futuristic Background */}
-        <div className="absolute inset-0">
-          {/* Animated grid */}
+      <section id="features" className="relative py-20 md:py-32 bg-gradient-to-b from-black via-gray-900 to-black overflow-hidden">
+        {/* Animated Background */}
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          {/* Grid Pattern */}
           <div className="absolute inset-0 opacity-20">
             <div className="absolute inset-0" style={{
-              backgroundImage: `
-                linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px)
-              `,
+              backgroundImage: 'linear-gradient(rgba(255,255,255,0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.05) 1px, transparent 1px)',
               backgroundSize: '50px 50px',
-              animation: 'gridMove 20s linear infinite'
             }} />
           </div>
           
-          {/* Glowing orbs */}
-          <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-white/5 rounded-full blur-3xl animate-pulse" />
-          <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-white/5 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }} />
+          {/* Moving Code Lines - More visible and abundant */}
+          {[
+            'SELECT * FROM vulnerabilities WHERE severity="critical"',
+            'const scanTarget = await AI.analyze(url)',
+            'if (threat.level > 8) { alert("High Risk Detected") }',
+            'POST /api/scan {target: "example.com", deep: true}',
+            'function detectXSS(input) { return sanitize(input) }',
+            'query { bugs { id severity status bounty } }',
+            'npm install @ikodio/security-scanner',
+            'docker run -p 8080:8080 ikodio/scanner',
+            'git commit -m "Fix: SQL injection vulnerability"',
+            'axios.post("/validate", {token, signature})',
+            'async function verifyAuth() { return jwt.verify(token) }',
+            'UPDATE reports SET status="fixed" WHERE id=123',
+            'const risk = calculateScore(cve, cvss)',
+            'import { Scanner } from "@ikodio/core"',
+            'while(scanning) { progress.update(percent) }',
+            'app.get("/api/bugs", authenticate, getBugs)',
+            'const payload = jwt.sign({id: user.id}, SECRET)',
+            'db.query("INSERT INTO scans VALUES (?, ?)")',
+            'for(let bug of criticalBugs) { notify(bug) }',
+            'response.json({ success: true, data: results })',
+            'const encrypted = crypto.encrypt(password, key)',
+            'if(validated) { await processPayment(amount) }',
+            'fetch("/api/analyze", {method: "POST", body})',
+            'class VulnerabilityScanner extends BaseScanner',
+            'return vulnerabilities.filter(v => v.cvss > 7)',
+            'mongoose.model("Bug", bugSchema)',
+            'redis.set("scan:123", JSON.stringify(data))',
+            'const result = await validateInput(req.body)',
+            'socket.emit("scan-complete", {id, findings})',
+            'Authorization: Bearer eyJhbGciOiJIUzI1NiIs...',
+          ].map((code, i) => (
+            <motion.div
+              key={`code-${i}`}
+              className="absolute font-mono text-xs text-green-400/20 whitespace-nowrap"
+              initial={{ x: -500, opacity: 0 }}
+              animate={{
+                x: ['-100%', '100vw'],
+                opacity: [0, 0.5, 0.5, 0],
+              }}
+              transition={{
+                duration: 20 + (i % 5) * 3,
+                repeat: Infinity,
+                delay: i * 0.8,
+                ease: "linear",
+              }}
+              style={{
+                top: `${5 + (i * 3.2) % 90}%`,
+              }}
+            >
+              {code}
+            </motion.div>
+          ))}
           
-          {/* Scan lines */}
-          <div className="absolute inset-0 opacity-10" style={{
-            backgroundImage: 'repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(255,255,255,0.03) 2px, rgba(255,255,255,0.03) 4px)'
-          }} />
+          {/* Additional code snippets with different colors */}
+          {[
+            'ERROR: Connection timeout to target server',
+            'SUCCESS: 15 vulnerabilities found in 87 seconds',
+            'WARNING: Potential SQL injection detected',
+            'INFO: Starting deep scan on 47 endpoints',
+            'CRITICAL: Remote code execution vulnerability',
+            'DEBUG: Checking CORS policy configuration',
+            'ALERT: Suspicious activity detected in logs',
+            'COMPLETE: Report generated successfully',
+          ].map((log, i) => (
+            <motion.div
+              key={`log-${i}`}
+              className={`absolute font-mono text-xs whitespace-nowrap ${
+                log.includes('ERROR') || log.includes('CRITICAL') ? 'text-red-400/20' :
+                log.includes('SUCCESS') || log.includes('COMPLETE') ? 'text-green-400/20' :
+                log.includes('WARNING') || log.includes('ALERT') ? 'text-yellow-400/20' :
+                'text-gray-400/20'
+              }`}
+              initial={{ x: '100vw', opacity: 0 }}
+              animate={{
+                x: ['100vw', '-100%'],
+                opacity: [0, 0.6, 0.6, 0],
+              }}
+              transition={{
+                duration: 18 + (i % 4) * 2,
+                repeat: Infinity,
+                delay: i * 1.2,
+                ease: "linear",
+              }}
+              style={{
+                top: `${10 + (i * 11) % 80}%`,
+              }}
+            >
+              {log}
+            </motion.div>
+          ))}
+          
+          {/* Moving Lines */}
+          <motion.div
+            className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white to-transparent"
+            animate={{
+              y: [0, 800],
+              opacity: [0, 0.3, 0],
+            }}
+            transition={{
+              duration: 3,
+              repeat: Infinity,
+              ease: "linear",
+            }}
+          />
+          <motion.div
+            className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white to-transparent"
+            animate={{
+              y: [0, 800],
+              opacity: [0, 0.3, 0],
+            }}
+            transition={{
+              duration: 3,
+              repeat: Infinity,
+              ease: "linear",
+              delay: 1.5,
+            }}
+          />
+          
+          {/* Floating Particles */}
+          {[...Array(30)].map((_, i) => (
+            <motion.div
+              key={`particle-${i}`}
+              className="absolute w-1 h-1 bg-white rounded-full"
+              style={{
+                left: `${Math.random() * 100}%`,
+                top: `${Math.random() * 100}%`,
+              }}
+              animate={{
+                y: [0, -30, 0],
+                opacity: [0.1, 0.4, 0.1],
+              }}
+              transition={{
+                duration: 3 + Math.random() * 2,
+                repeat: Infinity,
+                delay: Math.random() * 2,
+              }}
+            />
+          ))}
+          
+          {/* Pulse Circles */}
+          <motion.div
+            className="absolute top-1/4 left-1/4 w-64 h-64 rounded-full bg-white"
+            animate={{
+              scale: [1, 2, 1],
+              opacity: [0.05, 0, 0.05],
+            }}
+            transition={{
+              duration: 4,
+              repeat: Infinity,
+              ease: "easeInOut",
+            }}
+          />
+          <motion.div
+            className="absolute bottom-1/4 right-1/4 w-64 h-64 rounded-full bg-white"
+            animate={{
+              scale: [1, 2, 1],
+              opacity: [0.05, 0, 0.05],
+            }}
+            transition={{
+              duration: 4,
+              repeat: Infinity,
+              ease: "easeInOut",
+              delay: 2,
+            }}
+          />
         </div>
 
         <div className="max-w-7xl mx-auto px-4 relative z-10">
-          {/* Futuristic Header */}
+          {/* Header */}
           <div className="text-center mb-16">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6 }}
-              className="inline-block mb-4"
-            >
-              <div className="relative">
-                <div className="absolute inset-0 bg-white/10 blur-xl rounded-full" />
-                <div className="relative px-6 py-2 border border-white/20 rounded-full backdrop-blur-sm">
-                  <span className="text-sm font-mono text-white/70 tracking-wider">ADVANCED CAPABILITIES</span>
-                </div>
-              </div>
-            </motion.div>
+            <div className="inline-block mb-4 px-3 py-1 border border-white/10 rounded-md bg-white/5 backdrop-blur-sm">
+              <span className="text-xs font-medium text-white/60 tracking-wider uppercase">Advanced Capabilities</span>
+            </div>
             
-            <motion.h2
-              className="text-4xl md:text-6xl font-bold text-white mb-4 tracking-tight relative"
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6, delay: 0.1 }}
-            >
-              <span className="relative">
-                Powerful Features
-                <div className="absolute -inset-1 bg-white/5 blur-2xl -z-10" />
-              </span>
-            </motion.h2>
+            <h2 className="text-4xl md:text-5xl font-bold text-white mb-4">
+              Powerful Features
+            </h2>
             
-            <motion.p
-              className="text-lg text-white/60 max-w-2xl mx-auto leading-relaxed font-light"
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6, delay: 0.2 }}
-            >
+            <p className="text-lg text-gray-400 max-w-2xl mx-auto">
               Next-generation security platform with AI-powered automation
-            </motion.p>
+            </p>
           </div>
 
-          {/* Futuristic Features Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {/* Features Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-px bg-white/5">
             {[
               {
-                icon: Zap,
                 title: '90-Second Discovery',
                 description: 'Advanced AI agents automatically scan and identify vulnerabilities in record time',
                 features: [
@@ -575,11 +780,9 @@ export default function Home() {
                   'Real-time threat analysis',
                   'Comprehensive security reports',
                   'Zero false positives'
-                ],
-                glowColor: 'rgba(255, 255, 255, 0.1)'
+                ]
               },
               {
-                icon: ShoppingCart,
                 title: 'Bug Marketplace',
                 description: 'Trade discovered vulnerabilities as assets, with NFT support and futures trading',
                 features: [
@@ -587,11 +790,9 @@ export default function Home() {
                   'NFT-based ownership proof',
                   'Real-time market pricing',
                   'Secure escrow system'
-                ],
-                glowColor: 'rgba(255, 255, 255, 0.1)'
+                ]
               },
               {
-                icon: Users,
                 title: 'Guild System',
                 description: 'Join or create elite hunter guilds, collaborate on bounties, and compete globally',
                 features: [
@@ -599,11 +800,9 @@ export default function Home() {
                   'Shared bounty rewards',
                   'Global ranking system',
                   'Exclusive guild benefits'
-                ],
-                glowColor: 'rgba(255, 255, 255, 0.1)'
+                ]
               },
               {
-                icon: BarChart3,
                 title: 'Advanced Analytics',
                 description: 'Track your performance, earnings, and success rates with detailed dashboards',
                 features: [
@@ -611,11 +810,9 @@ export default function Home() {
                   'Vulnerability trend analysis',
                   'Performance benchmarking',
                   'Export detailed reports'
-                ],
-                glowColor: 'rgba(255, 255, 255, 0.1)'
+                ]
               },
               {
-                icon: Code,
                 title: 'Developer-First API',
                 description: 'Integrate Ikodio directly into your workflow with comprehensive API and webhooks',
                 features: [
@@ -623,11 +820,9 @@ export default function Home() {
                   'Webhook notifications',
                   'Multiple SDK support',
                   'Detailed documentation'
-                ],
-                glowColor: 'rgba(255, 255, 255, 0.1)'
+                ]
               },
               {
-                icon: Headphones,
                 title: 'Enterprise Support',
                 description: 'Dedicated security experts and round-the-clock support for critical issues',
                 features: [
@@ -635,159 +830,249 @@ export default function Home() {
                   'Priority bug validation',
                   'Custom integration help',
                   'Security consultation'
-                ],
-                glowColor: 'rgba(255, 255, 255, 0.1)'
+                ]
               }
             ].map((feature, index) => (
-              <motion.div
+              <div
                 key={index}
-                initial={{ opacity: 0, y: 40 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.6, delay: index * 0.08 }}
-                whileHover={{ y: -8, scale: 1.02 }}
-                className="group relative"
+                className="bg-black p-8 hover:bg-white/[0.02] transition-colors duration-200"
               >
-                {/* Holographic border effect */}
-                <div className="absolute -inset-0.5 bg-gradient-to-r from-white/0 via-white/20 to-white/0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 blur-sm" />
-                
-                {/* Glow effect */}
-                <div className="absolute -inset-4 opacity-0 group-hover:opacity-100 transition-opacity duration-500 blur-2xl" style={{ background: feature.glowColor }} />
-                
-                {/* Card */}
-                <div className="relative h-full bg-black/40 backdrop-blur-xl border border-white/10 rounded-2xl p-8 transition-all duration-500 group-hover:bg-black/60 group-hover:border-white/30 overflow-hidden">
-                  {/* Corner accents */}
-                  <div className="absolute top-0 left-0 w-8 h-8 border-t-2 border-l-2 border-white/20 group-hover:border-white/40 transition-colors" />
-                  <div className="absolute top-0 right-0 w-8 h-8 border-t-2 border-r-2 border-white/20 group-hover:border-white/40 transition-colors" />
-                  <div className="absolute bottom-0 left-0 w-8 h-8 border-b-2 border-l-2 border-white/20 group-hover:border-white/40 transition-colors" />
-                  <div className="absolute bottom-0 right-0 w-8 h-8 border-b-2 border-r-2 border-white/20 group-hover:border-white/40 transition-colors" />
-                  
-                  {/* Scan line effect */}
-                  <motion.div
-                    className="absolute inset-0 bg-gradient-to-b from-transparent via-white/5 to-transparent opacity-0 group-hover:opacity-100"
-                    animate={{ y: ['-100%', '200%'] }}
-                    transition={{ duration: 2, repeat: Infinity, ease: 'linear' }}
-                  />
+                {/* Title */}
+                <h3 className="text-xl font-semibold text-white mb-3">
+                  {feature.title}
+                </h3>
 
-                  {/* Icon with holographic effect */}
-                  <div className="relative mb-6">
-                    <div className="absolute inset-0 bg-white/20 blur-xl rounded-xl transform group-hover:scale-150 transition-transform duration-500" />
-                    <div className="relative inline-flex items-center justify-center w-16 h-16 rounded-xl bg-white/90 shadow-lg backdrop-blur-sm group-hover:bg-white transition-all duration-300 group-hover:shadow-2xl group-hover:shadow-white/20">
-                      <feature.icon className="w-8 h-8 text-black" strokeWidth={2} />
-                    </div>
-                    {/* Orbiting particles */}
-                    <motion.div
-                      className="absolute top-0 right-0 w-2 h-2 bg-white rounded-full opacity-0 group-hover:opacity-100"
-                      animate={{ 
-                        rotate: 360,
-                        scale: [1, 1.5, 1]
-                      }}
-                      transition={{ 
-                        rotate: { duration: 3, repeat: Infinity, ease: 'linear' },
-                        scale: { duration: 1.5, repeat: Infinity }
-                      }}
-                    />
-                  </div>
+                {/* Description */}
+                <p className="text-sm text-gray-400 leading-relaxed mb-6">
+                  {feature.description}
+                </p>
 
-                  {/* Title with glitch effect on hover */}
-                  <h3 className="text-2xl font-bold text-white mb-3 tracking-tight font-mono relative">
-                    {feature.title}
-                    <div className="absolute inset-0 opacity-0 group-hover:opacity-20 transition-opacity duration-300 text-white blur-sm transform translate-x-0.5">
-                      {feature.title}
-                    </div>
-                  </h3>
-
-                  {/* Description */}
-                  <p className="text-base text-white/60 leading-relaxed mb-6 font-light">
-                    {feature.description}
-                  </p>
-
-                  {/* Feature List with animated checkmarks */}
-                  <ul className="space-y-2.5">
-                    {feature.features.map((item, i) => (
-                      <motion.li 
-                        key={i} 
-                        className="flex items-start gap-2.5 text-sm text-white/70"
-                        initial={{ opacity: 0, x: -10 }}
-                        whileInView={{ opacity: 1, x: 0 }}
-                        viewport={{ once: true }}
-                        transition={{ delay: index * 0.08 + i * 0.05 }}
-                      >
-                        <div className="relative mt-0.5">
-                          <Check className="w-4 h-4 text-white flex-shrink-0 relative z-10" strokeWidth={3} />
-                          <div className="absolute inset-0 bg-white/30 blur-md" />
-                        </div>
-                        <span className="font-light">{item}</span>
-                      </motion.li>
-                    ))}
-                  </ul>
-
-                  {/* Data stream effect at bottom */}
-                  <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent transform scale-x-0 group-hover:scale-x-100 transition-transform duration-500" />
-                </div>
-              </motion.div>
+                {/* Feature List */}
+                <ul className="space-y-2.5">
+                  {feature.features.map((item, i) => (
+                    <li 
+                      key={i} 
+                      className="flex items-start gap-2.5 text-sm text-gray-500"
+                    >
+                      <span className="text-white mt-0.5"></span>
+                      <span>{item}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
             ))}
           </div>
         </div>
-
-        <style jsx>{`
-          @keyframes gridMove {
-            0% { transform: translateY(0); }
-            100% { transform: translateY(50px); }
-          }
-        `}</style>
       </section>
 
       {/* HOW IT WORKS SECTION */}
-      <section id="how-it-works" className="py-20 px-4 bg-gradient-to-b from-gray-900 to-black">
-        <div className="max-w-6xl mx-auto">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="text-center mb-16"
-          >
+      <section id="how-it-works" className="relative py-20 px-4 bg-gradient-to-b from-black via-gray-900 to-black border-t border-white/5 overflow-hidden">
+        {/* Animated Background - Workflow Theme */}
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          {/* Flowchart Lines */}
+          <svg className="absolute inset-0 w-full h-full opacity-10" style={{ strokeDasharray: '10 5' }}>
+            <motion.path
+              d="M 100 50 L 300 50 L 300 150 L 500 150"
+              stroke="white"
+              strokeWidth="2"
+              fill="none"
+              initial={{ pathLength: 0 }}
+              animate={{ pathLength: 1 }}
+              transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
+            />
+            <motion.path
+              d="M 600 100 L 800 100 L 800 200 L 1000 200"
+              stroke="white"
+              strokeWidth="2"
+              fill="none"
+              initial={{ pathLength: 0 }}
+              animate={{ pathLength: 1 }}
+              transition={{ duration: 3, repeat: Infinity, delay: 0.5, ease: "linear" }}
+            />
+            <motion.path
+              d="M 200 300 L 400 300 L 400 400 L 600 400"
+              stroke="white"
+              strokeWidth="2"
+              fill="none"
+              initial={{ pathLength: 0 }}
+              animate={{ pathLength: 1 }}
+              transition={{ duration: 3, repeat: Infinity, delay: 1, ease: "linear" }}
+            />
+          </svg>
+          
+          {/* Moving Step Numbers */}
+          {[1, 2, 3, 4, 5].map((num, i) => (
+            <motion.div
+              key={`step-${num}`}
+              className="absolute w-12 h-12 rounded-full bg-white/5 border-2 border-white/20 flex items-center justify-center text-white font-bold text-lg"
+              style={{
+                left: `${10 + i * 18}%`,
+                top: `${20 + (i % 2) * 30}%`,
+              }}
+              animate={{
+                scale: [1, 1.2, 1],
+                opacity: [0.3, 0.6, 0.3],
+              }}
+              transition={{
+                duration: 2,
+                repeat: Infinity,
+                delay: i * 0.4,
+              }}
+            >
+              {num}
+            </motion.div>
+          ))}
+          
+          {/* Floating Arrows */}
+          {[...Array(12)].map((_, i) => (
+            <motion.div
+              key={`arrow-${i}`}
+              className="absolute text-white/10 text-2xl"
+              style={{
+                left: `${5 + (i * 8) % 90}%`,
+                top: `${15 + (i * 7) % 70}%`,
+              }}
+              animate={{
+                x: [0, 20, 0],
+                opacity: [0.1, 0.3, 0.1],
+              }}
+              transition={{
+                duration: 3 + (i % 3),
+                repeat: Infinity,
+                delay: i * 0.3,
+              }}
+            >
+              →
+            </motion.div>
+          ))}
+          
+          {/* Journey Path Text */}
+          {[
+            'SCAN',
+            'ANALYZE',
+            'REPORT',
+            'TRADE',
+            'REWARD',
+          ].map((text, i) => (
+            <motion.div
+              key={`journey-${text}`}
+              className="absolute font-bold text-sm text-white/10 tracking-wider"
+              style={{
+                left: `${15 + i * 17}%`,
+                top: `${60 + (i % 2) * 10}%`,
+              }}
+              animate={{
+                opacity: [0.1, 0.25, 0.1],
+                y: [0, -10, 0],
+              }}
+              transition={{
+                duration: 3,
+                repeat: Infinity,
+                delay: i * 0.6,
+              }}
+            >
+              {text}
+            </motion.div>
+          ))}
+          
+          {/* Progress Lines */}
+          {[...Array(5)].map((_, i) => (
+            <motion.div
+              key={`progress-${i}`}
+              className="absolute h-0.5 bg-gradient-to-r from-transparent via-white to-transparent"
+              style={{
+                left: 0,
+                right: 0,
+                top: `${20 + i * 15}%`,
+              }}
+              animate={{
+                scaleX: [0, 1, 0],
+                opacity: [0, 0.2, 0],
+              }}
+              transition={{
+                duration: 4,
+                repeat: Infinity,
+                delay: i * 0.8,
+                ease: "easeInOut",
+              }}
+            />
+          ))}
+          
+          {/* Circular Progress Indicators */}
+          {[...Array(8)].map((_, i) => (
+            <motion.div
+              key={`circle-${i}`}
+              className="absolute w-3 h-3 rounded-full border-2 border-white/20"
+              style={{
+                left: `${10 + (i * 12) % 80}%`,
+                top: `${30 + (i * 8) % 50}%`,
+              }}
+              animate={{
+                scale: [1, 1.5, 1],
+                opacity: [0.2, 0.4, 0.2],
+                borderColor: ['rgba(255,255,255,0.2)', 'rgba(255,255,255,0.4)', 'rgba(255,255,255,0.2)'],
+              }}
+              transition={{
+                duration: 2.5,
+                repeat: Infinity,
+                delay: i * 0.3,
+              }}
+            />
+          ))}
+          
+          {/* Animated Dots Trail */}
+          {[...Array(15)].map((_, i) => (
+            <motion.div
+              key={`dot-${i}`}
+              className="absolute w-1.5 h-1.5 rounded-full bg-white"
+              initial={{ x: 0, opacity: 0 }}
+              animate={{
+                x: [0, 1200],
+                opacity: [0, 0.4, 0],
+              }}
+              transition={{
+                duration: 5,
+                repeat: Infinity,
+                delay: i * 0.3,
+                ease: "linear",
+              }}
+              style={{
+                left: '-10px',
+                top: `${10 + (i * 6) % 80}%`,
+              }}
+            />
+          ))}
+        </div>
+
+        <div className="max-w-6xl mx-auto relative z-10">
+          <div className="text-center mb-16">
             <h2 className="text-4xl md:text-5xl font-bold mb-4 text-white">
               How Ikodio Works
             </h2>
             <p className="text-gray-400 text-lg">Your journey from scan to reward in 5 simple steps</p>
-          </motion.div>
+          </div>
 
-          <div className="space-y-12">
+          <div className="space-y-0 border border-white/5">
             {[
-              { icon: Upload, title: 'Submit Your Target', description: 'Upload URL or API endpoint for security analysis', delay: 0 },
-              { icon: Brain, title: 'AI Analysis', description: 'AI agents scan your target in just 90 seconds', delay: 0.2 },
-              { icon: FileText, title: 'Get Results', description: 'Receive comprehensive vulnerability reports instantly', delay: 0.4 },
-              { icon: RefreshCw, title: 'Trade or Report', description: 'Sell bugs in marketplace or report directly to companies', delay: 0.6 },
-              { icon: Trophy, title: 'Earn Rewards', description: 'Get paid bounties and profit from your discoveries', delay: 0.8 }
+              { title: 'Submit Your Target', description: 'Upload URL or API endpoint for security analysis' },
+              { title: 'AI Analysis', description: 'AI agents scan your target in just 90 seconds' },
+              { title: 'Get Results', description: 'Receive comprehensive vulnerability reports instantly' },
+              { title: 'Trade or Report', description: 'Sell bugs in marketplace or report directly to companies' },
+              { title: 'Earn Rewards', description: 'Get paid bounties and profit from your discoveries' }
             ].map((step, index) => (
-              <motion.div
+              <div
                 key={index}
-                initial={{ opacity: 0, x: index % 2 === 0 ? -50 : 50 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: step.delay }}
-                className="flex flex-col md:flex-row items-center gap-8 group"
+                className="flex items-start gap-6 p-8 border-b border-white/5 last:border-b-0 hover:bg-white/[0.02] transition-colors"
               >
-                <div className="flex-shrink-0 w-16 h-16 rounded-full bg-white flex items-center justify-center text-2xl font-bold shadow-lg shadow-white/30 group-hover:scale-110 transition-transform text-black">
+                <div className="flex-shrink-0 w-8 h-8 rounded-full bg-white flex items-center justify-center text-sm font-semibold text-black">
                   {index + 1}
                 </div>
                 
-                <motion.div 
-                  className="flex-1 bg-gradient-to-br from-gray-800/50 to-gray-900/50 backdrop-blur-xl p-6 rounded-xl border border-gray-700 group-hover:border-white/50 transition-all"
-                  whileHover={{ scale: 1.02 }}
-                >
-                  <div className="flex items-start gap-4">
-                    <div className="w-12 h-12 rounded-lg bg-white/20 flex items-center justify-center">
-                      <step.icon className="text-white" size={24} />
-                    </div>
-                    <div className="flex-1">
-                      <h3 className="text-2xl font-bold mb-2 text-white">{step.title}</h3>
-                      <p className="text-gray-400">{step.description}</p>
-                    </div>
-                  </div>
-                </motion.div>
-              </motion.div>
+                <div className="flex-1">
+                  <h3 className="text-xl font-semibold mb-2 text-white">{step.title}</h3>
+                  <p className="text-sm text-gray-500">{step.description}</p>
+                </div>
+              </div>
             ))}
           </div>
         </div>
@@ -799,88 +1084,36 @@ export default function Home() {
         <div className="max-w-7xl mx-auto relative z-10">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
             {/* Bugs Found */}
-            <motion.div
-              initial={{ opacity: 0, scale: 0.5 }}
-              whileInView={{ opacity: 1, scale: 1 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0 }}
-              className="text-center group"
-            >
-              <motion.div 
-                className="inline-block mb-4 p-4 rounded-full bg-white/20"
-                whileHover={{ scale: 1.1, rotate: 360 }}
-                transition={{ duration: 0.5 }}
-              >
-                <TrendingUp className="text-white" size={32} />
-              </motion.div>
+            <div className="text-center">
               <div className="text-4xl md:text-5xl font-bold mb-2 text-white">
                 <Counter end={10000} />
               </div>
               <div className="text-gray-400 text-lg">Bugs Found</div>
-            </motion.div>
+            </div>
 
             {/* Active Hunters */}
-            <motion.div
-              initial={{ opacity: 0, scale: 0.5 }}
-              whileInView={{ opacity: 1, scale: 1 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0.1 }}
-              className="text-center group"
-            >
-              <motion.div 
-                className="inline-block mb-4 p-4 rounded-full bg-white/20"
-                whileHover={{ scale: 1.1, rotate: 360 }}
-                transition={{ duration: 0.5 }}
-              >
-                <Users className="text-white" size={32} />
-              </motion.div>
+            <div className="text-center">
               <div className="text-4xl md:text-5xl font-bold mb-2 text-white">
                 <Counter end={500} />
               </div>
               <div className="text-gray-400 text-lg">Active Hunters</div>
-            </motion.div>
+            </div>
 
             {/* Success Rate */}
-            <motion.div
-              initial={{ opacity: 0, scale: 0.5 }}
-              whileInView={{ opacity: 1, scale: 1 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0.2 }}
-              className="text-center group"
-            >
-              <motion.div 
-                className="inline-block mb-4 p-4 rounded-full bg-white/20"
-                whileHover={{ scale: 1.1, rotate: 360 }}
-                transition={{ duration: 0.5 }}
-              >
-                <Shield className="text-white" size={32} />
-              </motion.div>
+            <div className="text-center">
               <div className="text-4xl md:text-5xl font-bold mb-2 text-white">
                 <Counter end={95} />%
               </div>
               <div className="text-gray-400 text-lg">Success Rate</div>
-            </motion.div>
+            </div>
 
             {/* Paid in Bounties */}
-            <motion.div
-              initial={{ opacity: 0, scale: 0.5 }}
-              whileInView={{ opacity: 1, scale: 1 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0.3 }}
-              className="text-center group"
-            >
-              <motion.div 
-                className="inline-block mb-4 p-4 rounded-full bg-white/20"
-                whileHover={{ scale: 1.1, rotate: 360 }}
-                transition={{ duration: 0.5 }}
-              >
-                <DollarSign className="text-white" size={32} />
-              </motion.div>
+            <div className="text-center">
               <div className="text-4xl md:text-5xl font-bold mb-2 text-white">
                 $<Counter end={2000000} />
               </div>
               <div className="text-gray-400 text-lg">Paid in Bounties</div>
-            </motion.div>
+            </div>
           </div>
         </div>
       </section>
@@ -900,18 +1133,16 @@ export default function Home() {
             </h2>
             <p className="text-xl text-gray-300 mb-8">Join thousands of security researchers earning rewards</p>
             
-            <Link href="/dashboard">
-              <motion.div 
-                whileHover={{ scale: 1.05, boxShadow: '0 0 50px rgba(255, 255, 255, 0.3)' }} 
-                whileTap={{ scale: 0.95 }}
-                className="inline-block"
-              >
-                <Button size="lg" className="bg-white hover:bg-gray-200 text-black px-12 py-6 text-lg font-semibold group">
-                  Get Started Now
-                  <ArrowRight className="ml-2 group-hover:translate-x-2 transition-transform" />
-                </Button>
-              </motion.div>
-            </Link>
+            <motion.div 
+              whileHover={{ scale: 1.05, boxShadow: '0 0 50px rgba(255, 255, 255, 0.3)' }} 
+              whileTap={{ scale: 0.95 }}
+              className="inline-block"
+            >
+              <Button size="lg" className="bg-white hover:bg-gray-200 text-black px-12 py-6 text-lg font-semibold group" onClick={() => setPricingModalOpen(true)}>
+                Get Started Now
+                <ArrowRight className="ml-2 group-hover:translate-x-2 transition-transform" />
+              </Button>
+            </motion.div>
           </motion.div>
         </div>
       </section>

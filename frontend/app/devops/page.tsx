@@ -123,7 +123,7 @@ export default function DevOpsPage() {
         </Button>
       </div>
 
-      <div className="bg-gradient-to-r from-purple-50 to-blue-50 p-6 rounded-lg mb-8">
+      <div className="bg-gradient-to-r from-gray-800 to-gray-800 p-6 rounded-lg mb-8">
         <h2 className="text-xl font-semibold mb-2">Autonomous DevOps Operations</h2>
         <p className="text-sm text-gray-700">
           AI-powered infrastructure management that replaces 95% of traditional DevOps tasks.
@@ -213,13 +213,13 @@ export default function DevOpsPage() {
                     </div>
                     <div className="flex gap-2">
                       {job.triggered_by_ai && (
-                        <span className="px-2 py-1 bg-purple-100 text-purple-800 rounded text-xs">
+                        <span className="px-2 py-1 bg-gray-700 text-white rounded text-xs">
                           AI Triggered
                         </span>
                       )}
                       <span className={`px-2 py-1 rounded text-xs ${
                         job.status === 'completed' ? 'bg-green-100 text-green-800' :
-                        job.status === 'running' ? 'bg-blue-100 text-blue-800' :
+                        job.status === 'running' ? 'bg-gray-700 text-white' :
                         job.status === 'failed' ? 'bg-red-100 text-red-800' :
                         'bg-gray-100 text-gray-800'
                       }`}>
@@ -244,7 +244,7 @@ export default function DevOpsPage() {
       {activeTab === 'healing' && (
         <div>
           <h2 className="text-2xl font-semibold mb-4">Self-Healing Events</h2>
-          <div className="bg-blue-50 p-4 rounded-lg mb-4">
+          <div className="bg-gray-800 p-4 rounded-lg mb-4">
             <p className="text-sm">
               AI detects incidents and automatically heals them without human intervention.
               Average resolution time: 120 seconds.
@@ -266,13 +266,13 @@ export default function DevOpsPage() {
                         event.severity === 'critical' ? 'bg-red-100 text-red-800' :
                         event.severity === 'high' ? 'bg-orange-100 text-orange-800' :
                         event.severity === 'medium' ? 'bg-yellow-100 text-yellow-800' :
-                        'bg-blue-100 text-blue-800'
+                        'bg-gray-700 text-white'
                       }`}>
                         {event.severity}
                       </span>
                       <span className={`px-2 py-1 rounded text-xs ${
                         event.healing_status === 'resolved' ? 'bg-green-100 text-green-800' :
-                        'bg-blue-100 text-blue-800'
+                        'bg-gray-700 text-white'
                       }`}>
                         {event.healing_status}
                       </span>

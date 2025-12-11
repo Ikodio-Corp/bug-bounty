@@ -25,8 +25,8 @@ const activityIcons = {
 
 const activityColors = {
   vulnerability: 'text-red-400 bg-red-400/10',
-  scan: 'text-blue-400 bg-blue-400/10',
-  marketplace: 'text-purple-400 bg-purple-400/10',
+  scan: 'text-gray-400 bg-gray-400/10',
+  marketplace: 'text-gray-400 bg-gray-400/10',
   guild: 'text-emerald-400 bg-emerald-400/10',
 };
 

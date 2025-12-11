@@ -16,7 +16,7 @@ interface StatCard {
 const statsData: StatCard[] = [
   {
     icon: Shield,
-    gradient: 'from-blue-500 to-blue-600',
+    gradient: 'from-gray-500 to-gray-600',
     value: 1247,
     label: 'Total Vulnerabilities',
     trend: '+23%',
@@ -40,7 +40,7 @@ const statsData: StatCard[] = [
   },
   {
     icon: Target,
-    gradient: 'from-purple-500 to-purple-600',
+    gradient: 'from-gray-400 to-gray-500',
     value: 94.8,
     label: 'Success Rate',
     trend: '+2.1%',

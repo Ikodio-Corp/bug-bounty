@@ -103,8 +103,8 @@ export default function GuildDetailPage() {
           <div className="bg-slate-900/50 backdrop-blur border border-slate-800 rounded-lg p-8 mb-8">
             <div className="flex items-start justify-between mb-6">
               <div className="flex items-start space-x-6">
-                <div className="w-20 h-20 bg-gradient-to-br from-cyan-600 to-blue-600 rounded-lg flex items-center justify-center text-4xl">
-                  🛡️
+                <div className="w-20 h-20 bg-gradient-to-br from-gray-500 to-gray-600 rounded-lg flex items-center justify-center text-4xl">
+                  
                 </div>
                 <div>
                   <h1 className="text-3xl font-bold text-white mb-2">{guild.name}</h1>
@@ -116,7 +116,7 @@ export default function GuildDetailPage() {
                 className={`px-6 py-3 rounded-lg font-semibold transition ${
                   guild.is_member
                     ? "bg-red-600 hover:bg-red-500 text-white"
-                    : "bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white"
+                    : "bg-gradient-to-r from-gray-500 to-gray-600 hover:from-gray-400 hover:to-gray-400 text-white"
                 }`}
               >
                 {guild.is_member ? "Leave Guild" : "Join Guild"}

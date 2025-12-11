@@ -89,12 +89,12 @@ STRIPE_API_KEY=sk_test_...
 
 ```
 ikodio-bugbounty/
-â”œâ”€â”€ backend/          # FastAPI backend
-â”œâ”€â”€ frontend/         # Next.js frontend
-â”œâ”€â”€ database/         # Migrations & backups
-â”œâ”€â”€ nginx/            # Reverse proxy config
-â”œâ”€â”€ scripts/          # Deployment scripts
-â””â”€â”€ docker-compose.yml
+”œ”€”€ backend/          # FastAPI backend
+”œ”€”€ frontend/         # Next.js frontend
+”œ”€”€ database/         # Migrations & backups
+”œ”€”€ nginx/            # Reverse proxy config
+”œ”€”€ scripts/          # Deployment scripts
+”””€”€ docker-compose.yml
 ```
 
 ## Troubleshooting
@@ -134,7 +134,7 @@ sudo ./scripts/install.sh
 - **RabbitMQ**: guest / guest
 - **Database**: ikodio / ikodio123
 
-**âš ï¸ Change these in production!**
+** Change these in production!**
 
 ## Feature Flags (.env)
 

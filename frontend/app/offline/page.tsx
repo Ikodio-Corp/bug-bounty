@@ -59,7 +59,7 @@ export default function OfflinePage() {
         
         <button
           onClick={() => window.location.reload()}
-          className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-lg transition-colors"
+          className="w-full bg-white hover:bg-gray-200 text-white font-semibold py-3 px-6 rounded-lg transition-colors"
         >
           Try Again
         </button>
@@ -67,7 +67,7 @@ export default function OfflinePage() {
         <div className="mt-6">
           <a
             href="/"
-            className="text-blue-400 hover:text-blue-300 transition-colors"
+            className="text-gray-400 hover:text-gray-300 transition-colors"
           >
             Go to Homepage
           </a>

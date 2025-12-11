@@ -582,7 +582,7 @@ Scan completed in {:.2f}s
         summary_parts = []
         for severity in ["CRITICAL", "HIGH", "MEDIUM", "LOW"]:
             if severity in severity_counts:
-                emoji = {"CRITICAL": "🔴", "HIGH": "🟠", "MEDIUM": "🟡", "LOW": "🔵"}.get(severity, "⚪")
+                emoji = {"CRITICAL": "[!]", "HIGH": "[H]", "MEDIUM": "[M]", "LOW": "[L]"}.get(severity, "[ ]")
                 summary_parts.append(f"{emoji} {severity_counts[severity]} {severity}")
 
         summary = " | ".join(summary_parts) if summary_parts else "No issues"
@@ -632,7 +632,7 @@ Scan completed in {scan_time_ms / 1000:.2f}s | Total: {len(vulnerabilities)} vul
         recommendation = vulnerability.get("recommendation", "")
         cve_id = vulnerability.get("cve_id", "")
 
-        emoji = {"CRITICAL": "🔴", "HIGH": "🟠", "MEDIUM": "🟡", "LOW": "🔵"}.get(severity, "⚪")
+        emoji = {"CRITICAL": "[!]", "HIGH": "[H]", "MEDIUM": "[M]", "LOW": "[L]"}.get(severity, "[ ]")
 
         comment = f"""### {emoji} {severity}: {vuln_type}
 

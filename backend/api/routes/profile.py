@@ -8,7 +8,7 @@ from pydantic import BaseModel
 from typing import Optional
 
 from core.database import get_db
-from middleware.auth import get_current_user
+from core.security import get_current_user
 from models.user import User, UserProfile
 
 router = APIRouter()
@@ -215,7 +215,7 @@ async def get_profile_stats(
 ):
     """Get user statistics"""
     from models.bug import Bug
-    from models.community import Scan
+    # from models.community import Scan  # Model doesn't exist
     
     total_bugs = db.query(Bug).filter(Bug.hunter_id == current_user.id).count()
     validated_bugs = db.query(Bug).filter(
@@ -223,7 +223,7 @@ async def get_profile_stats(
         Bug.validated == True
     ).count()
     
-    total_scans = db.query(Scan).filter(Scan.user_id == current_user.id).count()
+    total_scans = 0  # db.query(Scan).filter(Scan.user_id == current_user.id).count()
     
     return {
         "total_bugs": total_bugs,

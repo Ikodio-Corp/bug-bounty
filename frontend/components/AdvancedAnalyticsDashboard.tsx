@@ -57,7 +57,7 @@ export default function AdvancedAnalyticsDashboard() {
   if (loading || !data) {
     return (
       <div className="flex items-center justify-center h-96">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white"></div>
       </div>
     );
   }
@@ -74,7 +74,7 @@ export default function AdvancedAnalyticsDashboard() {
               onClick={() => setTimeRange(range)}
               className={`${isMobile ? 'flex-shrink-0 px-3 py-2 text-sm' : 'px-4 py-2'} rounded ${
                 timeRange === range
-                  ? 'bg-blue-600 text-white'
+                  ? 'bg-white text-white'
                   : 'bg-gray-800 text-gray-300 hover:bg-gray-700'
               }`}
             >

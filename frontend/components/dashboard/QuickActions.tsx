@@ -29,9 +29,9 @@ interface Event {
 }
 
 const quickActions: QuickAction[] = [
-  { icon: Search, label: 'Start New Scan', href: '/scans/new', gradient: 'from-blue-500 to-blue-600' },
+  { icon: Search, label: 'Start New Scan', href: '/scans/new', gradient: 'from-gray-500 to-gray-600' },
   { icon: FileText, label: 'View Reports', href: '/reports', gradient: 'from-cyan-500 to-cyan-600' },
-  { icon: ShoppingBag, label: 'Browse Marketplace', href: '/marketplace', gradient: 'from-purple-500 to-purple-600' },
+  { icon: ShoppingBag, label: 'Browse Marketplace', href: '/marketplace', gradient: 'from-gray-400 to-gray-500' },
   { icon: Users, label: 'Join Guild', href: '/guilds', gradient: 'from-emerald-500 to-emerald-600' },
   { icon: Trophy, label: 'View Leaderboard', href: '/leaderboard', gradient: 'from-orange-500 to-orange-600' },
   { icon: Code, label: 'API Docs', href: '/api-docs', gradient: 'from-red-500 to-red-600' },
@@ -126,7 +126,7 @@ export function UpcomingEvents() {
       }}
     >
       <div className="flex items-center gap-2 mb-4">
-        <Calendar className="w-5 h-5 text-blue-400" />
+        <Calendar className="w-5 h-5 text-gray-400" />
         <div>
           <h3 className="text-lg font-bold text-white">Upcoming Events</h3>
           <p className="text-xs text-white/50">Important dates and deadlines</p>
@@ -143,11 +143,11 @@ export function UpcomingEvents() {
             className="flex gap-3.5 pb-3.5 border-b border-white/5 last:border-0 last:pb-0"
           >
             {/* Date Box */}
-            <div className="w-14 h-14 flex-shrink-0 rounded-lg bg-blue-500/15 border border-blue-500/30 flex flex-col items-center justify-center">
-              <span className="text-xl font-bold text-blue-400 leading-none">
+            <div className="w-14 h-14 flex-shrink-0 rounded-lg bg-white/15 border border-white/30 flex flex-col items-center justify-center">
+              <span className="text-xl font-bold text-white leading-none">
                 {event.date.day}
               </span>
-              <span className="text-[10px] font-semibold text-blue-400/70 uppercase tracking-wide mt-0.5">
+              <span className="text-[10px] font-semibold text-white/70 uppercase tracking-wide mt-0.5">
                 {event.date.month}
               </span>
             </div>
@@ -170,7 +170,7 @@ export function UpcomingEvents() {
       </div>
 
       {/* View All Link */}
-      <button className="w-full mt-4 py-2 text-xs font-semibold text-blue-400 hover:text-blue-300 transition-colors flex items-center justify-center gap-1 group">
+      <button className="w-full mt-4 py-2 text-xs font-semibold text-white hover:text-gray-300 transition-colors flex items-center justify-center gap-1 group">
         <span>View All Events</span>
         <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
       </button>

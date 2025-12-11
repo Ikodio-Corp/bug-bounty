@@ -57,28 +57,28 @@ Revenue Potential: **$3B-$7B annually**
 
 ---
 
-## ğŸ—ï¸ Architecture
+## ğŸ— Architecture
 
 ```
-â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
-â”‚                    NGINX (Reverse Proxy)                 â”‚
-â”‚                    Ports: 80, 443                        â”‚
-â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
-                     â”‚
-        â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”´â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
-        â”‚                         â”‚
-â”Œâ”€â”€â”€â”€â”€â”€â”€â–¼â”€â”€â”€â”€â”€â”€â”€â”€â”      â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â–¼â”€â”€â”€â”€â”€â”€â”€â”€â”
-â”‚   Frontend     â”‚      â”‚    Backend      â”‚
-â”‚   Next.js 14   â”‚      â”‚    FastAPI      â”‚
-â”‚   Port: 3000   â”‚      â”‚   Port: 8000    â”‚
-â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜      â””â”€â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”˜
-                                 â”‚
-                    â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¼â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
-                    â”‚            â”‚            â”‚
-            â”Œâ”€â”€â”€â”€â”€â”€â”€â–¼â”€â”€â”€â”  â”Œâ”€â”€â”€â”€â–¼â”€â”€â”€â”€â”€â”  â”Œâ”€â”€â–¼â”€â”€â”€â”€â”€â”€â”€â”€â”
-            â”‚ PostgreSQLâ”‚  â”‚  Redis   â”‚  â”‚  Celery   â”‚
-            â”‚ Port: 5432â”‚  â”‚Port: 6379â”‚  â”‚  Workers  â”‚
-            â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
+”Œ”€”€”€”€”€”€”€”€”€”€”€”€”€”€”€”€”€”€”€”€”€”€”€”€”€”€”€”€”€”€”€”€”€”€”€”€”€”€”€”€”€”€”€”€”€”€”€”€”€”€”€”€”€”€”€”€”€”
+”‚                    NGINX (Reverse Proxy)                 ”‚
+”‚                    Ports: 80, 443                        ”‚
+”””€”€”€”€”€”€”€”€”€”€”€”€”€”€”€”€”€”€”€”€”¬”€”€”€”€”€”€”€”€”€”€”€”€”€”€”€”€”€”€”€”€”€”€”€”€”€”€”€”€”€”€”€”€”€”€”€”˜
+                     ”‚
+        ”Œ”€”€”€”€”€”€”€”€”€”€”€”€”´”€”€”€”€”€”€”€”€”€”€”€”€”
+        ”‚                         ”‚
+”Œ”€”€”€”€”€”€”€–¼”€”€”€”€”€”€”€”€”      ”Œ”€”€”€”€”€”€”€”€–¼”€”€”€”€”€”€”€”€”
+”‚   Frontend     ”‚      ”‚    Backend      ”‚
+”‚   Next.js 14   ”‚      ”‚    FastAPI      ”‚
+”‚   Port: 3000   ”‚      ”‚   Port: 8000    ”‚
+”””€”€”€”€”€”€”€”€”€”€”€”€”€”€”€”€”˜      ”””€”€”€”€”€”€”€”€”¬”€”€”€”€”€”€”€”€”˜
+                                 ”‚
+                    ”Œ”€”€”€”€”€”€”€”€”€”€”€”€”¼”€”€”€”€”€”€”€”€”€”€”€”€”
+                    ”‚            ”‚            ”‚
+            ”Œ”€”€”€”€”€”€”€–¼”€”€”€”  ”Œ”€”€”€”€–¼”€”€”€”€”€”  ”Œ”€”€–¼”€”€”€”€”€”€”€”€”
+            ”‚ PostgreSQL”‚  ”‚  Redis   ”‚  ”‚  Celery   ”‚
+            ”‚ Port: 5432”‚  ”‚Port: 6379”‚  ”‚  Workers  ”‚
+            ”””€”€”€”€”€”€”€”€”€”€”€”˜  ”””€”€”€”€”€”€”€”€”€”€”˜  ”””€”€”€”€”€”€”€”€”€”€”€”˜
 ```
 
 ---
@@ -259,37 +259,37 @@ See `PRODUCTION_GUIDE.md` for complete API reference.
 
 ---
 
-## ğŸ—‚ï¸ Project Structure
+## ğŸ—‚ Project Structure
 
 ```
 ikodio-bugbounty/
-â”œâ”€â”€ backend/
-â”‚   â”œâ”€â”€ api/routes/          # API endpoints (31+ files)
-â”‚   â”œâ”€â”€ models/              # Database models (22 new models)
-â”‚   â”œâ”€â”€ services/            # Business logic (5 revolutionary services)
-â”‚   â”œâ”€â”€ agents/              # AI agents (orchestrator + 5 specialists)
-â”‚   â”œâ”€â”€ middleware/          # Rate limiting, logging, auth
-â”‚   â”œâ”€â”€ utils/               # Helper functions
-â”‚   â”œâ”€â”€ core/                # Config, database, security
-â”‚   â”œâ”€â”€ tasks/               # Celery background tasks
-â”‚   â””â”€â”€ main.py              # FastAPI application
-â”œâ”€â”€ frontend/
-â”‚   â”œâ”€â”€ app/                 # Next.js 14 pages
-â”‚   â”‚   â”œâ”€â”€ insurance/       # Insurance dashboard
-â”‚   â”‚   â”œâ”€â”€ security-score/  # Security credit score
-â”‚   â”‚   â”œâ”€â”€ marketplace/     # Bug trading + futures
-â”‚   â”‚   â”œâ”€â”€ dao/             # DAO governance
-â”‚   â”‚   â””â”€â”€ devops/          # DevOps autopilot
-â”‚   â”œâ”€â”€ components/ui/       # Reusable components
-â”‚   â””â”€â”€ lib/                 # API client, utilities
-â”œâ”€â”€ ai-engine/               # Multi-agent AI system
-â”œâ”€â”€ database/migrations/     # Alembic migrations
-â”œâ”€â”€ scripts/                 # Deployment, backup scripts
-â”œâ”€â”€ monitoring/              # Prometheus, Grafana config
-â”œâ”€â”€ nginx/                   # Reverse proxy configuration
-â”œâ”€â”€ docker-compose.yml       # Development environment
-â”œâ”€â”€ docker-compose.prod.yml  # Production environment
-â””â”€â”€ PRODUCTION_GUIDE.md      # Complete deployment guide
+”œ”€”€ backend/
+”‚   ”œ”€”€ api/routes/          # API endpoints (31+ files)
+”‚   ”œ”€”€ models/              # Database models (22 new models)
+”‚   ”œ”€”€ services/            # Business logic (5 revolutionary services)
+”‚   ”œ”€”€ agents/              # AI agents (orchestrator + 5 specialists)
+”‚   ”œ”€”€ middleware/          # Rate limiting, logging, auth
+”‚   ”œ”€”€ utils/               # Helper functions
+”‚   ”œ”€”€ core/                # Config, database, security
+”‚   ”œ”€”€ tasks/               # Celery background tasks
+”‚   ”””€”€ main.py              # FastAPI application
+”œ”€”€ frontend/
+”‚   ”œ”€”€ app/                 # Next.js 14 pages
+”‚   ”‚   ”œ”€”€ insurance/       # Insurance dashboard
+”‚   ”‚   ”œ”€”€ security-score/  # Security credit score
+”‚   ”‚   ”œ”€”€ marketplace/     # Bug trading + futures
+”‚   ”‚   ”œ”€”€ dao/             # DAO governance
+”‚   ”‚   ”””€”€ devops/          # DevOps autopilot
+”‚   ”œ”€”€ components/ui/       # Reusable components
+”‚   ”””€”€ lib/                 # API client, utilities
+”œ”€”€ ai-engine/               # Multi-agent AI system
+”œ”€”€ database/migrations/     # Alembic migrations
+”œ”€”€ scripts/                 # Deployment, backup scripts
+”œ”€”€ monitoring/              # Prometheus, Grafana config
+”œ”€”€ nginx/                   # Reverse proxy configuration
+”œ”€”€ docker-compose.yml       # Development environment
+”œ”€”€ docker-compose.prod.yml  # Production environment
+”””€”€ PRODUCTION_GUIDE.md      # Complete deployment guide
 ```
 
 ---
@@ -310,7 +310,7 @@ ikodio-bugbounty/
 
 ---
 
-## ğŸ›¡ï¸ Security
+## ğŸ›¡ Security
 
 - JWT authentication with bcrypt password hashing
 - Rate limiting: 60 requests/minute per user
@@ -455,7 +455,7 @@ Contact: info@ikodio.com
 
 ---
 
-## ğŸ™ Acknowledgments
+## ğŸ Acknowledgments
 
 - FastAPI framework by SebastiÃ¡n RamÃ­rez
 - Next.js by Vercel
@@ -487,6 +487,6 @@ Contact: info@ikodio.com
 
 ---
 
-**Built with â¤ï¸ by the IKODIO team**
+**Built with ¤ by the IKODIO team**
 
 **Ready for production. Ready to disrupt. Ready to dominate.**

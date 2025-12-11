@@ -43,7 +43,7 @@ export default function AnalyticsPage() {
             <h2 className="text-xl font-bold text-white mb-6">Activity Over Time</h2>
             <div className="h-64 flex items-end justify-between gap-2">
               {[40, 60, 45, 75, 55, 80, 65, 90, 70, 85, 75, 95].map((h, i) => (
-                <div key={i} className="flex-1 bg-gradient-to-t from-blue-600 to-purple-600 rounded-t" style={{height: `${h}%`}} />
+                <div key={i} className="flex-1 bg-gradient-to-t from-gray-600 to-gray-700 rounded-t" style={{height: `${h}%`}} />
               ))}
             </div>
           </div>

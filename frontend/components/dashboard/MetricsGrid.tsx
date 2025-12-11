@@ -17,7 +17,7 @@ interface MetricCard {
 const metricsData: MetricCard[] = [
   {
     icon: Shield,
-    gradient: 'from-blue-500 to-blue-600',
+    gradient: 'from-gray-500 to-gray-600',
     value: '1,247',
     label: 'Total Vulnerabilities Discovered',
     badge: '+23%',
@@ -45,7 +45,7 @@ const metricsData: MetricCard[] = [
   },
   {
     icon: Target,
-    gradient: 'from-purple-500 to-purple-600',
+    gradient: 'from-gray-400 to-gray-500',
     value: '94.8%',
     label: 'Vulnerability Validation Rate',
     badge: '+2.1%',

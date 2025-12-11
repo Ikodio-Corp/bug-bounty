@@ -84,5 +84,5 @@ curl -H "Authorization: Bearer YOUR_TOKEN" \
 
 ---
 
-**Status:** ✅ Authentication Enabled | ✅ Dashboard Ready
+**Status:**  Authentication Enabled |  Dashboard Ready
 **Last Updated:** November 20, 2025

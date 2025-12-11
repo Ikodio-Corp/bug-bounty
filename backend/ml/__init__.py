@@ -12,13 +12,13 @@ from .models.bug_detector import (
     VulnerabilityType,
     SeverityLevel
 )
-from .models.exploit_generator import (
-    ExploitGeneratorModel,
-    ExploitGeneratorConfig,
-    GeneratedExploit,
-    ExploitLanguage,
-    SophisticationLevel
-)
+# from .models.exploit_generator import (
+#     ExploitGeneratorModel,
+#     ExploitGeneratorConfig,
+#     GeneratedExploit,
+#     ExploitLanguage,
+#     SophisticationLevel
+# )
 from .models.patch_generator import (
     PatchGeneratorModel,
     PatchGeneratorConfig,
@@ -52,11 +52,11 @@ __all__ = [
     "DetectionResult",
     "VulnerabilityType",
     "SeverityLevel",
-    "ExploitGeneratorModel",
-    "ExploitGeneratorConfig",
-    "GeneratedExploit",
-    "ExploitLanguage",
-    "SophisticationLevel",
+    # "ExploitGeneratorModel",
+    # "ExploitGeneratorConfig",
+    # "GeneratedExploit",
+    # "ExploitLanguage",
+    # "SophisticationLevel",
     "PatchGeneratorModel",
     "PatchGeneratorConfig",
     "GeneratedPatch",

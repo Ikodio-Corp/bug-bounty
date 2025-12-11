@@ -45,7 +45,8 @@ class AuthService:
         username: str,
         password: str,
         full_name: str,
-        role: UserRole = UserRole.HUNTER
+        role: UserRole = UserRole.HUNTER,
+        subscription_tier: SubscriptionTier = SubscriptionTier.FREE
     ) -> User:
         """Create new user with profile and subscription"""
         # Hash password
@@ -58,9 +59,9 @@ class AuthService:
             hashed_password=hashed_password,
             full_name=full_name,
             role=role,
+            subscription_tier=subscription_tier,
             is_active=True,
-            is_verified=False,
-            email_verified=True  # Auto-verify for now (SMTP not configured)
+            is_verified=True  # Auto-verify for now (SMTP not configured)
         )
         self.db.add(user)
         await self.db.flush()
@@ -76,7 +77,7 @@ class AuthService:
         try:
             subscription = Subscription(
                 user_id=user.id,
-                tier=SubscriptionTier.FREE,
+                tier=subscription_tier,
                 status="active",
                 price=0.0,
                 billing_cycle="monthly",

@@ -157,7 +157,7 @@ export default function DAOPage() {
           </div>
           <div className="bg-white p-4 rounded-lg shadow">
             <h3 className="text-sm text-gray-600 mb-1">Voting Power</h3>
-            <div className="text-2xl font-bold text-blue-600">{tokenBalance.voting_power.toLocaleString()}</div>
+            <div className="text-2xl font-bold text-white">{tokenBalance.voting_power.toLocaleString()}</div>
           </div>
           <div className="bg-white p-4 rounded-lg shadow flex items-center">
             <Button onClick={stakeTokens} disabled={loading} className="w-full">
@@ -228,7 +228,7 @@ export default function DAOPage() {
                   <h3 className="text-lg font-semibold">{proposal.title}</h3>
                   <p className="text-sm text-gray-600">{proposal.proposal_number}</p>
                 </div>
-                <span className="px-3 py-1 bg-blue-100 text-blue-800 rounded text-sm">
+                <span className="px-3 py-1 bg-gray-700 text-white rounded text-sm">
                   {proposal.status}
                 </span>
               </div>
@@ -295,7 +295,7 @@ export default function DAOPage() {
         </div>
       )}
 
-      <div className="mt-8 bg-purple-50 p-6 rounded-lg">
+      <div className="mt-8 bg-gray-800 p-6 rounded-lg">
         <h2 className="text-xl font-semibold mb-4">About DAO Governance</h2>
         <ul className="space-y-2 text-sm">
           <li>IKOD token holders can create and vote on proposals</li>

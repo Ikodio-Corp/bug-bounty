@@ -30,7 +30,7 @@ export default function AIScannerPage() {
           {/* Scan Configuration */}
           <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-8 mb-8">
             <div className="flex items-center gap-3 mb-6">
-              <Brain className="text-purple-400" size={28} />
+              <Brain className="text-gray-400" size={28} />
               <h2 className="text-xl font-bold text-white">Configure Scan</h2>
             </div>
 
@@ -42,7 +42,7 @@ export default function AIScannerPage() {
                   value={target}
                   onChange={(e) => setTarget(e.target.value)}
                   placeholder="https://example.com"
-                  className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                  className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-white/50"
                 />
               </div>
 
@@ -59,11 +59,11 @@ export default function AIScannerPage() {
                       onClick={() => setScanType(type.id)}
                       className={`p-4 rounded-lg border transition ${
                         scanType === type.id
-                          ? 'bg-purple-600/20 border-purple-500'
+                          ? 'bg-gray-700/20 border-white'
                           : 'bg-white/5 border-white/10 hover:border-white/20'
                       }`}
                     >
-                      <type.icon className={scanType === type.id ? 'text-purple-400' : 'text-slate-400'} size={24} />
+                      <type.icon className={scanType === type.id ? 'text-gray-400' : 'text-slate-400'} size={24} />
                       <div className="text-white font-medium mt-2">{type.label}</div>
                       <div className="text-slate-400 text-sm">{type.desc}</div>
                     </button>
@@ -74,7 +74,7 @@ export default function AIScannerPage() {
               <button
                 onClick={handleScan}
                 disabled={!target || isScanning}
-                className="w-full py-3 bg-gradient-to-r from-purple-600 to-pink-600 rounded-lg text-white font-medium flex items-center justify-center gap-2 hover:opacity-90 transition disabled:opacity-50"
+                className="w-full py-3 bg-gradient-to-r from-gray-500 to-gray-600 rounded-lg text-white font-medium flex items-center justify-center gap-2 hover:opacity-90 transition disabled:opacity-50"
               >
                 <Play size={20} />
                 {isScanning ? 'Scanning...' : 'Start Scan'}
@@ -96,7 +96,7 @@ export default function AIScannerPage() {
                     <div className="text-white font-medium">{scan.url}</div>
                     <div className="text-slate-400 text-sm">{scan.type} Scan • {scan.findings} findings</div>
                   </div>
-                  <span className={`px-3 py-1 rounded-full text-sm ${scan.status === 'Completed' ? 'bg-green-600/20 text-green-400' : 'bg-blue-600/20 text-blue-400'}`}>
+                  <span className={`px-3 py-1 rounded-full text-sm ${scan.status === 'Completed' ? 'bg-green-600/20 text-green-400' : 'bg-white/20 text-gray-400'}`}>
                     {scan.status}
                   </span>
                 </div>

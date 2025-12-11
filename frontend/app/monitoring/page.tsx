@@ -83,7 +83,7 @@ export default function MonitoringPage() {
       <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
         <SimpleCard>
           <h3 className="text-lg font-semibold mb-2">CPU Usage</h3>
-          <p className="text-3xl font-bold text-blue-600">
+          <p className="text-3xl font-bold text-white">
             {getLatestValue(data.cpu_usage).toFixed(1)}%
           </p>
         </SimpleCard>
@@ -104,7 +104,7 @@ export default function MonitoringPage() {
 
         <SimpleCard>
           <h3 className="text-lg font-semibold mb-2">Active Scans</h3>
-          <p className="text-3xl font-bold text-purple-600">
+          <p className="text-3xl font-bold text-white">
             {data.active_scans}
           </p>
         </SimpleCard>
@@ -136,7 +136,7 @@ export default function MonitoringPage() {
           <div className="space-y-3">
             <div>
               <p className="text-sm text-gray-600 mb-1">Incoming</p>
-              <p className="text-2xl font-bold text-blue-600">
+              <p className="text-2xl font-bold text-white">
                 {getLatestValue(data.network_in).toFixed(2)} MB/s
               </p>
             </div>
@@ -160,7 +160,7 @@ export default function MonitoringPage() {
             </div>
             <div>
               <p className="text-sm text-gray-600 mb-1">Processing</p>
-              <p className="text-2xl font-bold text-purple-600">
+              <p className="text-2xl font-bold text-white">
                 {data.active_scans}
               </p>
             </div>

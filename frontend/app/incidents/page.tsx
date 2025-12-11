@@ -149,7 +149,7 @@ export default function IncidentsPage() {
 
                   {incident.updates.map((update) => (
                     <div key={update.id} className="flex items-start gap-3">
-                      <div className="w-2 h-2 rounded-full bg-blue-500 mt-2"></div>
+                      <div className="w-2 h-2 rounded-full bg-white mt-2"></div>
                       <div>
                         <p className="text-sm text-gray-600">
                           {new Date(update.created_at).toLocaleString()}

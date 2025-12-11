@@ -910,11 +910,11 @@ Test Discovery: Automatic
 
 Test Directory Structure:
 backend/tests/
-â”œâ”€â”€ conftest.py - Test fixtures and configuration
-â”œâ”€â”€ Unit Tests (28 files)
-â”œâ”€â”€ Integration Tests (5 files)
-â”œâ”€â”€ E2E Tests (2 files)
-â””â”€â”€ Load Tests (2 files)
+”œ”€”€ conftest.py - Test fixtures and configuration
+”œ”€”€ Unit Tests (28 files)
+”œ”€”€ Integration Tests (5 files)
+”œ”€”€ E2E Tests (2 files)
+”””€”€ Load Tests (2 files)
 
 Total Test Files: 28
 Test Configuration: EXCELLENT
@@ -1050,14 +1050,14 @@ E2E Tests Present:
 - test_e2e_workflows.py - Extended E2E workflows
 
 Critical Paths Tested:
-- User registration â†’ Email verification â†’ Login
+- User registration †’ Email verification †’ Login
 - Partial coverage on other flows
 
 Missing E2E Tests:
-- Complete scan workflow (create â†’ run â†’ results â†’ report)
-- Complete marketplace workflow (list â†’ buy â†’ payment)
-- Complete bug submission workflow (submit â†’ validate â†’ publish)
-- Complete DAO workflow (create proposal â†’ vote â†’ execute)
+- Complete scan workflow (create †’ run †’ results †’ report)
+- Complete marketplace workflow (list †’ buy †’ payment)
+- Complete bug submission workflow (submit †’ validate †’ publish)
+- Complete DAO workflow (create proposal †’ vote †’ execute)
 
 ### 6.8 Load Test Coverage
 

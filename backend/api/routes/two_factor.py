@@ -15,7 +15,7 @@ from models.user import User
 router = APIRouter(prefix="/2fa", tags=["Two-Factor Authentication"])
 
 two_factor = TwoFactorAuth()
-webauthn = WebAuthnService()
+webauthn = WebAuthnService(rp_id="localhost", rp_name="IKODIO BugBounty")
 backup_codes = BackupCodeManager()
 
 

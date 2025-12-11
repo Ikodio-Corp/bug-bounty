@@ -9,7 +9,7 @@ from datetime import datetime, timedelta
 
 from models.user import User
 from models.bug import Bug
-from models.community import Scan
+# from models.community import Scan  # Model doesn't exist
 from core.redis import get_redis
 
 

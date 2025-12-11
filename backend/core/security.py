@@ -5,45 +5,61 @@ Core security utilities - JWT, encryption, hashing
 from datetime import datetime, timedelta
 from typing import Optional, Dict, Any
 from jose import JWTError, jwt
-from passlib.context import CryptContext
+import bcrypt
 from cryptography.fernet import Fernet
 import secrets
 import hashlib
+from fastapi import Depends, HTTPException, status
+from fastapi.security import OAuth2PasswordBearer
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from .config import settings
 
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+# Use bcrypt directly instead of passlib to avoid 72-byte test issues
 fernet = Fernet(settings.ENCRYPTION_KEY.encode() if len(settings.ENCRYPTION_KEY) == 44 else Fernet.generate_key())
 
+# OAuth2 scheme for token extraction
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="api/auth/login", auto_error=False)
 
 # Dependency for getting current user
-async def get_current_user(token: str, db):
+async def get_current_user(token: str = Depends(oauth2_scheme)):
     """Get current user from JWT token"""
-    from fastapi import HTTPException, status
     from models.user import User
+    from .database import AsyncSessionLocal
+    
+    if token is None:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Not authenticated",
+            headers={"WWW-Authenticate": "Bearer"}
+        )
     
     payload = Security.decode_access_token(token)
     if payload is None:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Could not validate credentials"
+            detail="Could not validate credentials",
+            headers={"WWW-Authenticate": "Bearer"}
         )
     
     user_id = payload.get("sub")
     if user_id is None:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Could not validate credentials"
+            detail="Could not validate credentials",
+            headers={"WWW-Authenticate": "Bearer"}
         )
     
-    user = await db.get(User, int(user_id))
-    if user is None:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="User not found"
-        )
-    
-    return user
+    # Create db session
+    async with AsyncSessionLocal() as db:
+        user = await db.get(User, int(user_id))
+        if user is None:
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="User not found",
+                headers={"WWW-Authenticate": "Bearer"}
+            )
+        return user
 
 
 class Security:
@@ -51,13 +67,21 @@ class Security:
     
     @staticmethod
     def hash_password(password: str) -> str:
-        """Hash a password using bcrypt"""
-        return pwd_context.hash(password)
+        """Hash a password using bcrypt (max 72 bytes)"""
+        # Bcrypt has a 72-byte limit, truncate if necessary
+        password_bytes = password.encode('utf-8')[:72]
+        # Use bcrypt directly
+        salt = bcrypt.gensalt()
+        hashed = bcrypt.hashpw(password_bytes, salt)
+        return hashed.decode('utf-8')
     
     @staticmethod
     def verify_password(plain_password: str, hashed_password: str) -> bool:
         """Verify a password against a hash"""
-        return pwd_context.verify(plain_password, hashed_password)
+        # Truncate to same length for verification
+        password_bytes = plain_password.encode('utf-8')[:72]
+        hashed_bytes = hashed_password.encode('utf-8')
+        return bcrypt.checkpw(password_bytes, hashed_bytes)
     
     @staticmethod
     def create_access_token(data: Dict[str, Any], expires_delta: Optional[timedelta] = None) -> str:
@@ -112,33 +136,45 @@ class Security:
         return Security.hash_sha256(data) == signature
     
     @staticmethod
-    async def get_current_user(token: str, db):
+    async def get_current_user(token: str = Depends(oauth2_scheme)):
         """Get current user from JWT token"""
         from fastapi import HTTPException, status
         from models.user import User
+        from .database import AsyncSessionLocal
+        
+        if token is None:
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Not authenticated",
+                headers={"WWW-Authenticate": "Bearer"}
+            )
         
         payload = Security.decode_access_token(token)
         if payload is None:
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="Could not validate credentials"
+                detail="Could not validate credentials",
+                headers={"WWW-Authenticate": "Bearer"}
             )
         
         user_id = payload.get("sub")
         if user_id is None:
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="Could not validate credentials"
+                detail="Could not validate credentials",
+                headers={"WWW-Authenticate": "Bearer"}
             )
         
-        user = await db.get(User, int(user_id))
-        if user is None:
-            raise HTTPException(
-                status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="User not found"
-            )
-        
-        return user
+        # Create db session using context manager
+        async with AsyncSessionLocal() as db:
+            user = await db.get(User, int(user_id))
+            if user is None:
+                raise HTTPException(
+                    status_code=status.HTTP_401_UNAUTHORIZED,
+                    detail="User not found",
+                    headers={"WWW-Authenticate": "Bearer"}
+                )
+            return user
 
 
 class RateLimiter:

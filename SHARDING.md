@@ -226,18 +226,18 @@ async def check_shard_health():
 ## Best Practices
 
 ### DO:
-- ✅ Use shard key in WHERE clauses when possible
-- ✅ Minimize cross-shard queries
-- ✅ Cache frequently accessed data
-- ✅ Monitor shard balance
-- ✅ Plan for shard rebalancing
+-  Use shard key in WHERE clauses when possible
+-  Minimize cross-shard queries
+-  Cache frequently accessed data
+-  Monitor shard balance
+-  Plan for shard rebalancing
 
 ### DON'T:
-- ❌ Use JOINs across shards
-- ❌ Use transactions across shards
-- ❌ Hardcode shard IDs
-- ❌ Ignore data skew
-- ❌ Forget to backup all shards
+-  Use JOINs across shards
+-  Use transactions across shards
+-  Hardcode shard IDs
+-  Ignore data skew
+-  Forget to backup all shards
 
 ## Performance Benefits
 

@@ -4,9 +4,9 @@ Database query optimization utilities
 from typing import List, Optional, Any
 from sqlalchemy import select, func, and_, or_
 from sqlalchemy.orm import Session, joinedload, selectinload, subqueryload
-from backend.models.bug import Bug, Scan
-from backend.models.user import User
-from backend.models.marketplace import Tool
+from models.bug import Bug  # , Scan  # Scan doesn't exist
+from models.user import User
+from models.marketplace import Tool
 
 
 class QueryOptimizer:

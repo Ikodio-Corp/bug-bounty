@@ -27,7 +27,7 @@ export default function DocsAPIPage() {
           {/* Quick Links */}
           <div className="grid md:grid-cols-4 gap-6 mb-8">
             {sections.map((section) => (
-              <button key={section.title} className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6 hover:border-purple-500/50 transition text-left">
+              <button key={section.title} className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6 hover:border-white/50 transition text-left">
                 <section.icon className={`text-${section.color}-400 mb-3`} size={28} />
                 <div className="text-white font-bold mb-1">{section.title}</div>
                 <div className="text-slate-400 text-sm">{section.desc}</div>
@@ -48,9 +48,9 @@ export default function DocsAPIPage() {
               ].map((endpoint, i) => (
                 <div key={i} className="flex items-center gap-4 p-4 bg-white/5 rounded-lg">
                   <span className={`px-3 py-1 rounded font-mono text-sm ${
-                    endpoint.method === 'GET' ? 'bg-green-600/20 text-green-400' : 'bg-blue-600/20 text-blue-400'
+                    endpoint.method === 'GET' ? 'bg-green-600/20 text-green-400' : 'bg-white/20 text-gray-400'
                   }`}>{endpoint.method}</span>
-                  <code className="text-purple-400 font-mono">{endpoint.path}</code>
+                  <code className="text-gray-400 font-mono">{endpoint.path}</code>
                   <span className="text-slate-400 ml-auto">{endpoint.desc}</span>
                 </div>
               ))}

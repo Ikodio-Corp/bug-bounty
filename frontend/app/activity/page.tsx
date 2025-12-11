@@ -38,23 +38,23 @@ export default function ActivityPage() {
 
   const getActivityIcon = (type: string) => {
     const icons: { [key: string]: string } = {
-      scan_started: '🔍',
-      scan_completed: '✅',
-      bug_submitted: '🐛',
-      bug_validated: '✓',
-      payment_received: '💰',
-      guild_joined: '👥',
-      marketplace_sale: '💵',
-      profile_updated: '👤'
+      scan_started: '[>>]',
+      scan_completed: '[OK]',
+      bug_submitted: '[BUG]',
+      bug_validated: '[CHK]',
+      payment_received: '[$$$]',
+      guild_joined: '[GRP]',
+      marketplace_sale: '[SALE]',
+      profile_updated: '[USR]'
     }
-    return icons[type] || '📝'
+    return icons[type] || '[LOG]'
   }
 
   const getActivityColor = (type: string) => {
     const colors: { [key: string]: string } = {
-      scan_started: 'border-blue-500/20',
+      scan_started: 'border-white/20',
       scan_completed: 'border-green-500/20',
-      bug_submitted: 'border-purple-500/20',
+      bug_submitted: 'border-white/20',
       bug_validated: 'border-cyan-500/20',
       payment_received: 'border-green-500/20',
       guild_joined: 'border-yellow-500/20',
@@ -101,7 +101,7 @@ export default function ActivityPage() {
           <div className="text-center text-slate-400 py-12">Loading activities...</div>
         ) : activities.length === 0 ? (
           <div className="bg-slate-800 rounded-xl p-12 text-center">
-            <div className="text-6xl mb-4">📭</div>
+            <div className="text-6xl mb-4"></div>
             <h3 className="text-xl font-semibold text-white mb-2">No Activities Yet</h3>
             <p className="text-slate-400">Start scanning and hunting bugs to see your activity here</p>
           </div>

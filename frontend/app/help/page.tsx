@@ -36,7 +36,7 @@ export default function HelpPage() {
                 placeholder="Search for help..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-12 pr-4 py-4 bg-white/5 border border-white/10 rounded-xl text-white placeholder-slate-400 focus:outline-none focus:border-blue-500"
+                className="w-full pl-12 pr-4 py-4 bg-white/5 border border-white/10 rounded-xl text-white placeholder-slate-400 focus:outline-none focus:border-white"
               />
             </div>
           </div>
@@ -44,7 +44,7 @@ export default function HelpPage() {
           {/* Quick Actions */}
           <div className="grid md:grid-cols-3 gap-4 mb-8">
             <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-xl p-6 hover:bg-white/10 transition cursor-pointer">
-              <Book className="text-blue-400 mb-3" size={32} />
+              <Book className="text-gray-400 mb-3" size={32} />
               <h3 className="text-white font-semibold mb-2">Documentation</h3>
               <p className="text-slate-400 text-sm">Complete guides and API reference</p>
             </div>
@@ -54,7 +54,7 @@ export default function HelpPage() {
               <p className="text-slate-400 text-sm">Chat with support team</p>
             </div>
             <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-xl p-6 hover:bg-white/10 transition cursor-pointer">
-              <FileText className="text-purple-400 mb-3" size={32} />
+              <FileText className="text-gray-400 mb-3" size={32} />
               <h3 className="text-white font-semibold mb-2">Submit Ticket</h3>
               <p className="text-slate-400 text-sm">Get help from our team</p>
             </div>
@@ -77,12 +77,12 @@ export default function HelpPage() {
           </div>
 
           {/* Contact */}
-          <div className="bg-gradient-to-r from-blue-600/20 to-purple-600/20 backdrop-blur-xl border border-white/10 rounded-2xl p-8">
+          <div className="bg-gradient-to-r from-white/10 to-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-8">
             <h2 className="text-2xl font-bold text-white mb-4">Still need help?</h2>
             <p className="text-slate-300 mb-6">Our support team is available 24/7</p>
             <div className="grid md:grid-cols-2 gap-4">
               <div className="flex items-center gap-3 p-4 bg-white/5 rounded-lg">
-                <Mail className="text-blue-400" size={24} />
+                <Mail className="text-gray-400" size={24} />
                 <div>
                   <div className="text-white font-medium">Email</div>
                   <div className="text-slate-400 text-sm">support@ikodio.com</div>

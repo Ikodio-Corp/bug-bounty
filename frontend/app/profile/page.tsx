@@ -105,20 +105,20 @@ export default function ProfilePage() {
       silver: 'text-slate-300',
       gold: 'text-yellow-400',
       platinum: 'text-cyan-400',
-      diamond: 'text-purple-400'
+      diamond: 'text-gray-400'
     }
     return colors[rank.toLowerCase()] || 'text-slate-400'
   }
 
   const getRankIcon = (rank: string) => {
     const icons: { [key: string]: string } = {
-      bronze: '🥉',
-      silver: '🥈',
-      gold: '🥇',
-      platinum: '💎',
-      diamond: '👑'
+      bronze: '',
+      silver: '',
+      gold: '',
+      platinum: '',
+      diamond: ''
     }
-    return icons[rank.toLowerCase()] || '🏆'
+    return icons[rank.toLowerCase()] || ''
   }
 
   if (loading) {
@@ -166,7 +166,7 @@ export default function ProfilePage() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           <div className="lg:col-span-1">
             <div className="bg-slate-800 rounded-xl p-6 text-center">
-              <div className="w-32 h-32 bg-gradient-to-br from-cyan-500 to-blue-600 rounded-full mx-auto mb-4 flex items-center justify-center text-5xl">
+              <div className="w-32 h-32 bg-gradient-to-br from-gray-400 to-gray-500 rounded-full mx-auto mb-4 flex items-center justify-center text-5xl">
                 {profile.user.avatar_url ? (
                   <img
                     src={profile.user.avatar_url}
@@ -207,7 +207,7 @@ export default function ProfilePage() {
 
             {profile.user.location && (
               <div className="bg-slate-800 rounded-xl p-4 mt-4">
-                <div className="text-slate-400 text-sm mb-2">📍 Location</div>
+                <div className="text-slate-400 text-sm mb-2"> Location</div>
                 <div className="text-white">{profile.user.location}</div>
               </div>
             )}
@@ -222,7 +222,7 @@ export default function ProfilePage() {
                     rel="noopener noreferrer"
                     className="block text-cyan-400 hover:text-cyan-300"
                   >
-                    🌐 Website
+                     Website
                   </a>
                 )}
                 {profile.user.github_username && (
@@ -232,7 +232,7 @@ export default function ProfilePage() {
                     rel="noopener noreferrer"
                     className="block text-cyan-400 hover:text-cyan-300"
                   >
-                    🐙 GitHub
+                     GitHub
                   </a>
                 )}
                 {profile.user.twitter_username && (
@@ -242,7 +242,7 @@ export default function ProfilePage() {
                     rel="noopener noreferrer"
                     className="block text-cyan-400 hover:text-cyan-300"
                   >
-                    🐦 Twitter
+                     Twitter
                   </a>
                 )}
                 {profile.user.linkedin_url && (
@@ -252,7 +252,7 @@ export default function ProfilePage() {
                     rel="noopener noreferrer"
                     className="block text-cyan-400 hover:text-cyan-300"
                   >
-                    💼 LinkedIn
+                     LinkedIn
                   </a>
                 )}
               </div>
@@ -270,7 +270,7 @@ export default function ProfilePage() {
                       type="text"
                       value={formData.full_name}
                       onChange={(e) => setFormData({ ...formData, full_name: e.target.value })}
-                      className="w-full px-4 py-3 bg-slate-700 border border-slate-600 rounded-lg text-white focus:ring-2 focus:ring-cyan-500 focus:border-transparent"
+                      className="w-full px-4 py-3 bg-slate-700 border border-slate-600 rounded-lg text-white focus:ring-2 focus:ring-white/50 focus:border-transparent"
                     />
                   </div>
                   <div>
@@ -279,7 +279,7 @@ export default function ProfilePage() {
                       value={formData.bio}
                       onChange={(e) => setFormData({ ...formData, bio: e.target.value })}
                       rows={4}
-                      className="w-full px-4 py-3 bg-slate-700 border border-slate-600 rounded-lg text-white focus:ring-2 focus:ring-cyan-500 focus:border-transparent"
+                      className="w-full px-4 py-3 bg-slate-700 border border-slate-600 rounded-lg text-white focus:ring-2 focus:ring-white/50 focus:border-transparent"
                     />
                   </div>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -289,7 +289,7 @@ export default function ProfilePage() {
                         type="text"
                         value={formData.location}
                         onChange={(e) => setFormData({ ...formData, location: e.target.value })}
-                        className="w-full px-4 py-3 bg-slate-700 border border-slate-600 rounded-lg text-white focus:ring-2 focus:ring-cyan-500 focus:border-transparent"
+                        className="w-full px-4 py-3 bg-slate-700 border border-slate-600 rounded-lg text-white focus:ring-2 focus:ring-white/50 focus:border-transparent"
                       />
                     </div>
                     <div>
@@ -298,7 +298,7 @@ export default function ProfilePage() {
                         type="url"
                         value={formData.website}
                         onChange={(e) => setFormData({ ...formData, website: e.target.value })}
-                        className="w-full px-4 py-3 bg-slate-700 border border-slate-600 rounded-lg text-white focus:ring-2 focus:ring-cyan-500 focus:border-transparent"
+                        className="w-full px-4 py-3 bg-slate-700 border border-slate-600 rounded-lg text-white focus:ring-2 focus:ring-white/50 focus:border-transparent"
                       />
                     </div>
                   </div>
@@ -311,7 +311,7 @@ export default function ProfilePage() {
                         onChange={(e) =>
                           setFormData({ ...formData, github_username: e.target.value })
                         }
-                        className="w-full px-4 py-3 bg-slate-700 border border-slate-600 rounded-lg text-white focus:ring-2 focus:ring-cyan-500 focus:border-transparent"
+                        className="w-full px-4 py-3 bg-slate-700 border border-slate-600 rounded-lg text-white focus:ring-2 focus:ring-white/50 focus:border-transparent"
                       />
                     </div>
                     <div>
@@ -322,7 +322,7 @@ export default function ProfilePage() {
                         onChange={(e) =>
                           setFormData({ ...formData, twitter_username: e.target.value })
                         }
-                        className="w-full px-4 py-3 bg-slate-700 border border-slate-600 rounded-lg text-white focus:ring-2 focus:ring-cyan-500 focus:border-transparent"
+                        className="w-full px-4 py-3 bg-slate-700 border border-slate-600 rounded-lg text-white focus:ring-2 focus:ring-white/50 focus:border-transparent"
                       />
                     </div>
                   </div>
@@ -335,7 +335,7 @@ export default function ProfilePage() {
                         setFormData({ ...formData, specializations: e.target.value })
                       }
                       placeholder="e.g., Web Security, Mobile Security"
-                      className="w-full px-4 py-3 bg-slate-700 border border-slate-600 rounded-lg text-white focus:ring-2 focus:ring-cyan-500 focus:border-transparent"
+                      className="w-full px-4 py-3 bg-slate-700 border border-slate-600 rounded-lg text-white focus:ring-2 focus:ring-white/50 focus:border-transparent"
                     />
                   </div>
                   <div>
@@ -345,7 +345,7 @@ export default function ProfilePage() {
                       value={formData.skills}
                       onChange={(e) => setFormData({ ...formData, skills: e.target.value })}
                       placeholder="e.g., Penetration Testing, Code Review"
-                      className="w-full px-4 py-3 bg-slate-700 border border-slate-600 rounded-lg text-white focus:ring-2 focus:ring-cyan-500 focus:border-transparent"
+                      className="w-full px-4 py-3 bg-slate-700 border border-slate-600 rounded-lg text-white focus:ring-2 focus:ring-white/50 focus:border-transparent"
                     />
                   </div>
                   <div className="flex gap-3 pt-4">
@@ -399,7 +399,7 @@ export default function ProfilePage() {
                         <div className="text-sm text-slate-400">Acceptance Rate</div>
                       </div>
                       <div className="bg-slate-700 rounded-lg p-4 text-center">
-                        <div className="text-2xl font-bold text-purple-400">
+                        <div className="text-2xl font-bold text-gray-400">
                           {profile.profile.experience_years}
                         </div>
                         <div className="text-sm text-slate-400">Years Experience</div>

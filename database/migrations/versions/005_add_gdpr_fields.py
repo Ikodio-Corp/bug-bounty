@@ -1,7 +1,7 @@
 """Add GDPR compliance fields to users table
 
 Revision ID: 005_add_gdpr_fields
-Revises: 004
+Revises: revolutionary_001
 Create Date: 2024-01-20 10:00:00.000000
 
 """
@@ -11,7 +11,7 @@ from sqlalchemy.dialects import postgresql
 
 # revision identifiers, used by Alembic.
 revision = '005_add_gdpr_fields'
-down_revision = '004'
+down_revision = 'revolutionary_001'
 branch_labels = None
 depends_on = None
 

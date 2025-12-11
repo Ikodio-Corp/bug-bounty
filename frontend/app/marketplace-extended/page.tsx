@@ -127,7 +127,7 @@ export default function MarketplacePage() {
 
       {activeTab === 'listings' && (
         <div>
-          <div className="bg-blue-50 p-4 rounded-lg mb-6">
+          <div className="bg-gray-800 p-4 rounded-lg mb-6">
             <h3 className="font-semibold mb-2">How Bug Trading Works</h3>
             <ul className="text-sm space-y-1">
               <li>80% instant payment to seller when you buy</li>
@@ -153,7 +153,7 @@ export default function MarketplacePage() {
                   </div>
 
                   <div className="mb-4">
-                    <div className="text-2xl font-bold text-blue-600 mb-1">
+                    <div className="text-2xl font-bold text-white mb-1">
                       ${listing.listing_price.toLocaleString()}
                     </div>
                     <p className="text-xs text-gray-600">
@@ -177,7 +177,7 @@ export default function MarketplacePage() {
 
       {activeTab === 'futures' && (
         <div>
-          <div className="bg-purple-50 p-4 rounded-lg mb-6">
+          <div className="bg-gray-800 p-4 rounded-lg mb-6">
             <h3 className="font-semibold mb-2">Bug Futures Trading</h3>
             <ul className="text-sm space-y-1">
               <li>Speculate on future bug discoveries</li>
@@ -215,7 +215,7 @@ export default function MarketplacePage() {
                   </div>
 
                   <div className="mb-4">
-                    <div className="text-2xl font-bold text-purple-600">
+                    <div className="text-2xl font-bold text-white">
                       ${future.contract_price.toLocaleString()}
                     </div>
                     <p className="text-xs text-gray-600">per contract</p>

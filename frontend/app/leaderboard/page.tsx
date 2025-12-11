@@ -42,9 +42,9 @@ export default function LeaderboardPage() {
   }
 
   const getRankIcon = (position: number) => {
-    if (position === 1) return '🥇'
-    if (position === 2) return '🥈'
-    if (position === 3) return '🥉'
+    if (position === 1) return ''
+    if (position === 2) return ''
+    if (position === 3) return ''
     return `#${position}`
   }
 
@@ -173,7 +173,7 @@ export default function LeaderboardPage() {
                       </td>
                       <td className="px-6 py-4">
                         <div className="flex items-center gap-3">
-                          <div className="w-12 h-12 bg-gradient-to-br from-cyan-500 to-blue-600 rounded-full flex items-center justify-center text-white font-bold">
+                          <div className="w-12 h-12 bg-gradient-to-br from-gray-400 to-gray-500 rounded-full flex items-center justify-center text-white font-bold">
                             {hunter.avatar_url ? (
                               <img
                                 src={hunter.avatar_url}

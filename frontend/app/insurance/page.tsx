@@ -187,7 +187,7 @@ export default function InsurancePage() {
         </div>
       </div>
 
-      <div className="mt-8 bg-blue-50 p-6 rounded-lg">
+      <div className="mt-8 bg-gray-800 p-6 rounded-lg">
         <h2 className="text-xl font-semibold mb-4">How It Works</h2>
         <ul className="space-y-2 text-sm">
           <li>1. Calculate premium based on your coverage needs</li>

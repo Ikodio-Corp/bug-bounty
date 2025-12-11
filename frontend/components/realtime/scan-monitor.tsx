@@ -58,7 +58,7 @@ export function LiveScanMonitor({ scanId }: { scanId: number }) {
 
         <div>
           <p className="text-sm text-gray-400 mb-1">Current Phase</p>
-          <p className="font-medium text-blue-400">{scanProgress.current_phase}</p>
+          <p className="font-medium text-gray-400">{scanProgress.current_phase}</p>
         </div>
 
         <div>
@@ -68,7 +68,7 @@ export function LiveScanMonitor({ scanId }: { scanId: number }) {
           </div>
           <div className="w-full bg-gray-700 rounded-full h-2">
             <div
-              className="bg-blue-500 h-2 rounded-full transition-all duration-500"
+              className="bg-white h-2 rounded-full transition-all duration-500"
               style={{ width: `${scanProgress.progress}%` }}
             ></div>
           </div>

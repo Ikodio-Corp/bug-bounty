@@ -132,7 +132,7 @@ export default function NFTPage() {
       <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
         {nfts.map((nft) => (
           <SimpleCard key={nft.id}>
-            <div className="aspect-square bg-gradient-to-br from-purple-600 to-blue-600 rounded-lg mb-4 flex items-center justify-center">
+            <div className="aspect-square bg-gradient-to-br from-gray-600 to-gray-700 rounded-lg mb-4 flex items-center justify-center">
               {nft.metadata.image ? (
                 <img src={nft.metadata.image} alt={nft.metadata.name} className="w-full h-full object-cover rounded-lg" />
               ) : (

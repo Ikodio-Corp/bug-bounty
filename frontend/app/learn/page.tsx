@@ -6,12 +6,12 @@ import { BookOpen, Video, FileText, Award, Clock } from 'lucide-react';
 
 export default function LearnPage() {
   const courses = [
-    { title: 'Web Application Security Fundamentals', lessons: 12, duration: '4h', level: 'Beginner', icon: '🔐' },
-    { title: 'Advanced XSS Exploitation', lessons: 8, duration: '2.5h', level: 'Advanced', icon: '⚡' },
-    { title: 'SQL Injection Mastery', lessons: 10, duration: '3h', level: 'Intermediate', icon: '💉' },
-    { title: 'API Security Testing', lessons: 15, duration: '5h', level: 'Intermediate', icon: '🔌' },
-    { title: 'Mobile App Penetration Testing', lessons: 14, duration: '6h', level: 'Advanced', icon: '📱' },
-    { title: 'Bug Bounty Methodology', lessons: 9, duration: '3.5h', level: 'Beginner', icon: '🎯' },
+    { title: 'Web Application Security Fundamentals', lessons: 12, duration: '4h', level: 'Beginner', icon: '' },
+    { title: 'Advanced XSS Exploitation', lessons: 8, duration: '2.5h', level: 'Advanced', icon: '[!]' },
+    { title: 'SQL Injection Mastery', lessons: 10, duration: '3h', level: 'Intermediate', icon: '' },
+    { title: 'API Security Testing', lessons: 15, duration: '5h', level: 'Intermediate', icon: '' },
+    { title: 'Mobile App Penetration Testing', lessons: 14, duration: '6h', level: 'Advanced', icon: '' },
+    { title: 'Bug Bounty Methodology', lessons: 9, duration: '3.5h', level: 'Beginner', icon: '' },
   ];
 
   return (
@@ -47,7 +47,7 @@ export default function LearnPage() {
             <h2 className="text-xl font-bold text-white mb-6">Popular Courses</h2>
             <div className="grid md:grid-cols-2 gap-6">
               {courses.map((course, i) => (
-                <div key={i} className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-xl p-6 hover:border-purple-500/50 transition">
+                <div key={i} className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-xl p-6 hover:border-white/50 transition">
                   <div className="flex items-start gap-4 mb-4">
                     <div className="text-4xl">{course.icon}</div>
                     <div className="flex-1">
@@ -67,10 +67,10 @@ export default function LearnPage() {
                   <div className="flex items-center justify-between">
                     <span className={`px-3 py-1 rounded-full text-sm ${
                       course.level === 'Beginner' ? 'bg-green-600/20 text-green-400' :
-                      course.level === 'Intermediate' ? 'bg-blue-600/20 text-blue-400' :
-                      'bg-purple-600/20 text-purple-400'
+                      course.level === 'Intermediate' ? 'bg-white/20 text-gray-400' :
+                      'bg-gray-700/20 text-gray-400'
                     }`}>{course.level}</span>
-                    <button className="px-4 py-2 bg-purple-600 hover:bg-purple-700 rounded-lg text-white text-sm font-medium transition">
+                    <button className="px-4 py-2 bg-gray-700 hover:bg-gray-700 rounded-lg text-white text-sm font-medium transition">
                       Start Learning
                     </button>
                   </div>

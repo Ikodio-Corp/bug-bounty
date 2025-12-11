@@ -74,28 +74,28 @@ export default function NotificationsPage() {
   const getNotificationIcon = (type: string) => {
     switch (type) {
       case 'scan_complete':
-        return '🔍'
+        return ''
       case 'bug_validated':
-        return '✅'
+        return '[OK]'
       case 'payment_received':
-        return '💰'
+        return ''
       case 'guild_invitation':
-        return '🤝'
+        return ''
       default:
-        return '📢'
+        return ''
     }
   }
 
   const getNotificationColor = (type: string) => {
     switch (type) {
       case 'scan_complete':
-        return 'border-l-blue-500'
+        return 'border-l-white'
       case 'bug_validated':
         return 'border-l-green-500'
       case 'payment_received':
         return 'border-l-yellow-500'
       case 'guild_invitation':
-        return 'border-l-purple-500'
+        return 'border-l-white'
       default:
         return 'border-l-slate-500'
     }
@@ -176,7 +176,7 @@ export default function NotificationsPage() {
 
         {notifications.length === 0 ? (
           <div className="bg-slate-800 rounded-xl p-12 text-center">
-            <div className="text-6xl mb-4">📭</div>
+            <div className="text-6xl mb-4"></div>
             <h3 className="text-xl font-semibold text-white mb-2">No notifications</h3>
             <p className="text-slate-400">
               {filter === 'unread' ? 'No unread notifications' : 'You have no notifications yet'}

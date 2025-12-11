@@ -1,0 +1,528 @@
+'use client'
+
+import { useState, useEffect } from 'react'
+import { motion } from 'framer-motion'
+import { Search, Filter, TrendingUp, Shield, Zap, Package, FileText, Gem, Star, Eye, ShoppingCart, ArrowRight, Sparkles, Award, Lock, Check } from 'lucide-react'
+import { api } from '@/lib/api'
+
+interface MarketplaceListing {
+  id: number
+  title: string
+  description: string
+  price: number
+  listing_type: string
+  seller_name: string
+  seller_reputation?: number
+  views: number
+  sales_count?: number
+  rating?: number
+  tags?: string[]
+  image_url?: string
+}
+
+const categories = [
+  { id: 'all', name: 'All Items', icon: Package },
+  { id: 'tool', name: 'Security Tools', icon: Shield },
+  { id: 'report', name: 'Bug Reports', icon: FileText },
+  { id: 'nft', name: 'NFT Assets', icon: Gem },
+  { id: 'subscription', name: 'Subscriptions', icon: Star }
+]
+
+// Particle Background Animation (sama seperti landing page)
+function ParticleBackground() {
+  const [particles, setParticles] = useState<Array<{x: number; y: number; opacity: number}>>([])
+
+  useEffect(() => {
+    const newParticles = Array.from({ length: 50 }, () => ({
+      x: Math.random() * (typeof window !== 'undefined' ? window.innerWidth : 1920),
+      y: Math.random() * (typeof window !== 'undefined' ? window.innerHeight : 1080),
+      opacity: Math.random() * 0.5,
+    }))
+    setParticles(newParticles)
+  }, [])
+
+  if (particles.length === 0) return null
+
+  return (
+    <div className="absolute inset-0 overflow-hidden pointer-events-none">
+      {particles.map((particle, i) => (
+        <motion.div
+          key={i}
+          className="absolute w-1 h-1 bg-white rounded-full"
+          initial={particle}
+          animate={{
+            y: [particle.y, Math.random() * (typeof window !== 'undefined' ? window.innerHeight : 1080)],
+            opacity: [particle.opacity, Math.random() * 0.5, 0],
+          }}
+          transition={{
+            duration: Math.random() * 10 + 10,
+            repeat: Infinity,
+            ease: 'linear',
+          }}
+        />
+      ))}
+    </div>
+  )
+}
+
+// Floating Elements (sama seperti landing page)
+function FloatingElements() {
+  return (
+    <div className="absolute inset-0 overflow-hidden pointer-events-none">
+      <motion.div
+        className="absolute top-20 left-10 w-20 h-20 border border-white/10 rounded-full"
+        animate={{ y: [0, 30, 0], rotate: 360 }}
+        transition={{ duration: 20, repeat: Infinity }}
+      />
+      <motion.div
+        className="absolute top-40 right-20 w-32 h-32 border border-white/10 rounded-lg"
+        animate={{ y: [0, -40, 0], rotate: -360 }}
+        transition={{ duration: 25, repeat: Infinity }}
+      />
+      <motion.div
+        className="absolute bottom-20 left-1/4 w-16 h-16 border border-white/10 rounded-full"
+        animate={{ y: [0, 20, 0], x: [0, 20, 0] }}
+        transition={{ duration: 15, repeat: Infinity }}
+      />
+      <motion.div
+        className="absolute top-1/2 right-10 w-24 h-24 border border-purple-500/20 rounded-lg"
+        animate={{ rotate: [0, 180, 360], scale: [1, 1.1, 1] }}
+        transition={{ duration: 30, repeat: Infinity }}
+      />
+    </div>
+  )
+}
+
+export default function MarketplacePage() {
+  const [listings, setListings] = useState<MarketplaceListing[]>([])
+  const [loading, setLoading] = useState(true)
+  const [filter, setFilter] = useState('all')
+  const [searchQuery, setSearchQuery] = useState('')
+  const [sortBy, setSortBy] = useState('popular')
+
+  useEffect(() => {
+    fetchListings()
+  }, [filter])
+
+  const fetchListings = async () => {
+    try {
+      const response = await api.get('/marketplace', {
+        params: filter !== 'all' ? { category: filter } : {}
+      })
+      setListings(response.data || [])
+    } catch (error) {
+      console.error('Failed to fetch listings:', error)
+      setListings([])
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const handlePurchase = async (listingId: number, title: string) => {
+    if (confirm(`Purchase "${title}"?`)) {
+      try {
+        await api.post('/marketplace/purchase', { listing_id: listingId })
+        alert('Purchase successful!')
+        fetchListings()
+      } catch (error: any) {
+        alert(error.response?.data?.detail || 'Purchase failed. Please try again.')
+      }
+    }
+  }
+
+  const filteredListings = listings.filter(listing =>
+    listing.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    listing.description.toLowerCase().includes(searchQuery.toLowerCase())
+  )
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-black relative overflow-hidden">
+        <ParticleBackground />
+        <FloatingElements />
+        <div className="flex items-center justify-center min-h-screen relative z-10">
+          <div className="flex flex-col items-center gap-4">
+            <motion.div 
+              className="w-16 h-16 border-4 border-purple-500 border-t-transparent rounded-full"
+              animate={{ rotate: 360 }}
+              transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
+            />
+            <p className="text-gray-300 text-lg">Loading marketplace...</p>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
+  return (
+    <div className="min-h-screen bg-black text-white relative overflow-hidden">
+      {/* Animated Background */}
+      <ParticleBackground />
+      <FloatingElements />
+      
+      {/* Gradient Overlay */}
+      <div className="absolute inset-0 bg-gradient-to-br from-purple-900/20 via-black to-pink-900/20 pointer-events-none" />
+      
+      {/* Content */}
+      <div className="relative z-10">
+        {/* Hero Header Section */}
+        <div className="border-b border-gray-800/50 bg-black/30 backdrop-blur-xl">
+          <div className="container mx-auto px-6 py-12">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="text-center mb-8"
+            >
+              <div className="inline-flex items-center gap-2 px-4 py-2 bg-purple-500/10 border border-purple-500/30 rounded-full mb-6">
+                <Sparkles className="w-4 h-4 text-purple-400" />
+                <span className="text-sm text-purple-300">Trusted by 10,000+ Security Researchers</span>
+              </div>
+              
+              <h1 className="text-5xl md:text-6xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-white via-purple-200 to-pink-200">
+                Security Marketplace
+              </h1>
+              <p className="text-xl text-gray-300 max-w-2xl mx-auto mb-8">
+                Discover premium tools, reports, and resources from top security researchers worldwide
+              </p>
+
+              <div className="flex flex-col sm:flex-row gap-4 justify-center mb-8">
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={() => window.location.href = '/marketplace/new'}
+                  className="px-8 py-4 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-xl font-semibold hover:from-purple-700 hover:to-pink-700 transition-all flex items-center justify-center gap-2 shadow-lg shadow-purple-500/50"
+                >
+                  <Package className="w-5 h-5" />
+                  List Your Product
+                </motion.button>
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  className="px-8 py-4 bg-white/5 border border-white/10 text-white rounded-xl font-semibold hover:bg-white/10 transition-all flex items-center justify-center gap-2 backdrop-blur-sm"
+                >
+                  <Award className="w-5 h-5" />
+                  Become Verified Seller
+                </motion.button>
+              </div>
+            </motion.div>
+
+            {/* Search Bar */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2 }}
+              className="max-w-4xl mx-auto"
+            >
+              <div className="flex flex-col md:flex-row gap-4">
+                <div className="flex-1 relative">
+                  <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+                  <input
+                    type="text"
+                    placeholder="Search tools, reports, NFTs..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className="w-full pl-12 pr-4 py-4 bg-white/5 border border-white/10 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:border-purple-500 transition-all backdrop-blur-sm"
+                  />
+                </div>
+                <div className="flex items-center gap-3">
+                  <Filter className="w-5 h-5 text-gray-400" />
+                  <select
+                    value={sortBy}
+                    onChange={(e) => setSortBy(e.target.value)}
+                    className="px-6 py-4 bg-white/5 border border-white/10 rounded-xl text-white focus:outline-none focus:border-purple-500 transition-all backdrop-blur-sm"
+                  >
+                    <option value="popular">Most Popular</option>
+                    <option value="recent">Recently Added</option>
+                    <option value="price-low">Price: Low to High</option>
+                    <option value="price-high">Price: High to Low</option>
+                    <option value="rating">Highest Rated</option>
+                  </select>
+                </div>
+              </div>
+            </motion.div>
+          </div>
+        </div>
+
+      <div className="container mx-auto px-6 py-12">
+        {/* Category Tabs */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.3 }}
+          className="flex gap-3 mb-12 overflow-x-auto pb-2"
+        >
+          {categories.map((category) => {
+            const Icon = category.icon
+            const isActive = filter === category.id
+            return (
+              <motion.button
+                key={category.id}
+                whileHover={{ scale: 1.05, y: -2 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={() => setFilter(category.id)}
+                className={`px-6 py-3 rounded-xl font-medium transition-all flex items-center gap-2 whitespace-nowrap ${
+                  isActive
+                    ? 'bg-gradient-to-r from-purple-600 to-pink-600 text-white shadow-lg shadow-purple-500/50'
+                    : 'bg-white/5 text-gray-300 hover:bg-white/10 border border-white/10 backdrop-blur-sm'
+                }`}
+              >
+                <Icon className="w-5 h-5" />
+                {category.name}
+              </motion.button>
+            )
+          })}
+        </motion.div>
+
+        {/* Stats Bar */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.4 }}
+          className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-12"
+        >
+          {[
+            { icon: Package, value: filteredListings.length, label: 'Active Listings', color: 'purple' },
+            { icon: TrendingUp, value: '2.4k+', label: 'Total Sales', color: 'green' },
+            { icon: Shield, value: '98.5%', label: 'Satisfaction Rate', color: 'blue' },
+            { icon: Star, value: '4.8/5', label: 'Average Rating', color: 'yellow' }
+          ].map((stat, i) => {
+            const Icon = stat.icon
+            return (
+              <motion.div
+                key={i}
+                whileHover={{ y: -5, scale: 1.02 }}
+                className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6 hover:border-purple-500/50 transition-all"
+              >
+                <div className="flex items-center gap-4">
+                  <div className={`p-4 bg-${stat.color}-600/20 rounded-xl`}>
+                    <Icon className={`w-8 h-8 text-${stat.color}-400`} />
+                  </div>
+                  <div>
+                    <p className="text-3xl font-bold text-white">{stat.value}</p>
+                    <p className="text-sm text-gray-400">{stat.label}</p>
+                  </div>
+                </div>
+              </motion.div>
+            )
+          })}
+        </motion.div>
+
+        {/* Listings Grid */}
+        {filteredListings.length === 0 ? (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="text-center py-20"
+          >
+            <div className="inline-flex items-center justify-center w-24 h-24 bg-white/5 border border-white/10 rounded-full mb-6 backdrop-blur-sm">
+              <Package className="w-12 h-12 text-gray-500" />
+            </div>
+            <h3 className="text-3xl font-bold text-white mb-3">No listings found</h3>
+            <p className="text-gray-400 mb-8 max-w-md mx-auto">
+              Be the first to list a product in this category and start earning from your expertise
+            </p>
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={() => window.location.href = '/marketplace/new'}
+              className="px-8 py-4 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-xl font-semibold hover:from-purple-700 hover:to-pink-700 transition-all shadow-lg shadow-purple-500/50"
+            >
+              Create First Listing
+            </motion.button>
+          </motion.div>
+        ) : (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.5 }}
+            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
+          >
+            {filteredListings.map((listing, index) => (
+              <motion.div
+                key={listing.id}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: index * 0.1 }}
+                whileHover={{ y: -10, scale: 1.02 }}
+                className="group bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl overflow-hidden hover:border-purple-500/50 hover:shadow-2xl hover:shadow-purple-500/20 transition-all duration-300"
+              >
+                {/* Product Image with Gradient Overlay */}
+                <div className="relative h-56 bg-gradient-to-br from-purple-600/30 via-pink-600/20 to-blue-600/30 flex items-center justify-center overflow-hidden">
+                  {/* Animated gradient on hover */}
+                  <motion.div
+                    className="absolute inset-0 bg-gradient-to-br from-purple-600/20 via-pink-600/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+                    animate={{
+                      background: [
+                        'linear-gradient(to bottom right, rgba(147, 51, 234, 0.2), rgba(236, 72, 153, 0.2), transparent)',
+                        'linear-gradient(to bottom right, rgba(236, 72, 153, 0.2), rgba(59, 130, 246, 0.2), transparent)',
+                        'linear-gradient(to bottom right, rgba(147, 51, 234, 0.2), rgba(236, 72, 153, 0.2), transparent)',
+                      ]
+                    }}
+                    transition={{ duration: 3, repeat: Infinity }}
+                  />
+                  
+                  {/* Icon with glow effect */}
+                  <motion.div
+                    animate={{ rotate: [0, 5, -5, 0] }}
+                    transition={{ duration: 4, repeat: Infinity }}
+                  >
+                    <Zap className="w-24 h-24 text-purple-400/60 group-hover:text-purple-300 transition-colors" />
+                  </motion.div>
+                  
+                  {/* Sales badge */}
+                  {listing.sales_count && listing.sales_count > 0 && (
+                    <div className="absolute top-4 right-4 px-3 py-1.5 bg-green-500 text-white text-xs font-bold rounded-full shadow-lg backdrop-blur-sm">
+                      {listing.sales_count} sold
+                    </div>
+                  )}
+                  
+                  {/* Featured badge */}
+                  <div className="absolute top-4 left-4 px-3 py-1.5 bg-white/10 backdrop-blur-md text-white text-xs font-semibold rounded-full border border-white/20">
+                    Featured
+                  </div>
+                </div>
+
+                <div className="p-6">
+                  {/* Title and Category */}
+                  <div className="flex items-start justify-between mb-3">
+                    <h3 className="text-xl font-bold text-white group-hover:text-purple-300 transition-colors line-clamp-1 flex-1">
+                      {listing.title}
+                    </h3>
+                    <span className="px-3 py-1 bg-purple-600/30 border border-purple-500/50 text-purple-300 text-xs font-semibold rounded-lg whitespace-nowrap ml-2">
+                      {listing.listing_type}
+                    </span>
+                  </div>
+
+                  {/* Description */}
+                  <p className="text-gray-400 text-sm mb-5 line-clamp-2 leading-relaxed">
+                    {listing.description}
+                  </p>
+
+                  {/* Stats Row */}
+                  <div className="flex items-center gap-4 mb-5 text-xs text-gray-400">
+                    <div className="flex items-center gap-1.5">
+                      <Eye className="w-4 h-4" />
+                      <span>{listing.views || 0}</span>
+                    </div>
+                    {listing.rating && (
+                      <div className="flex items-center gap-1.5">
+                        <Star className="w-4 h-4 text-yellow-400 fill-yellow-400" />
+                        <span>{listing.rating.toFixed(1)}</span>
+                      </div>
+                    )}
+                    {listing.seller_reputation && (
+                      <div className="flex items-center gap-1.5">
+                        <Shield className="w-4 h-4 text-blue-400" />
+                        <span>{listing.seller_reputation}%</span>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Seller Info */}
+                  <div className="flex items-center gap-3 mb-5 pb-5 border-b border-white/10">
+                    <div className="w-10 h-10 bg-gradient-to-br from-purple-600 to-pink-600 rounded-full flex items-center justify-center text-white text-sm font-bold shadow-lg">
+                      {listing.seller_name?.charAt(0).toUpperCase() || 'U'}
+                    </div>
+                    <div>
+                      <p className="text-xs text-gray-500">Seller</p>
+                      <p className="text-sm font-semibold text-white">{listing.seller_name || 'Anonymous'}</p>
+                    </div>
+                    <div className="ml-auto">
+                      <div className="flex items-center gap-1 text-green-400 text-xs">
+                        <Check className="w-3 h-3" />
+                        <span>Verified</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Price and Action */}
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-xs text-gray-500 mb-1">Price</p>
+                      <p className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-white to-purple-200">
+                        ${listing.price.toLocaleString()}
+                      </p>
+                    </div>
+                    <motion.button
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                      onClick={() => handlePurchase(listing.id, listing.title)}
+                      className="px-6 py-3 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-xl font-semibold hover:from-purple-700 hover:to-pink-700 transition-all flex items-center gap-2 shadow-lg shadow-purple-500/50"
+                    >
+                      <ShoppingCart className="w-4 h-4" />
+                      Buy
+                    </motion.button>
+                  </div>
+                </div>
+              </motion.div>
+            ))}
+          </motion.div>
+        )}
+
+        {/* CTA Section */}
+        {filteredListings.length > 0 && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.6 }}
+            className="mt-16 bg-gradient-to-r from-purple-600/20 via-pink-600/20 to-blue-600/20 border border-purple-500/30 rounded-3xl p-12 text-center backdrop-blur-xl relative overflow-hidden"
+          >
+            {/* Decorative elements */}
+            <div className="absolute top-0 right-0 w-64 h-64 bg-purple-500/10 rounded-full blur-3xl" />
+            <div className="absolute bottom-0 left-0 w-64 h-64 bg-pink-500/10 rounded-full blur-3xl" />
+            
+            <div className="relative z-10">
+              <div className="inline-flex items-center gap-2 px-4 py-2 bg-purple-500/20 border border-purple-500/30 rounded-full mb-6">
+                <Award className="w-4 h-4 text-purple-300" />
+                <span className="text-sm text-purple-200">Verified Seller Program</span>
+              </div>
+              
+              <h3 className="text-4xl font-bold text-white mb-4">Become a Verified Seller</h3>
+              <p className="text-xl text-gray-300 mb-8 max-w-2xl mx-auto">
+                List your security tools, reports, and expertise. Earn from your knowledge and help the community grow stronger.
+              </p>
+              
+              <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={() => window.location.href = '/marketplace/seller'}
+                  className="px-8 py-4 bg-white text-purple-600 rounded-xl font-semibold hover:bg-gray-100 transition-all inline-flex items-center justify-center gap-2 shadow-lg"
+                >
+                  Learn More
+                  <ArrowRight className="w-5 h-5" />
+                </motion.button>
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={() => window.location.href = '/marketplace/new'}
+                  className="px-8 py-4 bg-purple-600/20 border border-purple-500/50 text-white rounded-xl font-semibold hover:bg-purple-600/30 transition-all inline-flex items-center justify-center gap-2 backdrop-blur-sm"
+                >
+                  <Package className="w-5 h-5" />
+                  Start Selling
+                </motion.button>
+              </div>
+              
+              {/* Trust indicators */}
+              <div className="mt-12 grid grid-cols-1 md:grid-cols-3 gap-6 max-w-3xl mx-auto">
+                {[
+                  { icon: Shield, text: 'Secure Transactions' },
+                  { icon: Star, text: 'Verified Buyers' },
+                  { icon: Lock, text: 'Protected Payments' }
+                ].map((item, i) => {
+                  const Icon = item.icon
+                  return (
+                    <div key={i} className="flex items-center justify-center gap-2 text-gray-300">
+                      <Icon className="w-5 h-5 text-purple-400" />
+                      <span className="text-sm">{item.text}</span>
+                    </div>
+                  )
+                })}
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </div>
+    </div>
+  )
+}

@@ -1,7 +1,7 @@
 """add report model
 
-Revision ID: 010
-Revises: 009
+Revision ID: 10
+Revises: 9
 Create Date: 2025-11-20 07:10:00.000000
 
 """
@@ -10,8 +10,8 @@ import sqlalchemy as sa
 from sqlalchemy.dialects import postgresql
 
 # revision identifiers, used by Alembic.
-revision = '010'
-down_revision = '009'
+revision = '10'
+down_revision = '9'
 branch_labels = None
 depends_on = None
 

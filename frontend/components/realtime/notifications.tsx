@@ -140,7 +140,7 @@ export function RealtimeNotifications() {
             <div className="p-3 border-t border-slate-700">
               <button
                 onClick={() => setNotifications([])}
-                className="w-full text-sm text-blue-400 hover:text-blue-300 transition-colors"
+                className="w-full text-sm text-gray-400 hover:text-gray-300 transition-colors"
               >
                 Clear all
               </button>

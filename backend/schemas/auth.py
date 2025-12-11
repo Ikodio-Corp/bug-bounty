@@ -6,7 +6,7 @@ from pydantic import BaseModel, EmailStr, Field, validator
 from typing import Optional
 from datetime import datetime
 
-from models.user import UserRole
+from models.user import UserRole, SubscriptionTier
 
 
 class UserRegister(BaseModel):
@@ -15,6 +15,7 @@ class UserRegister(BaseModel):
     password: str = Field(..., min_length=8)
     full_name: str = Field(..., min_length=1, max_length=255)
     role: Optional[UserRole] = UserRole.HUNTER
+    subscription_tier: Optional[SubscriptionTier] = SubscriptionTier.FREE
     
     @validator('password')
     def validate_password(cls, v):
